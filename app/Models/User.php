@@ -11,9 +11,10 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use SoftDeletes;
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -25,6 +26,8 @@ class User extends Authenticatable
         'email',
         'phone',
         'password',
+        'membership_tier',
+        'consultant_id',
     ];
 
     /**
@@ -42,7 +45,7 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
+    protected function casts(): array// what is this? I dont understand
     {
         return [
             'email_verified_at' => 'datetime',
@@ -50,13 +53,43 @@ class User extends Authenticatable
         ];
     }
 
+    public function consultant()
+    {
+        return $this->belongsTo(Consultant::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
+
+    public function treasure()
+    {
+        return $this->hasMany(Treasure::class);
+    }
+
+    public function getIsGoldCircleAttribute()
+    {
+        return $this->membership_tier === 'gold_circle';
+    }
+
     public function addresses()
     {
         return $this->hasMany(Address::class);
     }
-    
+
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function bespokeProjects()
+    {
+        return $this->hasMany(BespokeProject::class);
     }
 }

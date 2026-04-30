@@ -3,25 +3,25 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
-use App\Models\Address;
-use App\Models\Payment;
-use App\Models\Shipment;
 
 class Order extends Model
 {
     //
-    protected $fillable = [
-        'user_id',
+    protected $fillable = ['user_id',
         'total',
-        'status',
-    ];
-    
+        'order_status',
+        'shipping_full_name',
+        'shipping_address',
+        'shipping_city',
+        'shipping_state',
+        'shipping_postal_code',
+        'shipping_country'];
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-    
+
     public function items()
     {
         return $this->hasMany(OrderItem::class);
@@ -31,12 +31,12 @@ class Order extends Model
     {
         return $this->belongsTo(Address::class);
     }
-    
+
     public function payment()
     {
         return $this->hasOne(Payment::class);
     }
-    
+
     public function shipment()
     {
         return $this->hasOne(Shipment::class);
