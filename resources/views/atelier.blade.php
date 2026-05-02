@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>The Atelier | LUMIÈRE Fine Jewelry</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -187,19 +188,40 @@
     <!-- NAV — lighter on dark hero -->
     <nav id="main-nav" class="fixed top-0 left-0 w-full z-50 py-5 px-6 md:px-12">
         <div class="flex justify-between items-center max-w-screen-xl mx-auto">
-            <a href="index.html" class="font-playfair text-2xl tracking-widest text-white hover:text-soft-gold transition-colors duration-300">LUMIÈRE</a>
+            <a href="{{ route('home') }}" class="font-playfair text-2xl tracking-widest text-white hover:text-soft-gold transition-colors duration-300">LUMIÈRE</a>
             <div class="hidden md:flex items-center gap-10">
-                <a href="collections.html" class="nav-link text-xs tracking-[0.18em] text-white/70 hover:text-white font-jost">COLLECTIONS</a>
-                <a href="shop.html"        class="nav-link text-xs tracking-[0.18em] text-white/70 hover:text-white font-jost">SHOP</a>
-                <a href="atelier.html"     class="nav-link active text-xs tracking-[0.18em] text-white font-jost">ABOUT</a>
-                <a href="journal.html"     class="nav-link text-xs tracking-[0.18em] text-white/70 hover:text-white font-jost">JOURNAL</a>
+                <a href="{{ route('collections') }}" class="nav-link text-xs tracking-[0.18em] text-white/70 hover:text-white font-jost">COLLECTIONS</a>
+                <a href="{{ route('shop') }}"        class="nav-link text-xs tracking-[0.18em] text-white/70 hover:text-white font-jost">SHOP</a>
+                <a href="{{ route('atelier') }}"     class="nav-link active text-xs tracking-[0.18em] text-white font-jost">ABOUT</a>
+                <a href="{{ route('journal') }}"     class="nav-link text-xs tracking-[0.18em] text-white/70 hover:text-white font-jost">JOURNAL</a>
             </div>
             <div class="flex items-center gap-5">
                 <button class="text-white/50 hover:text-soft-gold transition-colors"><i class="fa-regular fa-heart text-base"></i></button>
-                <button class="text-white/50 hover:text-soft-gold transition-colors"><i class="fa-regular fa-user text-base"></i></button>
-                <button class="text-white/50 hover:text-soft-gold transition-colors relative">
-                    <i class="fa-regular fa-bag-shopping text-base"></i>
-                    <span class="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-soft-gold text-white text-[8px] flex items-center justify-center">2</span>
+                @auth
+                    <div class="relative group">
+                        <button class="text-white/50 hover:text-soft-gold transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-user text-base"></i>
+                            <span class="text-xs font-jost hidden md:block">{{ auth()->user()->name }}</span>
+                        </button>
+                        @if(auth()->user()->is_gold_circle)
+                            <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-soft-gold"></span>
+                        @endif
+                        <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <a href="#" class="block px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">My Profile</a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="w-full text-left px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">Sign Out</button>
+                            </form>
+                        </div>
+                    </div>
+                @else
+                    <a href="{{ route('login') }}" class="text-white/50 hover:text-soft-gold transition-colors">
+                        <i class="fa-regular fa-user text-base"></i>
+                    </a>
+                @endif
+                <button onclick="toggleCart()" class="text-white/50 hover:text-soft-gold transition-colors relative">
+                    <i class="fa-solid fa-cart-shopping text-base"></i>
+                    <span class="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-soft-gold text-white text-[8px] flex items-center justify-center">{{ $cartCount ?? 0 }}</span>
                 </button>
                 <button id="menu-open" class="md:hidden text-white/70 ml-1"><i class="fa-solid fa-bars text-lg"></i></button>
             </div>
@@ -207,12 +229,12 @@
     </nav>
     <div id="mobile-menu" class="fixed inset-y-0 right-0 w-72 bg-cream z-[60] shadow-2xl flex flex-col px-10 py-12">
         <button id="menu-close" class="self-end text-charcoal/50 hover:text-charcoal mb-10"><i class="fa-solid fa-xmark text-xl"></i></button>
-        <a href="index.html" class="font-playfair text-2xl tracking-widest text-charcoal mb-10 block">LUMIÈRE</a>
+        <a href="{{ route('home') }}" class="font-playfair text-2xl tracking-widest text-charcoal mb-10 block">LUMIÈRE</a>
         <div class="flex flex-col gap-7">
-            <a href="collections.html" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold font-jost">COLLECTIONS</a>
-            <a href="shop.html"        class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold font-jost">SHOP</a>
-            <a href="atelier.html"     class="text-xs tracking-[0.18em] text-soft-gold font-jost">ABOUT</a>
-            <a href="journal.html"     class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold font-jost">JOURNAL</a>
+            <a href="{{ route('collections') }}" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold font-jost">COLLECTIONS</a>
+            <a href="{{ route('shop') }}"        class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold font-jost">SHOP</a>
+            <a href="{{ route('atelier') }}"     class="text-xs tracking-[0.18em] text-soft-gold font-jost">ABOUT</a>
+            <a href="{{ route('home') }}#journal"     class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold font-jost">JOURNAL</a>
         </div>
         <div class="mt-auto flex gap-5 text-charcoal/40">
             <a href="#"><i class="fa-brands fa-instagram text-lg hover:text-soft-gold transition-colors"></i></a>
@@ -236,7 +258,7 @@
 
         <div class="relative z-10 max-w-screen-xl mx-auto px-6 md:px-12 w-full">
             <div class="flex items-center gap-3 mb-12 animate-fade-up">
-                <a href="index.html" class="text-white/30 text-[10px] tracking-[0.25em] font-jost hover:text-soft-gold transition-colors">HOME</a>
+                <a href="{{ route('home') }}" class="text-white/30 text-[10px] tracking-[0.25em] font-jost hover:text-soft-gold transition-colors">HOME</a>
                 <span class="text-soft-gold/40 text-[10px]">✦</span>
                 <span class="text-soft-gold text-[10px] tracking-[0.25em] font-jost">THE ATELIER</span>
             </div>
@@ -251,7 +273,7 @@
                     A small house born in Paris with a single conviction: fine jewelry made slowly, by hand, designed to outlive its maker.
                 </p>
                 <div class="flex gap-4 mt-10 animate-fade-up-3">
-                    <a href="shop.html" class="btn-gold inline-block px-8 py-3.5 text-[11px] tracking-[0.22em] font-jost"><span>SHOP THE COLLECTIONS</span></a>
+                    <a href="{{ route('shop') }}" class="btn-gold inline-block px-8 py-3.5 text-[11px] tracking-[0.22em] font-jost"><span>SHOP THE COLLECTIONS</span></a>
                     <a href="#story"    class="btn-outline-white inline-block px-8 py-3.5 text-[11px] tracking-[0.22em] font-jost"><span>OUR STORY</span></a>
                 </div>
             </div>
@@ -426,19 +448,19 @@
             </div>
             <div class="grid md:grid-cols-2 gap-10 max-w-3xl mx-auto">
                 <div class="flex gap-5 reveal">
-                    <div class="value-icon text-soft-gold"><i class="fa-regular fa-leaf text-lg"></i></div>
+                    <div class="value-icon text-soft-gold"><i class="fa-solid fa-leaf text-lg"></i></div>
                     <div><h3 class="font-playfair text-lg font-light text-white mb-1">Ethical Sourcing</h3><p class="text-white/45 text-[11px] font-jost font-light leading-relaxed">Every stone traceable to origin. We visit our suppliers in person and publish what we find.</p></div>
                 </div>
                 <div class="flex gap-5 reveal" style="transition-delay:.1s">
-                    <div class="value-icon text-soft-gold"><i class="fa-regular fa-hand-holding-heart text-lg"></i></div>
+                    <div class="value-icon text-soft-gold"><i class="fa-solid fa-hand-holding-heart text-lg"></i></div>
                     <div><h3 class="font-playfair text-lg font-light text-white mb-1">Made by Hand</h3><p class="text-white/45 text-[11px] font-jost font-light leading-relaxed">No mass-production machinery. Tools and techniques unchanged for three centuries.</p></div>
                 </div>
                 <div class="flex gap-5 reveal" style="transition-delay:.2s">
-                    <div class="value-icon text-soft-gold"><i class="fa-regular fa-infinity text-lg"></i></div>
+                    <div class="value-icon text-soft-gold"><i class="fa-solid fa-infinity text-lg"></i></div>
                     <div><h3 class="font-playfair text-lg font-light text-white mb-1">Designed to Last</h3><p class="text-white/45 text-[11px] font-jost font-light leading-relaxed">Lifetime repairs, annual cleaning, and an heirloom promise. We intend to still be here when you need us.</p></div>
                 </div>
                 <div class="flex gap-5 reveal" style="transition-delay:.3s">
-                    <div class="value-icon text-soft-gold"><i class="fa-regular fa-eye text-lg"></i></div>
+                    <div class="value-icon text-soft-gold"><i class="fa-solid fa-eye text-lg"></i></div>
                     <div><h3 class="font-playfair text-lg font-light text-white mb-1">Radical Transparency</h3><p class="text-white/45 text-[11px] font-jost font-light leading-relaxed">We publish the origin of every major gemstone we sell. If you ask how a piece is made, we will tell you everything.</p></div>
                 </div>
             </div>
@@ -453,9 +475,9 @@
             <span class="block w-10 h-px bg-soft-gold mx-auto my-7"></span>
             <p class="text-warm-charcoal/60 font-jost font-light text-sm leading-relaxed mb-10 max-w-md mx-auto">Commission a bespoke piece, book an atelier visit, or simply ask a question.</p>
             <div class="grid sm:grid-cols-3 gap-6 mb-10 text-center">
-                <div><i class="fa-regular fa-envelope text-soft-gold text-xl mb-2"></i><p class="text-[9px] tracking-[0.2em] font-jost text-warm-charcoal/50 mb-1">EMAIL</p><a href="mailto:bonjour@lumiere.com" class="text-xs font-jost text-warm-charcoal hover:text-soft-gold transition-colors">bonjour@lumiere.com</a></div>
-                <div><i class="fa-regular fa-phone text-soft-gold text-xl mb-2"></i><p class="text-[9px] tracking-[0.2em] font-jost text-warm-charcoal/50 mb-1">PHONE</p><a href="tel:+33140000000" class="text-xs font-jost text-warm-charcoal hover:text-soft-gold transition-colors">+33 1 40 00 00 00</a></div>
-                <div><i class="fa-regular fa-location-dot text-soft-gold text-xl mb-2"></i><p class="text-[9px] tracking-[0.2em] font-jost text-warm-charcoal/50 mb-1">ATELIER</p><p class="text-xs font-jost text-warm-charcoal">6th Arr., Paris · By appt</p></div>
+                <div><i class="fa-solid fa-envelope text-soft-gold text-xl mb-2"></i><p class="text-[9px] tracking-[0.2em] font-jost text-warm-charcoal/50 mb-1">EMAIL</p><a href="mailto:bonjour@lumiere.com" class="text-xs font-jost text-warm-charcoal hover:text-soft-gold transition-colors">bonjour@lumiere.com</a></div>
+                <div><i class="fa-solid fa-phone text-soft-gold text-xl mb-2"></i><p class="text-[9px] tracking-[0.2em] font-jost text-warm-charcoal/50 mb-1">PHONE</p><a href="tel:+33140000000" class="text-xs font-jost text-warm-charcoal hover:text-soft-gold transition-colors">+33 1 40 00 00 00</a></div>
+                <div><i class="fa-solid fa-location-dot text-soft-gold text-xl mb-2"></i><p class="text-[9px] tracking-[0.2em] font-jost text-warm-charcoal/50 mb-1">ATELIER</p><p class="text-xs font-jost text-warm-charcoal">6th Arr., Paris · By appt</p></div>
             </div>
             <a href="mailto:bonjour@lumiere.com" class="btn-outline-dark inline-block px-10 py-3.5 text-[11px] tracking-[0.22em] font-jost"><span>WRITE TO US</span></a>
         </div>
@@ -467,7 +489,7 @@
             <div class="grid md:grid-cols-4 gap-12 mb-16">
                 <div><h3 class="font-playfair text-2xl font-light text-white mb-4 tracking-widest">LUMIÈRE</h3><p class="text-white/30 text-xs font-jost font-light">Timeless elegance crafted in Paris.</p></div>
                 <div><h4 class="text-white/50 text-[9px] font-jost tracking-[0.3em] mb-5">SHOP</h4><ul class="space-y-2"><li><a href="#" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">Necklaces</a></li><li><a href="#" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">Rings</a></li><li><a href="#" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">Earrings</a></li></ul></div>
-                <div><h4 class="text-white/50 text-[9px] font-jost tracking-[0.3em] mb-5">SUPPORT</h4><ul class="space-y-2"><li><a href="#" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">Contact</a></li><li><a href="#" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">FAQs</a></li><li><a href="#" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">Shipping</a></li></ul></div>
+                <div><h4 class="text-white/50 text-[9px] font-jost tracking-[0.3em] mb-5">SUPPORT</h4><ul class="space-y-2"><li><a href="{{ route('contact') }}" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">Contact</a></li><li><a href="{{ route('faq') }}" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">FAQs</a></li><li><a href="{{ route('shipping') }}" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">Shipping</a></li></ul></div>
                 <div><h4 class="text-white/50 text-[9px] font-jost tracking-[0.3em] mb-5">FOLLOW</h4><div class="flex gap-4"><a href="#" class="text-white/30 hover:text-soft-gold"><i class="fa-brands fa-instagram"></i></a><a href="#" class="text-white/30 hover:text-soft-gold"><i class="fa-brands fa-pinterest"></i></a></div></div>
             </div>
             <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-3">
@@ -556,7 +578,7 @@
             <div id="visit-success" class="p-10 md:p-12 flex-col items-center justify-center text-center min-h-[420px]">
                 <!-- Ornament -->
                 <div class="w-14 h-14 border border-soft-gold/40 flex items-center justify-center mx-auto mb-6">
-                    <i class="fa-regular fa-check text-soft-gold text-lg"></i>
+                    <i class="fa-solid fa-check text-soft-gold text-lg"></i>
                 </div>
                 <p class="text-soft-gold text-[10px] tracking-[0.35em] font-jost font-light mb-4">REQUEST RECEIVED</p>
                 <h3 class="font-playfair text-2xl font-light text-warm-charcoal mb-2">Thank you,</h3>
@@ -680,6 +702,18 @@
                 visitError.classList.remove('hidden');
             });
         });
+    </script>
+
+    @include('partials.cart-drawer')
+
+    <script>
+        function toggleCart() {
+            const drawer = document.getElementById('cart-drawer');
+            const overlay = document.getElementById('cart-overlay');
+            drawer.classList.toggle('translate-x-full');
+            overlay.classList.toggle('hidden');
+            setTimeout(() => overlay.classList.toggle('opacity-100'), 10);
+        }
     </script>
 </body>
 </html>

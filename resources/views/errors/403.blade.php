@@ -100,7 +100,7 @@
         
         <div class="relative z-10 max-w-2xl mx-auto text-center">
             <div class="w-16 h-16 rounded-full bg-soft-gold/10 flex items-center justify-center mx-auto mb-8 animate-fade-up">
-                <i class="fa-regular fa-lock text-soft-gold text-2xl"></i>
+                <i class="fa-solid fa-lock text-soft-gold text-2xl"></i>
             </div>
             
             <p class="font-cormorant italic text-soft-gold text-lg tracking-[0.3em] mb-5 animate-fade-up" style="animation-delay: 0.05s;">ACCESS DENIED</p>
@@ -114,7 +114,7 @@
             
             <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-sm p-6 mb-10 max-w-md mx-auto animate-fade-up" style="animation-delay: 0.2s;">
                 <p class="text-white/50 text-xs font-jost font-light leading-relaxed">
-                    <i class="fa-regular fa-crown text-soft-gold mr-2"></i>
+                    <i class="fa-solid fa-crown text-soft-gold mr-2"></i>
                     Gold Circle members have access to exclusive areas. 
                     <a href="#" class="text-soft-gold hover:text-gold-light transition-colors">Sign in</a> to your private suite.
                 </p>

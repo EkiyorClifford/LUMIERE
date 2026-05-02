@@ -58,11 +58,18 @@ return new class extends Migration
             $table->timestamps();
         });
 
+        Schema::create('post_categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->timestamps();
+        });
+
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->string('slug')->unique();
-            $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
+            $table->foreignId('post_category_id')->nullable()->constrained('post_categories')->nullOnDelete();
             $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('volume_label')->nullable();
             $table->text('excerpt');
@@ -181,6 +188,13 @@ return new class extends Migration
             $table->string('project_title');
             $table->enum('current_step', ['consultation', 'sketching', 'wax_model', 'setting', 'polishing', 'finished'])->default('consultation');
             $table->string('sketch_image_path')->nullable();
+            $table->string('full_name');
+            $table->string('email');
+            $table->string('phone')->nullable();
+            $table->string('occasion')->nullable();
+            $table->string('budget_range')->nullable();
+            $table->text('vision')->nullable();
+            $table->enum('status', ['new', 'in_progress', 'completed', 'cancelled'])->default('new');
             $table->timestamps();
         });
 

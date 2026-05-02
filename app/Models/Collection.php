@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Collection extends Model
 {
-    //
     protected $fillable = [
         'name',
         'slug',
@@ -16,8 +16,15 @@ class Collection extends Model
         'sort_order',
     ];
 
-    public function products()
+    protected function casts(): array
     {
-        return $this->hasMany(Product::class);
+        return [
+            'is_active' => 'boolean',
+        ];
+    }
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class)->orderBy('sort_order');
     }
 }

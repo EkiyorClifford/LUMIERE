@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Size & Fit Guide | LUMIÈRE Fine Jewelry</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -108,18 +109,39 @@
     <!-- NAVIGATION -->
     <nav id="main-nav" class="fixed top-0 left-0 w-full z-50 py-5 px-6 md:px-12 transition-all duration-300">
         <div class="flex justify-between items-center max-w-screen-xl mx-auto">
-            <a href="index.html" class="font-playfair text-2xl tracking-widest text-white hover:text-soft-gold transition-colors">LUMIÈRE</a>
+            <a href="{{ route('home') }}" class="font-playfair text-2xl tracking-widest text-white hover:text-soft-gold transition-colors">LUMIÈRE</a>
             <div class="hidden md:flex items-center gap-10">
-                <a href="collections.html" class="nav-link text-xs tracking-[0.18em] text-white/70 hover:text-white">COLLECTIONS</a>
-                <a href="shop.html" class="nav-link text-xs tracking-[0.18em] text-white/70 hover:text-white">SHOP</a>
-                <a href="atelier.html" class="nav-link text-xs tracking-[0.18em] text-white/70 hover:text-white">ATELIER</a>
-                <a href="journal.html" class="nav-link text-xs tracking-[0.18em] text-white/70 hover:text-white">JOURNAL</a>
-                <a href="size-guide.html" class="nav-link active text-xs tracking-[0.18em] text-white">SIZE GUIDE</a>
+                <a href="{{ route('collections') }}" class="nav-link text-xs tracking-[0.18em] text-white/70 hover:text-white">COLLECTIONS</a>
+                <a href="{{ route('shop') }}" class="nav-link text-xs tracking-[0.18em] text-white/70 hover:text-white">SHOP</a>
+                <a href="{{ route('atelier') }}" class="nav-link text-xs tracking-[0.18em] text-white/70 hover:text-white">ATELIER</a>
+                <a href="{{ route('journal') }}" class="nav-link text-xs tracking-[0.18em] text-white/70 hover:text-white">JOURNAL</a>
+                <a href="{{ route('size-guide') }}" class="nav-link active text-xs tracking-[0.18em] text-white">SIZE GUIDE</a>
             </div>
             <div class="flex items-center gap-5">
                 <button class="text-white/50 hover:text-soft-gold"><i class="fa-regular fa-heart"></i></button>
-                <button class="text-white/50 hover:text-soft-gold"><i class="fa-regular fa-user"></i></button>
-                <button class="text-white/50 hover:text-soft-gold relative"><i class="fa-regular fa-bag-shopping"></i><span class="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-soft-gold text-white text-[8px] flex items-center justify-center">2</span></button>
+                @auth
+                    <div class="relative group">
+                        <button class="text-white/50 hover:text-soft-gold flex items-center gap-2">
+                            <i class="fa-solid fa-user"></i>
+                            <span class="text-xs font-jost hidden md:block">{{ auth()->user()->name }}</span>
+                        </button>
+                        @if(auth()->user()->is_gold_circle)
+                            <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-soft-gold"></span>
+                        @endif
+                        <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <a href="#" class="block px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">My Profile</a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="w-full text-left px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">Sign Out</button>
+                            </form>
+                        </div>
+                    </div>
+                @else
+                    <a href="{{ route('login') }}" class="text-white/50 hover:text-soft-gold">
+                        <i class="fa-regular fa-user"></i>
+                    </a>
+                @endif
+                <button class="text-white/50 hover:text-soft-gold relative"><i class="fa-solid fa-cart-shopping"></i><span class="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-soft-gold text-white text-[8px] flex items-center justify-center">{{ $cartCount ?? 0 }}</span></button>
                 <button id="menu-open" class="md:hidden text-white/70"><i class="fa-solid fa-bars text-lg"></i></button>
             </div>
         </div>
@@ -128,13 +150,13 @@
     <!-- MOBILE MENU -->
     <div id="mobile-menu" class="fixed inset-y-0 right-0 w-72 bg-cream z-[60] shadow-2xl flex flex-col px-10 py-12">
         <button id="menu-close" class="self-end text-charcoal/50 hover:text-charcoal mb-10"><i class="fa-solid fa-xmark text-xl"></i></button>
-        <a href="index.html" class="font-playfair text-2xl tracking-widest text-charcoal mb-10 block">LUMIÈRE</a>
+        <a href="{{ route('home') }}" class="font-playfair text-2xl tracking-widest text-charcoal mb-10 block">LUMIÈRE</a>
         <div class="flex flex-col gap-7">
-            <a href="collections.html" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold">COLLECTIONS</a>
-            <a href="shop.html" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold">SHOP</a>
-            <a href="atelier.html" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold">ATELIER</a>
-            <a href="journal.html" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold">JOURNAL</a>
-            <a href="size-guide.html" class="text-xs tracking-[0.18em] text-soft-gold">SIZE GUIDE</a>
+            <a href="{{ route('collections') }}" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold">COLLECTIONS</a>
+            <a href="{{ route('shop') }}" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold">SHOP</a>
+            <a href="{{ route('atelier') }}" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold">ATELIER</a>
+            <a href="{{ route('journal') }}" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold">JOURNAL</a>
+            <a href="{{ route('size-guide') }}" class="text-xs tracking-[0.18em] text-soft-gold">SIZE GUIDE</a>
         </div>
         <div class="mt-auto flex gap-5 text-charcoal/40"><a href="#"><i class="fa-brands fa-instagram text-lg hover:text-soft-gold"></i></a><a href="#"><i class="fa-brands fa-pinterest text-lg hover:text-soft-gold"></i></a></div>
     </div>
@@ -193,8 +215,8 @@
                     </div>
 
                     <div class="mt-10 flex flex-col sm:flex-row gap-4">
-                        <a href="#" class="btn-outline-dark inline-flex items-center justify-center gap-2 px-6 py-3 text-[10px] tracking-[0.2em]"><span><i class="fa-regular fa-print mr-2"></i> PRINTABLE RING SIZER</span></a>
-                        <a href="#" class="btn-gold inline-flex items-center justify-center gap-2 px-6 py-3 text-[10px] tracking-[0.2em]"><span><i class="fa-regular fa-envelope mr-2"></i> REQUEST FREE SIZER KIT</span></a>
+                        <a href="#" class="btn-outline-dark inline-flex items-center justify-center gap-2 px-6 py-3 text-[10px] tracking-[0.2em]"><span><i class="fa-solid fa-print mr-2"></i> PRINTABLE RING SIZER</span></a>
+                        <a href="#" class="btn-gold inline-flex items-center justify-center gap-2 px-6 py-3 text-[10px] tracking-[0.2em]"><span><i class="fa-solid fa-envelope mr-2"></i> REQUEST FREE SIZER KIT</span></a>
                     </div>
                 </div>
 
@@ -229,7 +251,7 @@
             <!-- Sizing tip card -->
             <div class="mt-16 p-8 bg-deep-ivory rounded-sm flex flex-col md:flex-row items-center justify-between gap-6 reveal">
                 <div class="flex items-center gap-4">
-                    <i class="fa-regular fa-rotate text-soft-gold text-2xl"></i>
+                    <i class="fa-solid fa-rotate text-soft-gold text-2xl"></i>
                     <div>
                         <p class="font-playfair text-lg font-light">Free resizing within your first year</p>
                         <p class="text-xs text-warm-gray font-light">Every Lumière ring comes with one complimentary resize — no questions asked.</p>
@@ -258,7 +280,7 @@
                         <div class="absolute top-0 w-1 h-8 bg-soft-gold/30 left-1/2 -translate-x-1/2"></div>
                         <div class="absolute top-10 w-2 h-2 rounded-full bg-soft-gold left-1/2 -translate-x-1/2"></div>
                         <!-- Visual guide would go here in production -->
-                        <i class="fa-regular fa-necklace text-5xl text-soft-gold/20 absolute bottom-0 left-1/2 -translate-x-1/2"></i>
+                        <i class="fa-solid fa-gem text-5xl text-soft-gold/20 absolute bottom-0 left-1/2 -translate-x-1/2"></i>
                     </div>
                     <p class="text-sm font-light text-warm-gray mb-4">Not sure which length suits you?</p>
                     <button id="open-concierge-necklaces" class="text-[10px] tracking-[0.2em] text-soft-gold border-b border-soft-gold/30 pb-0.5 hover:border-soft-gold transition-all">WRITE TO OUR CONCIERGE</button>
@@ -289,7 +311,7 @@
                     </div>
                 </div>
                 <div class="reveal size-card p-8 flex flex-col items-center text-center" style="transition-delay: 0.15s;">
-                    <i class="fa-regular fa-hand-peace text-4xl text-soft-gold/40 mb-4"></i>
+                    <i class="fa-solid fa-hand-peace text-4xl text-soft-gold/40 mb-4"></i>
                     <p class="text-sm font-light text-charcoal mb-4">Need a specific fit for a gift?</p>
                     <p class="text-xs text-warm-gray font-light mb-6">We offer complimentary resizing within the first 60 days for all chain bracelets.</p>
                     <button id="open-concierge-bracelets" class="btn-outline-dark inline-block px-8 py-3 text-[10px] tracking-[0.2em]"><span>CONTACT CONCIERGE</span></button>
@@ -311,7 +333,7 @@
                 </div>
                 <div class="reveal size-card p-8" style="transition-delay: 0.15s;">
                     <div class="flex items-start gap-4 mb-6">
-                        <i class="fa-regular fa-ear-listen text-soft-gold text-2xl"></i>
+                        <i class="fa-solid fa-ear-listen text-soft-gold text-2xl"></i>
                         <div>
                             <p class="text-sm font-medium">For sensitive ears</p>
                             <p class="text-xs text-warm-gray font-light">All posts are 14k gold or platinum — no nickel, no alloys. If you have known sensitivities, please note it during checkout and we'll ensure your piece is made with extra care.</p>
@@ -319,7 +341,7 @@
                     </div>
                     <hr class="my-6 border-charcoal/5">
                     <div class="flex items-start gap-4">
-                        <i class="fa-regular fa-clock text-soft-gold text-2xl"></i>
+                        <i class="fa-solid fa-clock text-soft-gold text-2xl"></i>
                         <div>
                             <p class="text-sm font-medium">First piercing?</p>
                             <p class="text-xs text-warm-gray font-light">We recommend waiting 6 weeks before wearing heavier earrings. Start with our stud collection — each piece weighs under 2 grams.</p>
@@ -347,7 +369,7 @@
             <div class="grid md:grid-cols-4 gap-12 mb-16">
                 <div><h3 class="font-playfair text-2xl font-light text-white mb-4 tracking-widest">LUMIÈRE</h3><p class="text-white/35 text-xs font-jost font-light leading-relaxed max-w-[180px]">Timeless elegance crafted for the discerning soul.</p></div>
                 <div><h4 class="text-white/60 text-[9px] font-jost tracking-[0.3em] mb-5">SHOP</h4><ul class="space-y-3"><li><a href="shop.html" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Necklaces</a></li><li><a href="shop.html" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Rings</a></li><li><a href="shop.html" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Earrings</a></li><li><a href="shop.html" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Bracelets</a></li></ul></div>
-                <div><h4 class="text-white/60 text-[9px] font-jost tracking-[0.3em] mb-5">SUPPORT</h4><ul class="space-y-3"><li><a href="#" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Contact Us</a></li><li><a href="#" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">FAQs</a></li><li><a href="#" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Shipping & Returns</a></li><li><a href="size-guide.html" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Size Guide</a></li></ul></div>
+                <div><h4 class="text-white/60 text-[9px] font-jost tracking-[0.3em] mb-5">SUPPORT</h4><ul class="space-y-3"><li><a href="{{ route('contact') }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Contact Us</a></li><li><a href="{{ route('faq') }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">FAQs</a></li><li><a href="{{ route('shipping') }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Shipping & Returns</a></li><li><a href="{{ route('size-guide') }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Size Guide</a></li></ul></div>
                 <div><h4 class="text-white/60 text-[9px] font-jost tracking-[0.3em] mb-5">FOLLOW</h4><div class="flex gap-5"><a href="#" class="text-white/35 hover:text-soft-gold transition-colors"><i class="fa-brands fa-instagram text-base"></i></a><a href="#" class="text-white/35 hover:text-soft-gold transition-colors"><i class="fa-brands fa-pinterest text-base"></i></a><a href="#" class="text-white/35 hover:text-soft-gold transition-colors"><i class="fa-brands fa-x-twitter text-base"></i></a></div></div>
             </div>
             <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-3">
@@ -418,7 +440,7 @@
             <!-- Success -->
             <div class="fitting-success modal-success p-10 md:p-12 flex-col items-center justify-center text-center" style="min-height:420px">
                 <div class="w-14 h-14 border border-soft-gold/40 flex items-center justify-center mx-auto mb-6">
-                    <i class="fa-regular fa-check text-soft-gold text-lg"></i>
+                    <i class="fa-solid fa-check text-soft-gold text-lg"></i>
                 </div>
                 <p class="text-soft-gold text-[10px] tracking-[0.35em] font-jost font-light mb-4">REQUEST RECEIVED</p>
                 <h3 class="font-playfair text-2xl font-light text-charcoal mb-1">Thank you,</h3>
@@ -488,7 +510,7 @@
             <!-- Success -->
             <div class="concierge-success modal-success p-10 md:p-12 flex-col items-center justify-center text-center" style="min-height:400px">
                 <div class="w-14 h-14 border border-soft-gold/40 flex items-center justify-center mx-auto mb-6">
-                    <i class="fa-regular fa-envelope-open text-soft-gold text-lg"></i>
+                    <i class="fa-solid fa-envelope-open text-soft-gold text-lg"></i>
                 </div>
                 <p class="text-soft-gold text-[10px] tracking-[0.35em] font-jost font-light mb-4">MESSAGE RECEIVED</p>
                 <h3 class="font-playfair text-2xl font-light text-charcoal mb-1">Thank you,</h3>
@@ -605,14 +627,62 @@
                 submitBtn.disabled = true;
 
                 // Mock — replace with fetch('/route', {...}) in Laravel
-                setTimeout(() => {
+                const isFittingRequest = submitBtnSel.includes('fitting');
+                const payload = isFittingRequest
+                    ? {
+                        name,
+                        email,
+                        subject: 'Fitting consultation',
+                        piece_category: document.getElementById('fit-category').value,
+                        measurement: document.getElementById('fit-measurement').value.trim(),
+                        piece: document.getElementById('fit-notes').value.trim(),
+                        message: document.getElementById('fit-notes').value.trim() || 'Fitting consultation requested from the size guide.',
+                        source: 'size_guide_fitting',
+                    }
+                    : {
+                        name,
+                        email,
+                        subject: document.getElementById('con-subject').value || 'Concierge request',
+                        message: document.getElementById('con-message').value.trim(),
+                        source: 'contact_page',
+                    };
+
+                if (isFittingRequest && !payload.piece_category) {
+                    label.textContent = 'SEND REQUEST';
+                    spinner.classList.add('hidden');
+                    submitBtn.disabled = false;
+                    errorEl.textContent = 'Please select a piece category.';
+                    errorEl.classList.remove('hidden');
+                    document.getElementById('fit-category').focus();
+                    return;
+                }
+
+                fetch('{{ route('concierge-requests.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify(payload),
+                }).then(response => {
+                    if (!response.ok) {
+                        throw new Error('Unable to send request.');
+                    }
+
                     label.textContent = submitBtnSel.includes('fitting') ? 'SEND REQUEST' : 'SEND MESSAGE';
                     spinner.classList.add('hidden');
                     submitBtn.disabled = false;
                     document.querySelector(formWrapSel).style.display = 'none';
                     document.querySelector(successNameSel).textContent = name + '.';
                     document.querySelector(successSel).classList.add('show');
-                }, 1400);
+                }).catch(() => {
+                    label.textContent = submitBtnSel.includes('fitting') ? 'SEND REQUEST' : 'SEND MESSAGE';
+                    spinner.classList.add('hidden');
+                    submitBtn.disabled = false;
+                    errorEl.textContent = 'We could not send this just now. Please try again.';
+                    errorEl.classList.remove('hidden');
+                });
             });
         }
 

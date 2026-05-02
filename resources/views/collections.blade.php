@@ -328,25 +328,44 @@
     ══════════════════════════════════ -->
     <nav id="main-nav" class="fixed top-0 left-0 w-full z-50 py-5 px-6 md:px-12">
         <div class="flex justify-between items-center max-w-screen-xl mx-auto">
-            <a href="index.html" class="font-playfair text-2xl tracking-widest text-charcoal hover:text-soft-gold transition-colors duration-300">
+            <a href="{{ route('home') }}" class="font-playfair text-2xl tracking-widest text-charcoal hover:text-soft-gold transition-colors duration-300">
                 LUMIÈRE
             </a>
             <div class="hidden md:flex items-center gap-10">
-                <a href="#" class="nav-link active text-xs tracking-[0.18em] text-charcoal transition-colors duration-300 font-jost">COLLECTIONS</a>
-                <a href="#" class="nav-link text-xs tracking-[0.18em] text-charcoal/70 hover:text-charcoal transition-colors duration-300 font-jost">SHOP</a>
-                <a href="#" class="nav-link text-xs tracking-[0.18em] text-charcoal/70 hover:text-charcoal transition-colors duration-300 font-jost">ABOUT</a>
-                <a href="#" class="nav-link text-xs tracking-[0.18em] text-charcoal/70 hover:text-charcoal transition-colors duration-300 font-jost">JOURNAL</a>
+                <a href="{{ route('collections') }}" class="nav-link active text-xs tracking-[0.18em] text-charcoal transition-colors duration-300 font-jost">COLLECTIONS</a>
+                <a href="{{ route('shop') }}" class="nav-link text-xs tracking-[0.18em] text-charcoal/70 hover:text-charcoal transition-colors duration-300 font-jost">SHOP</a>
+                <a href="{{ route('atelier') }}" class="nav-link text-xs tracking-[0.18em] text-charcoal/70 hover:text-charcoal transition-colors duration-300 font-jost">ABOUT</a>
+                <a href="{{ route('journal') }}" class="nav-link text-xs tracking-[0.18em] text-charcoal/70 hover:text-charcoal transition-colors duration-300 font-jost">JOURNAL</a>
             </div>
             <div class="flex items-center gap-5">
                 <button class="text-charcoal/60 hover:text-soft-gold transition-colors duration-300">
                     <i class="fa-regular fa-heart text-base"></i>
                 </button>
-                <button class="text-charcoal/60 hover:text-soft-gold transition-colors duration-300">
-                    <i class="fa-regular fa-user text-base"></i>
-                </button>
-                <button class="text-charcoal/60 hover:text-soft-gold transition-colors duration-300 relative">
-                    <i class="fa-regular fa-bag-shopping text-base"></i>
-                    <span class="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-soft-gold text-white text-[8px] flex items-center justify-center font-jost">2</span>
+                @auth
+                    <div class="relative group">
+                        <button class="text-charcoal/60 hover:text-soft-gold transition-colors duration-300 flex items-center gap-2">
+                            <i class="fa-solid fa-user text-base"></i>
+                            <span class="text-xs font-jost hidden md:block">{{ auth()->user()->name }}</span>
+                        </button>
+                        @if(auth()->user()->is_gold_circle)
+                            <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-soft-gold"></span>
+                        @endif
+                        <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                            <a href="#" class="block px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">My Profile</a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="w-full text-left px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">Sign Out</button>
+                            </form>
+                        </div>
+                    </div>
+                @else
+                    <a href="{{ route('login') }}" class="text-charcoal/60 hover:text-soft-gold transition-colors duration-300">
+                        <i class="fa-regular fa-user text-base"></i>
+                    </a>
+                @endif
+                <button onclick="toggleCart()" class="text-charcoal/60 hover:text-soft-gold transition-colors duration-300 relative">
+                    <i class="fa-solid fa-cart-shopping text-base"></i>
+                    <span class="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-soft-gold text-white text-[8px] flex items-center justify-center font-jost">{{ $cartCount ?? 0 }}</span>
                 </button>
                 <button id="menu-open" class="md:hidden text-charcoal/70 ml-1">
                     <i class="fa-solid fa-bars text-lg"></i>
@@ -360,12 +379,12 @@
         <button id="menu-close" class="self-end text-charcoal/50 hover:text-charcoal mb-10">
             <i class="fa-solid fa-xmark text-xl"></i>
         </button>
-        <a href="index.html" class="font-playfair text-2xl tracking-widest text-charcoal mb-10 block">LUMIÈRE</a>
+        <a href="{{ route('home') }}" class="font-playfair text-2xl tracking-widest text-charcoal mb-10 block">LUMIÈRE</a>
         <div class="flex flex-col gap-7">
-            <a href="#" class="text-xs tracking-[0.18em] text-soft-gold font-jost">COLLECTIONS</a>
-            <a href="#" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold transition-colors duration-300 font-jost">SHOP</a>
-            <a href="#" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold transition-colors duration-300 font-jost">ABOUT</a>
-            <a href="#" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold transition-colors duration-300 font-jost">JOURNAL</a>
+            <a href="{{ route('collections') }}" class="text-xs tracking-[0.18em] text-soft-gold font-jost">COLLECTIONS</a>
+            <a href="{{ route('shop') }}" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold transition-colors duration-300 font-jost">SHOP</a>
+            <a href="{{ route('atelier') }}" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold transition-colors duration-300 font-jost">ABOUT</a>
+            <a href="{{ route('journal') }}" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold transition-colors duration-300 font-jost">JOURNAL</a>
         </div>
         <div class="mt-auto flex gap-5 text-charcoal/40">
             <a href="#"><i class="fa-brands fa-instagram text-lg hover:text-soft-gold transition-colors"></i></a>
@@ -387,7 +406,7 @@
 
             <!-- Breadcrumb -->
             <div class="flex items-center gap-3 mb-12 animate-fade-up">
-                <a href="index.html" class="text-white/35 text-[10px] tracking-[0.25em] font-jost font-light hover:text-soft-gold transition-colors duration-300">HOME</a>
+                <a href="{{ route('home') }}" class="text-white/35 text-[10px] tracking-[0.25em] font-jost font-light hover:text-soft-gold transition-colors duration-300">HOME</a>
                 <span class="breadcrumb-sep text-[10px]">✦</span>
                 <span class="text-soft-gold text-[10px] tracking-[0.25em] font-jost font-light">COLLECTIONS</span>
             </div>
@@ -491,7 +510,7 @@
                             <div class="flex items-center justify-between">
                                 <p class="font-playfair text-2xl text-white font-light">From $1,200</p>
                                 <a href="#" class="explore-btn text-[10px] tracking-[0.2em] font-jost text-soft-gold hover:text-gold-light transition-colors duration-300 flex items-center gap-2">
-                                    EXPLORE <i class="fa-regular fa-arrow-right text-[10px]"></i>
+                                    EXPLORE <i class="fa-solid fa-arrow-right text-[10px]"></i>
                                 </a>
                             </div>
                         </div>
@@ -517,7 +536,7 @@
                             <div class="flex items-center justify-between">
                                 <p class="font-playfair text-2xl text-white font-light">From $900</p>
                                 <a href="#" class="explore-btn text-[10px] tracking-[0.2em] font-jost text-soft-gold hover:text-gold-light transition-colors duration-300 flex items-center gap-2">
-                                    EXPLORE <i class="fa-regular fa-arrow-right text-[10px]"></i>
+                                    EXPLORE <i class="fa-solid fa-arrow-right text-[10px]"></i>
                                 </a>
                             </div>
                         </div>
@@ -675,10 +694,10 @@
                 <div>
                     <h4 class="text-white/60 text-[9px] font-jost tracking-[0.3em] mb-5">SUPPORT</h4>
                     <ul class="space-y-3">
-                        <li><a href="#" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors duration-300 tracking-wide">Contact Us</a></li>
-                        <li><a href="#" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors duration-300 tracking-wide">FAQs</a></li>
-                        <li><a href="#" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors duration-300 tracking-wide">Shipping & Returns</a></li>
-                        <li><a href="#" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors duration-300 tracking-wide">Size Guide</a></li>
+                        <li><a href="{{ route('contact') }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors duration-300 tracking-wide">Contact Us</a></li>
+                        <li><a href="{{ route('faq') }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors duration-300 tracking-wide">FAQs</a></li>
+                        <li><a href="{{ route('shipping') }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors duration-300 tracking-wide">Shipping & Returns</a></li>
+                        <li><a href="{{ route('size-guide') }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors duration-300 tracking-wide">Size Guide</a></li>
                     </ul>
                 </div>
                 <div>
@@ -689,6 +708,14 @@
                         <a href="#" class="text-white/35 hover:text-soft-gold transition-colors duration-300"><i class="fa-brands fa-facebook-f text-base"></i></a>
                         <a href="#" class="text-white/35 hover:text-soft-gold transition-colors duration-300"><i class="fa-brands fa-x-twitter text-base"></i></a>
                     </div>
+                    <form action="{{ route('newsletter') }}" method="POST" class="mt-8">
+                        @csrf
+                        <input type="hidden" name="source" value="newsletter_footer">
+                        <div class="flex border-b border-white/20">
+                            <input type="email" name="email" required placeholder="Email address" class="flex-1 bg-transparent py-3 text-xs text-white placeholder:text-white/30 outline-none">
+                            <button type="submit" class="text-soft-gold text-[9px] tracking-[0.2em] pl-3">JOIN</button>
+                        </div>
+                    </form>
                 </div>
             </div>
             <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-3">
@@ -728,6 +755,18 @@
             });
         }, { threshold: 0.12 });
         reveals.forEach(el => observer.observe(el));
+    </script>
+
+    @include('partials.cart-drawer')
+
+    <script>
+        function toggleCart() {
+            const drawer = document.getElementById('cart-drawer');
+            const overlay = document.getElementById('cart-overlay');
+            drawer.classList.toggle('translate-x-full');
+            overlay.classList.toggle('hidden');
+            setTimeout(() => overlay.classList.toggle('opacity-100'), 10);
+        }
     </script>
 
 </body>

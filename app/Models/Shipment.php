@@ -3,21 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Order;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Shipment extends Model
 {
-    //
     protected $fillable = [
         'order_id',
         'tracking_number',
-        'shipping_method',
-        'shipping_address',
-        'shipped_at',
-        'delivered_at',
+        'status',
     ];
-    
-    public function order()
+
+    public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
     }

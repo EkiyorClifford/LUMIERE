@@ -45,7 +45,7 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array// what is this? I dont understand
+    protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
@@ -68,7 +68,7 @@ class User extends Authenticatable
         return $this->hasMany(Appointment::class);
     }
 
-    public function treasure()
+    public function treasures()
     {
         return $this->hasMany(Treasure::class);
     }

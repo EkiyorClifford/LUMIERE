@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUMIÈRE | Enter</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@200;300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --gold:        #C9A84C;
+            --gold-light:  #E8C97A;
+            --gold-dim:    rgba(201,168,76,0.15);
+            --charcoal:    #141414;
+            --charcoal-2:  #1E1E1E;
+            --charcoal-3:  #2A2A2A;
+            --cream:       #F9F6F0;
+            --ivory:       #F2EDE4;
+            --warm-gray:   #8A8580;
+            --text-muted:  rgba(255,255,255,0.35);
+            --text-dim:    rgba(255,255,255,0.55);
+            --text-bright: rgba(255,255,255,0.88);
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Jost', sans-serif;
+            background: var(--charcoal);
+            color: #fff;
+        }
+
+        /* ─────────────────────────────────────
+           LAYOUT
+        ───────────────────────────────────── */
+        .layout {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* ─────────────────────────────────────
+           LEFT — IMAGE PANEL
+        ───────────────────────────────────── */
+        .image-panel {
+            flex: 0 0 48%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @media (max-width: 900px) { .image-panel { display: none; } }
+
+        .image-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transform: scale(1.06);
+            transition: opacity 1.4s cubic-bezier(0.4,0,0.2,1),
+                        transform 8s cubic-bezier(0.4,0,0.2,1);
+        }
+        .image-slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Cinematic vignette */
+        .image-panel::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(to right,  transparent 55%, var(--charcoal) 100%),
+                linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 30%, transparent 60%, rgba(0,0,0,0.6) 100%),
+                linear-gradient(to left,   transparent 80%, rgba(0,0,0,0.2) 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Noise grain overlay */
+        .image-panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .panel-content {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 48px 52px;
+        }
+
+        .panel-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.22em;
+            color: #fff;
+            text-decoration: none;
+            opacity: 0.9;
+        }
+
+        .panel-quote-block {
+            max-width: 320px;
+        }
+
+        .quote-mark {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4rem;
+            line-height: 1;
+            color: var(--gold);
+            opacity: 0.5;
+            display: block;
+            margin-bottom: -12px;
+        }
+
+        .panel-quote {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 300;
+            font-size: 1.45rem;
+            line-height: 1.55;
+            color: rgba(255,255,255,0.82);
+        }
+
+        .panel-attribution {
+            font-family: 'Jost', sans-serif;
+            font-weight: 300;
+            font-size: 0.65rem;
+            letter-spacing: 0.28em;
+            color: var(--gold);
+            margin-top: 14px;
+            display: block;
+        }
+
+        /* Image indicator dots */
+        .slide-dots {
+            display: flex;
+            gap: 6px;
+            margin-top: 28px;
+        }
+        .slide-dot {
+            width: 18px;
+            height: 1px;
+            background: rgba(255,255,255,0.25);
+            transition: background 0.4s ease, width 0.4s ease;
+            cursor: pointer;
+        }
+        .slide-dot.active {
+            background: var(--gold);
+            width: 30px;
+        }
+
+        /* ─────────────────────────────────────
+           RIGHT — FORM PANEL
+        ───────────────────────────────────── */
+        .form-panel {
+            flex: 1;
+            background: var(--charcoal);
+            position: relative;
+            overflow-y: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 32px;
+        }
+
+        /* Subtle radial glow behind form */
+        .form-panel::before {
+            content: '';
+            position: fixed;
+            top: 30%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .form-inner {
+            width: 100%;
+            max-width: 380px;
+            position: relative;
+        }
+
+        /* Mobile logo */
+        .mobile-logo {
+            display: none;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            letter-spacing: 0.2em;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 36px;
+            text-decoration: none;
+        }
+        @media (max-width: 900px) { .mobile-logo { display: block; } }
+
+        /* ── Tab switcher ── */
+        .tab-bar {
+            display: flex;
+            gap: 0;
+            margin-bottom: 44px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            position: relative;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 0 0 16px;
+            font-family: 'Jost', sans-serif;
+            font-weight: 300;
+            font-size: 0.65rem;
+            letter-spacing: 0.28em;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        .tab-btn.active { color: #fff; }
+
+        /* Gold underline indicator */
+        .tab-indicator {
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 50%;
+            height: 1px;
+            background: var(--gold);
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+        }
+        .tab-indicator.register { transform: translateX(100%); }
+
+        /* ── Form panels ── */
+        .auth-form { display: none; }
+        .auth-form.active {
+            display: block;
+            animation: formReveal 0.5s ease both;
+        }
+        @keyframes formReveal {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stagger children */
+        .auth-form.active .field-row:nth-child(1) { animation: fieldIn 0.45s ease 0.05s both; }
+        .auth-form.active .field-row:nth-child(2) { animation: fieldIn 0.45s ease 0.12s both; }
+        .auth-form.active .field-row:nth-child(3) { animation: fieldIn 0.45s ease 0.19s both; }
+        .auth-form.active .field-row:nth-child(4) { animation: fieldIn 0.45s ease 0.26s both; }
+        .auth-form.active .field-row:nth-child(5) { animation: fieldIn 0.45s ease 0.33s both; }
+        .auth-form.active .form-footer           { animation: fieldIn 0.45s ease 0.4s  both; }
+        @keyframes fieldIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Form heading ── */
+        .form-heading {
+            margin-bottom: 36px;
+        }
+        .form-eyebrow {
+            font-size: 0.6rem;
+            letter-spacing: 0.32em;
+            color: var(--gold);
+            font-weight: 300;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .form-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-weight: 300;
+            font-size: 2.4rem;
+            line-height: 1.15;
+            color: #fff;
+        }
+
+        /* ── Field rows ── */
+        .field-row { margin-bottom: 28px; }
+
+        .field-label {
+            display: block;
+            font-size: 0.6rem;
+            letter-spacing: 0.28em;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .field-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+            transition: border-color 0.3s ease;
+        }
+        .field-wrap:focus-within {
+            border-bottom-color: var(--gold);
+        }
+        .field-wrap i {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-right: 12px;
+            transition: color 0.3s ease;
+            flex-shrink: 0;
+        }
+        .field-wrap:focus-within i { color: var(--gold); }
+
+        .lux-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 10px 0;
+            font-family: 'Jost', sans-serif;
+            font-weight: 300;
+            font-size: 0.85rem;
+            color: var(--text-bright);
+            letter-spacing: 0.04em;
+        }
+        .lux-input::placeholder { color: rgba(255,255,255,0.2); }
+
+        /* Password toggle */
+        .pw-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            padding: 4px;
+            transition: color 0.3s ease;
+        }
+        .pw-toggle:hover { color: var(--gold); }
+
+        /* Name grid */
+        .name-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* ── Password strength ── */
+        .pw-strength {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+            height: 2px;
+        }
+        .pw-bar {
+            flex: 1;
+            background: rgba(255,255,255,0.08);
+            border-radius: 2px;
+            transition: background 0.3s ease;
+        }
+        .pw-bar.weak   { background: #e57373; }
+        .pw-bar.fair   { background: #FFB74D; }
+        .pw-bar.strong { background: var(--gold); }
+        .pw-label {
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            margin-top: 5px;
+            color: var(--text-muted);
+            transition: color 0.3s ease;
+        }
+
+        /* ── Checkbox ── */
+        .check-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .custom-check {
+            width: 14px;
+            height: 14px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+            cursor: pointer;
+            transition: border-color 0.3s ease, background 0.3s ease;
+            position: relative;
+        }
+        .custom-check input { display: none; }
+        .custom-check.checked {
+            background: var(--gold);
+            border-color: var(--gold);
+        }
+        .custom-check.checked::after {
+            content: '';
+            width: 6px;
+            height: 4px;
+            border-left: 1.5px solid #fff;
+            border-bottom: 1.5px solid #fff;
+            transform: rotate(-45deg) translate(0.5px, -0.5px);
+        }
+        .check-label {
+            font-size: 0.72rem;
+            font-weight: 300;
+            color: var(--text-muted);
+            line-height: 1.5;
+            letter-spacing: 0.02em;
+        }
+        .check-label a {
+            color: var(--gold);
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+        .check-label a:hover { opacity: 0.75; }
+
+        /* ── Forgot link ── */
+        .forgot-link {
+            display: block;
+            text-align: right;
+            font-size: 0.62rem;
+            letter-spacing: 0.18em;
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-top: -16px;
+            margin-bottom: 32px;
+            transition: color 0.3s ease;
+        }
+        .forgot-link:hover { color: var(--gold); }
+
+        /* ── Submit button ── */
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: var(--gold);
+            border: none;
+            color: #fff;
+            font-family: 'Jost', sans-serif;
+            font-weight: 400;
+            font-size: 0.65rem;
+            letter-spacing: 0.32em;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: color 0.35s ease;
+        }
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: #A8862E;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+        }
+        .btn-submit:hover::before { transform: translateY(0); }
+        .btn-submit span { position: relative; z-index: 1; }
+
+        /* ── Divider ── */
+        .or-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        .or-divider::before,
+        .or-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255,255,255,0.07);
+        }
+        .or-divider span {
+            font-size: 0.6rem;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+        }
+
+        /* ── Social buttons ── */
+        .social-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+        .btn-social {
+            padding: 11px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-dim);
+            font-family: 'Jost', sans-serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.18em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+        }
+        .btn-social:hover {
+            border-color: rgba(255,255,255,0.25);
+            color: #fff;
+            background: rgba(255,255,255,0.04);
+        }
+        .btn-social i { font-size: 0.85rem; }
+
+        /* ── Form footer ── */
+        .form-footer {
+            text-align: center;
+        }
+        .switch-link {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 0.12em;
+        }
+        .switch-link button {
+            background: none;
+            border: none;
+            color: var(--gold);
+            cursor: pointer;
+            font-family: 'Jost', sans-serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+            text-decoration: underline;
+            transition: opacity 0.2s ease;
+        }
+        .switch-link button:hover { opacity: 0.7; }
+
+        /* ── Back to site ── */
+        .back-link {
+            position: absolute;
+            top: 32px;
+            right: 32px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.6rem;
+            letter-spacing: 0.22em;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .back-link:hover { color: var(--gold); }
+        .back-link i { font-size: 0.7rem; }
+
+        /* ── Shimmer on gold ── */
+        @keyframes shimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position:  200% center; }
+        }
+        .gold-shimmer {
+            background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 40%, var(--gold) 60%, var(--gold-light) 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 4s linear infinite;
+        }
+
+        /* ── Scrollbar ── */
+        .form-panel::-webkit-scrollbar { width: 3px; }
+        .form-panel::-webkit-scrollbar-track { background: transparent; }
+        .form-panel::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius: 3px; }
+
+        /* ── Error shake ── */
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            20%     { transform: translateX(-6px); }
+            40%     { transform: translateX(6px); }
+            60%     { transform: translateX(-4px); }
+            80%     { transform: translateX(4px); }
+        }
+        .shake { animation: shake 0.4s ease; }
+
+        .field-error {
+            font-size: 0.6rem;
+            color: #e57373;
+            letter-spacing: 0.1em;
+            margin-top: 5px;
+            display: none;
+        }
+        .field-error.show { display: block; }
+    </style>
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- ══════════════════════════════
+         LEFT — IMAGE PANEL
+    ══════════════════════════════ -->
+    <div class="image-panel">
+
+        <!-- Slides -->
+        <div class="image-slide active" style="background-image: url('https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=2070&auto=format&fit=crop')"></div>
+        <div class="image-slide" style="background-image: url('https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=2187&auto=format&fit=crop')"></div>
+        <div class="image-slide" style="background-image: url('https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=2070&auto=format&fit=crop')"></div>
+
+        <div class="panel-content">
+            <a href="lumiere.html" class="panel-logo">LUMIÈRE</a>
+
+            <div class="panel-quote-block">
+                <span class="quote-mark">"</span>
+                <p class="panel-quote" id="panel-quote">
+                    Jewelry is a way of keeping memories alive and worn close to the heart.
+                </p>
+                <span class="panel-attribution" id="panel-attr">— THE LUMIÈRE ATELIER</span>
+                <div class="slide-dots" id="slide-dots">
+                    <div class="slide-dot active" data-index="0"></div>
+                    <div class="slide-dot" data-index="1"></div>
+                    <div class="slide-dot" data-index="2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         RIGHT — FORM PANEL
+    ══════════════════════════════ -->
+    <div class="form-panel">
+        <a href="lumiere.html" class="back-link">
+            <i class="fa-regular fa-arrow-left"></i> RETURN TO SITE
+        </a>
+
+        <div class="form-inner">
+            <!-- Mobile logo -->
+            <a href="lumiere.html" class="mobile-logo">LUMIÈRE</a>
+
+            <!-- Tab bar -->
+            <div class="tab-bar">
+                <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">SIGN IN</button>
+                <button class="tab-btn" id="tab-register" onclick="switchTab('register')">CREATE ACCOUNT</button>
+                <div class="tab-indicator" id="tab-indicator"></div>
+            </div>
+
+            <!-- ══ LOGIN FORM ══ -->
+            <div class="auth-form active" id="form-login">
+
+                <div class="form-heading">
+                    <span class="form-eyebrow">WELCOME BACK</span>
+                    <h1 class="form-title">Sign in to<br>your account</h1>
+                </div>
+
+                <!-- Social login -->
+                <div class="social-row field-row">
+                    <button class="btn-social">
+                        <i class="fa-brands fa-google"></i> GOOGLE
+                    </button>
+                    <button class="btn-social">
+                        <i class="fa-brands fa-apple"></i> APPLE
+                    </button>
+                </div>
+
+                <div class="or-divider field-row">
+                    <span>OR CONTINUE WITH EMAIL</span>
+                </div>
+
+                <!-- Email -->
+                <div class="field-row">
+                    <label class="field-label">EMAIL ADDRESS</label>
+                    <div class="field-wrap">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" id="login-email" class="lux-input" placeholder="you@example.com" autocomplete="email">
+                    </div>
+                    <p class="field-error" id="login-email-err">Please enter a valid email address.</p>
+                </div>
+
+                <!-- Password -->
+                <div class="field-row">
+                    <label class="field-label">PASSWORD</label>
+                    <div class="field-wrap">
+                        <i class="fa-regular fa-lock"></i>
+                        <input type="password" id="login-pw" class="lux-input" placeholder="••••••••" autocomplete="current-password">
+                        <button class="pw-toggle" onclick="togglePw('login-pw', this)" tabindex="-1">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                    <p class="field-error" id="login-pw-err">Password is required.</p>
+                </div>
+
+                <a href="#" class="forgot-link">FORGOT PASSWORD?</a>
+
+                <!-- Remember me -->
+                <div class="check-row field-row">
+                    <div class="custom-check" id="remember-check" onclick="toggleCheck(this)">
+                        <input type="checkbox" id="remember">
+                    </div>
+                    <span class="check-label">Keep me signed in on this device</span>
+                </div>
+
+                <button class="btn-submit" onclick="handleLogin()">
+                    <span>SIGN IN</span>
+                </button>
+
+                <div class="form-footer" style="margin-top:24px;">
+                    <p class="switch-link">Don't have an account? <button onclick="switchTab('register')">Create one</button></p>
+                </div>
+            </div>
+
+            <!-- ══ REGISTER FORM ══ -->
+            <div class="auth-form" id="form-register">
+
+                <div class="form-heading">
+                    <span class="form-eyebrow">JOIN THE INNER CIRCLE</span>
+                    <h1 class="form-title">Create your<br>account</h1>
+                </div>
+
+                <!-- Name grid -->
+                <div class="field-row name-grid">
+                    <div>
+                        <label class="field-label">FIRST NAME</label>
+                        <div class="field-wrap">
+                            <i class="fa-regular fa-user"></i>
+                            <input type="text" id="reg-fname" class="lux-input" placeholder="Isabelle" autocomplete="given-name">
+                        </div>
+                        <p class="field-error" id="reg-fname-err">Required.</p>
+                    </div>
+                    <div>
+                        <label class="field-label">LAST NAME</label>
+                        <div class="field-wrap">
+                            <input type="text" id="reg-lname" class="lux-input" placeholder="Moreau" autocomplete="family-name">
+                        </div>
+                        <p class="field-error" id="reg-lname-err">Required.</p>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="field-row">
+                    <label class="field-label">EMAIL ADDRESS</label>
+                    <div class="field-wrap">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" id="reg-email" class="lux-input" placeholder="you@example.com" autocomplete="email">
+                    </div>
+                    <p class="field-error" id="reg-email-err">Please enter a valid email address.</p>
+                </div>
+
+                <!-- Password -->
+                <div class="field-row">
+                    <label class="field-label">PASSWORD</label>
+                    <div class="field-wrap">
+                        <i class="fa-regular fa-lock"></i>
+                        <input type="password" id="reg-pw" class="lux-input" placeholder="Minimum 8 characters"
+                               autocomplete="new-password" oninput="checkStrength(this.value)">
+                        <button class="pw-toggle" onclick="togglePw('reg-pw', this)" tabindex="-1">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                    <!-- Strength meter -->
+                    <div class="pw-strength" id="pw-strength">
+                        <div class="pw-bar" id="bar-1"></div>
+                        <div class="pw-bar" id="bar-2"></div>
+                        <div class="pw-bar" id="bar-3"></div>
+                        <div class="pw-bar" id="bar-4"></div>
+                    </div>
+                    <p class="pw-label" id="pw-label">&nbsp;</p>
+                    <p class="field-error" id="reg-pw-err">Password must be at least 8 characters.</p>
+                </div>
+
+                <!-- Confirm password -->
+                <div class="field-row">
+                    <label class="field-label">CONFIRM PASSWORD</label>
+                    <div class="field-wrap">
+                        <i class="fa-regular fa-lock-keyhole"></i>
+                        <input type="password" id="reg-pw2" class="lux-input" placeholder="Repeat password" autocomplete="new-password">
+                        <button class="pw-toggle" onclick="togglePw('reg-pw2', this)" tabindex="-1">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                    <p class="field-error" id="reg-pw2-err">Passwords do not match.</p>
+                </div>
+
+                <!-- Terms -->
+                <div class="check-row field-row">
+                    <div class="custom-check" id="terms-check" onclick="toggleCheck(this)">
+                        <input type="checkbox" id="terms">
+                    </div>
+                    <span class="check-label">I agree to LUMIÈRE's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+                </div>
+                <p class="field-error" id="reg-terms-err" style="margin-top:-20px; margin-bottom:16px;">You must accept the terms to continue.</p>
+
+                <!-- Newsletter opt-in -->
+                <div class="check-row field-row" style="margin-bottom:32px;">
+                    <div class="custom-check checked" id="news-check" onclick="toggleCheck(this)">
+                        <input type="checkbox" id="newsletter" checked>
+                    </div>
+                    <span class="check-label">Receive exclusive offers and new collection previews by email</span>
+                </div>
+
+                <button class="btn-submit" onclick="handleRegister()">
+                    <span>CREATE MY ACCOUNT</span>
+                </button>
+
+                <div class="form-footer" style="margin-top:24px;">
+                    <p class="switch-link">Already have an account? <button onclick="switchTab('login')">Sign in</button></p>
+                </div>
+            </div>
+
+        </div><!-- /form-inner -->
+    </div><!-- /form-panel -->
+</div><!-- /layout -->
+
+
+<script>
+    // ──────────────────────────────
+    // TAB SWITCHING
+    // ──────────────────────────────
+    function switchTab(tab) {
+        const loginForm    = document.getElementById('form-login');
+        const registerForm = document.getElementById('form-register');
+        const tabLogin     = document.getElementById('tab-login');
+        const tabRegister  = document.getElementById('tab-register');
+        const indicator    = document.getElementById('tab-indicator');
+
+        loginForm.classList.remove('active');
+        registerForm.classList.remove('active');
+        tabLogin.classList.remove('active');
+        tabRegister.classList.remove('active');
+
+        if (tab === 'login') {
+            loginForm.classList.add('active');
+            tabLogin.classList.add('active');
+            indicator.classList.remove('register');
+        } else {
+            registerForm.classList.add('active');
+            tabRegister.classList.add('active');
+            indicator.classList.add('register');
+        }
+        clearErrors();
+    }
+
+    // ──────────────────────────────
+    // PASSWORD TOGGLE
+    // ──────────────────────────────
+    function togglePw(id, btn) {
+        const input = document.getElementById(id);
+        const isText = input.type === 'text';
+        input.type = isText ? 'password' : 'text';
+        btn.querySelector('i').className = isText ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash';
+    }
+
+    // ──────────────────────────────
+    // CHECKBOX TOGGLE
+    // ──────────────────────────────
+    function toggleCheck(el) {
+        el.classList.toggle('checked');
+        const inp = el.querySelector('input');
+        inp.checked = !inp.checked;
+    }
+
+    // ──────────────────────────────
+    // PASSWORD STRENGTH
+    // ──────────────────────────────
+    function checkStrength(pw) {
+        const bars  = [document.getElementById('bar-1'), document.getElementById('bar-2'),
+                       document.getElementById('bar-3'), document.getElementById('bar-4')];
+        const label = document.getElementById('pw-label');
+
+        bars.forEach(b => { b.className = 'pw-bar'; });
+
+        if (!pw) { label.textContent = '\u00a0'; label.style.color = 'var(--text-muted)'; return; }
+
+        let score = 0;
+        if (pw.length >= 8)  score++;
+        if (pw.length >= 12) score++;
+        if (/[A-Z]/.test(pw) && /[0-9]/.test(pw)) score++;
+        if (/[^A-Za-z0-9]/.test(pw)) score++;
+
+        const levels = ['weak','weak','fair','strong'];
+        const labels = ['Too short','Weak','Fair','Strong'];
+        const colors = ['#e57373','#e57373','#FFB74D','var(--gold)'];
+
+        for (let i = 0; i < score; i++) bars[i].classList.add(levels[score - 1]);
+        label.textContent    = labels[score - 1] || '\u00a0';
+        label.style.color    = colors[score - 1] || 'var(--text-muted)';
+    }
+
+    // ──────────────────────────────
+    // ERRORS
+    // ──────────────────────────────
+    function clearErrors() {
+        document.querySelectorAll('.field-error').forEach(e => e.classList.remove('show'));
+    }
+
+    function showError(id, inputEl) {
+        document.getElementById(id).classList.add('show');
+        if (inputEl) inputEl.closest('.field-wrap')?.classList.add('shake');
+        setTimeout(() => inputEl?.closest('.field-wrap')?.classList.remove('shake'), 400);
+    }
+
+    // ──────────────────────────────
+    // LOGIN SUBMIT
+    // ──────────────────────────────
+    function handleLogin() {
+        clearErrors();
+        const email = document.getElementById('login-email');
+        const pw    = document.getElementById('login-pw');
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+        const pwOk    = pw.value.length > 0;
+        let valid = true;
+
+        if (!emailOk) { showError('login-email-err', email); valid = false; }
+        if (!pwOk)    { showError('login-pw-err', pw);       valid = false; }
+
+        if (valid) {
+            // Would POST to /login in Laravel
+            console.log('Login:', { email: email.value });
+            // Redirect: window.location.href = '/';
+        }
+    }
+
+    // ──────────────────────────────
+    // REGISTER SUBMIT
+    // ──────────────────────────────
+    function handleRegister() {
+        clearErrors();
+        const fname  = document.getElementById('reg-fname');
+        const lname  = document.getElementById('reg-lname');
+        const email  = document.getElementById('reg-email');
+        const pw     = document.getElementById('reg-pw');
+        const pw2    = document.getElementById('reg-pw2');
+        const terms  = document.getElementById('terms-check');
+
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+        let valid = true;
+
+        if (!fname.value.trim())      { showError('reg-fname-err', fname);  valid = false; }
+        if (!lname.value.trim())      { showError('reg-lname-err', lname);  valid = false; }
+        if (!emailOk)                 { showError('reg-email-err', email);  valid = false; }
+        if (pw.value.length < 8)      { showError('reg-pw-err', pw);        valid = false; }
+        if (pw.value !== pw2.value)   { showError('reg-pw2-err', pw2);      valid = false; }
+        if (!terms.classList.contains('checked')) { showError('reg-terms-err', null); valid = false; }
+
+        if (valid) {
+            // Would POST to /register in Laravel
+            console.log('Register:', { name: fname.value + ' ' + lname.value, email: email.value });
+            // Redirect: window.location.href = '/dashboard';
+        }
+    }
+
+    // Enter key support
+    document.addEventListener('keydown', e => {
+        if (e.key !== 'Enter') return;
+        const loginActive = document.getElementById('form-login').classList.contains('active');
+        if (loginActive) handleLogin(); else handleRegister();
+    });
+
+
+    // ──────────────────────────────
+    // IMAGE SLIDESHOW
+    // ──────────────────────────────
+    const slides = document.querySelectorAll('.image-slide');
+    const dots   = document.querySelectorAll('.slide-dot');
+    const quotes = [
+        { text: 'Jewelry is a way of keeping memories alive and worn close to the heart.', attr: '— THE LUMIÈRE ATELIER' },
+        { text: 'Every gemstone is a universe unto itself — infinite, irreplaceable.', attr: '— PARIS ATELIER, 2024' },
+        { text: 'True luxury is not about price. It is about meaning.', attr: '— LUMIÈRE PHILOSOPHY' },
+    ];
+
+    let slideIndex = 0;
+
+    function goSlide(n) {
+        slides[slideIndex].classList.remove('active');
+        dots[slideIndex].classList.remove('active');
+
+        slideIndex = n;
+        slides[slideIndex].classList.add('active');
+        dots[slideIndex].classList.add('active');
+
+        const quoteEl = document.getElementById('panel-quote');
+        const attrEl  = document.getElementById('panel-attr');
+        quoteEl.style.opacity = '0';
+        attrEl.style.opacity  = '0';
+        quoteEl.style.transform = 'translateY(8px)';
+        setTimeout(() => {
+            quoteEl.textContent   = quotes[n].text;
+            attrEl.textContent    = quotes[n].attr;
+            quoteEl.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+            attrEl.style.transition  = 'opacity 0.8s ease 0.1s';
+            quoteEl.style.opacity = '1';
+            attrEl.style.opacity  = '1';
+            quoteEl.style.transform = 'translateY(0)';
+        }, 200);
+    }
+
+    // Manual dot click
+    dots.forEach(dot => {
+        dot.addEventListener('click', () => goSlide(parseInt(dot.dataset.index)));
+    });
+
+    // Auto-advance every 6s
+    setInterval(() => {
+        goSlide((slideIndex + 1) % slides.length);
+    }, 6000);
+</script>
+
+</body>
+</html>

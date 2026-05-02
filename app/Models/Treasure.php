@@ -3,25 +3,33 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Treasure extends Model
 {
-    //
     protected $fillable = [
         'user_id', 'product_id', 'order_item_id', 'serial_number', 'certificate_path', 'purchased_at',
     ];
 
-    protected $casts = [
-        'purchased_at' => 'date',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'purchased_at' => 'date',
+        ];
+    }
 
-    public function product()
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function orderItem(): BelongsTo
+    {
+        return $this->belongsTo(OrderItem::class);
     }
 }

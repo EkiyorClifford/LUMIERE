@@ -28,12 +28,13 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('name')->nullable();         // they might give it later
             $table->enum('source', [
+                'newsletter_footer',
                 'newsletter',       // footer signup
                 'collections',      // collections page CTA
                 'la_nuit_notify',   // "notify me" on coming soon
                 'checkout',         // opted in during purchase
                 'size_guide',       // from size guide page
-            ])->default('newsletter');
+            ])->default('newsletter_footer');
             $table->enum('status', [
                 'active',
                 'unsubscribed',
@@ -52,5 +53,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('concierge_requests');
+        Schema::dropIfExists('subscribers');
     }
 };

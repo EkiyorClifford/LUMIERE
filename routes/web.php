@@ -1,41 +1,52 @@
 <?php
 
+use App\Http\Controllers\AtelierController;
+use App\Http\Controllers\ConciergeController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('/')->group(function () {
-    Route::get('/', function () {
-        return view('welcome');
-    })->name('home');
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
 
-    Route::get('/shop/{category?}', function ($category = null) {
-        return view('shop', ['category' => $category]);
-    })->name('shop');
-    Route::get('/collections', function(){
-        return view('collections');
-    })->name('collections');
-    Route::get('/atelier', function(){
-        return view('atelier');
-    })->name('atelier');
-    Route::get('/bespoke', function(){
-        return view('bespoke');
-    })->name('bespoke');
+Route::get('/collections', [ProductController::class, 'collections'])->name('collections');
+Route::get('/shop', [ProductController::class, 'index'])->name('shop');
+Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
+Route::get('/atelier', [AtelierController::class, 'index'])->name('atelier');
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::get('/size-guide', function () {
+    return view('size-guide');
+})->name('size-guide');
+Route::get('/faq', function () {
+    return view('FAQ');
+})->name('faq');
+Route::get('/shipping', function () {
+    return view('SHIPPING');
+})->name('shipping');
+Route::get('/sur-mesure', function () {
+    return view('sur-mesure');
+})->name('sur-mesure');
+Route::get('/bespoke', function () {
+    return view('bespoke');
+})->name('bespoke');
+
+// Blog/Journal routes
+Route::get('/journal', [PostController::class, 'index'])->name('journal');
+Route::get('/journal/{slug}', [PostController::class, 'show'])->name('post.show');
+Route::get('/journal/category/{slug}', [PostController::class, 'category'])->name('post.category');
+
+Route::post('/atelier-request', [AtelierController::class, 'store'])->name('atelier.request');
+Route::post('/concierge-request', [ConciergeController::class, 'store'])->name('concierge.request');
+Route::post('/newsletter', [NewsletterController::class, 'store'])->name('newsletter');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
-//create testing routes for my error pages
-Route::get('/404', function () {
-    return view('errors.404');
-});
-Route::get('/403', function () {
-    return view('errors.403');
-});
-Route::get('/500', function () {
-    return view('errors.500');
-});
-Route::get('/503', function () {
-    return view('errors.503');
-});
-//when to use post and get:
-//get: when you want to retrieve data from the server
-//post: when you want to send data to the server
-
+require __DIR__.'/auth.php';

@@ -3,32 +3,36 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
-use App\Models\Order;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Address extends Model
 {
-    //
     protected $fillable = [
         'user_id',
+        'address_type',
+        'phone',
         'address_line',
         'city',
         'state',
+        'postal_code',
         'country',
         'is_default',
     ];
-    //fillable are the fields that can be mass assigned by the user.
-    
-    public function user()
+
+    protected function casts(): array
+    {
+        return [
+            'is_default' => 'boolean',
+        ];
+    }
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-    
-    //one address belongs to one user
-    //is there a relationship btwn order and address?
-    //yes, order has a shipping address field which is a snapshot of the address at the time of order
-    //so order and address are not directly related.
-    public function order()
+
+    public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
     }
