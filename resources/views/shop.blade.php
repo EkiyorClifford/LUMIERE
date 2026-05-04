@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Shop - LUMIERE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@300;400;500&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
@@ -49,10 +50,31 @@
             @endif
             <button onclick="toggleCart()" class="text-black/60 hover:text-[#C9A84C] transition-colors relative">
                 <i class="fa-solid fa-cart-shopping text-base"></i>
-                <span class="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-[#C9A84C] text-white text-[8px] flex items-center justify-center">{{ $cartCount ?? 0 }}</span>
+                <span id="cart-count" class="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-[#C9A84C] text-white text-[8px] flex items-center justify-center">0</span>
             </button>
         </div>
     </nav>
+
+    <!-- Cart Drawer -->
+    <div id="cart-overlay" class="fixed inset-0 bg-black/50 hidden opacity-0 transition-opacity duration-300 z-40" onclick="toggleCart()"></div>
+    <div id="cart-drawer" class="fixed top-0 right-0 w-96 h-full bg-white shadow-lg transform translate-x-full transition-transform duration-300 z-50">
+        <div class="p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="font-playfair text-xl">Your Cart</h2>
+                <button onclick="toggleCart()" class="text-black/60 hover:text-[#C9A84C]">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div id="cart-items" class="space-y-4">
+                <!-- Cart items will be loaded here -->
+            </div>
+            <div class="mt-6 pt-6 border-t border-black/10">
+                <a href="{{ route('cart.index') }}" class="w-full bg-[#C9A84C] text-white py-3 text-center block hover:bg-[#B8953A] transition-colors">
+                    VIEW CART
+                </a>
+            </div>
+        </div>
+    </div>
 
     <header class="px-6 md:px-12 pt-10 pb-14">
         <div class="max-w-screen-xl mx-auto">
@@ -113,15 +135,20 @@
             @else
                 <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-7">
                     @foreach ($products as $product)
-                        <a href="{{ route('products.show', $product) }}" class="group">
-                            <div class="aspect-[3/4] bg-[#F2EDE4] overflow-hidden mb-4">
-                                <img src="{{ $product->primaryImage?->image_path ?? 'https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop' }}" alt="{{ $product->name }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
-                            </div>
-                            <p class="text-[#C9A84C] text-[10px] tracking-[0.25em] mb-2">{{ strtoupper($product->collection?->name ?? $product->category) }}</p>
-                            <h2 class="font-playfair text-xl font-light">{{ $product->name }}</h2>
-                            <p class="text-sm text-black/50 mt-1">{{ ucfirst($product->category) }}</p>
-                            <p class="font-playfair text-lg mt-3">${{ number_format((float) $product->price) }}</p>
-                        </a>
+                        <div class="group">
+                            <a href="{{ route('product.show', $product) }}">
+                                <div class="aspect-[3/4] bg-[#F2EDE4] overflow-hidden mb-4">
+                                    <img src="{{ $product->primaryImage?->image_path ?? 'https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop' }}" alt="{{ $product->name }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                </div>
+                                <p class="text-[#C9A84C] text-[10px] tracking-[0.25em] mb-2">{{ strtoupper($product->collection?->name ?? $product->category) }}</p>
+                                <h2 class="font-playfair text-xl font-light">{{ $product->name }}</h2>
+                                <p class="text-sm text-black/50 mt-1">{{ ucfirst($product->category) }}</p>
+                                <p class="font-playfair text-lg mt-3">${{ number_format((float) $product->price) }}</p>
+                            </a>
+                            <button onclick="addToCart({{ $product->id }}, null, 1)" class="w-full mt-4 bg-[#C9A84C] text-white py-2 text-sm font-light hover:bg-[#B8953A] transition-colors">
+                                ADD TO CART
+                            </button>
+                        </div>
                     @endforeach
                 </div>
                 <div class="text-center mt-16">
@@ -155,7 +182,57 @@
             drawer.classList.toggle('translate-x-full');
             overlay.classList.toggle('hidden');
             setTimeout(() => overlay.classList.toggle('opacity-100'), 10);
+            loadCart();
         }
+
+        function addToCart(productId, variantId, quantity) {
+            fetch('/api/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ product_id: productId, variant_id: variantId, quantity: quantity })
+            }).then(response => response.json()).then(data => {
+                alert(data.message);
+                updateCartCount();
+            }).catch(error => console.error('Error:', error));
+        }
+
+        function loadCart() {
+            fetch('/api/cart')
+            .then(response => response.json())
+            .then(data => {
+                const cartItems = document.getElementById('cart-items');
+                cartItems.innerHTML = '';
+                data.items.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'flex items-center justify-between py-4 border-b border-black/10';
+                    itemDiv.innerHTML = `
+                        <div class="flex items-center">
+                            <img src="${item.product.primaryImage?.image_path || 'https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop'}" alt="${item.product.name}" class="w-16 h-16 object-cover mr-4">
+                            <div>
+                                <p class="font-playfair text-sm">${item.product.name}</p>
+                                <p class="text-xs text-black/50">Qty: ${item.quantity}</p>
+                            </div>
+                        </div>
+                        <p class="font-playfair text-sm">$${item.product.price * item.quantity}</p>
+                    `;
+                    cartItems.appendChild(itemDiv);
+                });
+            });
+        }
+
+        function updateCartCount() {
+            fetch('/api/cart')
+            .then(response => response.json())
+            .then(data => {
+                const count = data.items.reduce((sum, item) => sum + item.quantity, 0);
+                document.getElementById('cart-count').textContent = count;
+            });
+        }
+
+        window.onload = updateCartCount;
     </script>
 </body>
 </html>

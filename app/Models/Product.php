@@ -67,6 +67,11 @@ class Product extends Model
         return $this->hasOne(ProductImage::class)->where('is_primary', true)->orderBy('sort_order');
     }
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);

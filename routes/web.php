@@ -1,8 +1,9 @@
 <?php
 
 use App\Http\Controllers\AtelierController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ConciergeController;
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProductController;
@@ -17,7 +18,6 @@ Route::get('/collections', [ProductController::class, 'collections'])->name('col
 Route::get('/shop', [ProductController::class, 'index'])->name('shop');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/atelier', [AtelierController::class, 'index'])->name('atelier');
-Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::get('/size-guide', function () {
     return view('size-guide');
 })->name('size-guide');
@@ -43,10 +43,27 @@ Route::post('/atelier-request', [AtelierController::class, 'store'])->name('atel
 Route::post('/concierge-request', [ConciergeController::class, 'store'])->name('concierge.request');
 Route::post('/newsletter', [NewsletterController::class, 'store'])->name('newsletter');
 
+Route::prefix('api')->group(function () {
+    Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name('api.cart.index');
+    Route::post('/cart/add', [App\Http\Controllers\CartController::class, 'add'])->name('api.cart.add');
+    Route::post('/cart/remove', [App\Http\Controllers\CartController::class, 'remove'])->name('api.cart.remove');
+    Route::post('/cart/update', [App\Http\Controllers\CartController::class, 'update'])->name('api.cart.update');
+    Route::get('/cart/count', [App\Http\Controllers\CartController::class, 'getCartCount'])->name('api.cart.count');
+});
+
+Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout', [CheckoutController::class, 'create'])->name('checkout.create');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
+});
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile/orders', [ProfileController::class, 'orders'])->name('profile.orders');
 });
 
 require __DIR__.'/auth.php';

@@ -30,7 +30,7 @@ class PostController extends Controller
             ->firstOrFail();
 
         $relatedPosts = Post::with('category')
-            ->where('category_id', $post->category_id)
+            ->where('post_category_id', $post->post_category_id)
             ->where('id', '!=', $post->id)
             ->where('published_at', '<=', now())
             ->take(3)
@@ -42,9 +42,9 @@ class PostController extends Controller
     public function category($slug)
     {
         $category = PostCategory::where('slug', $slug)->firstOrFail();
-        
+
         $posts = Post::with('category')
-            ->where('category_id', $category->id)
+            ->where('post_category_id', $category->id)
             ->where('published_at', '<=', now())
             ->orderBy('published_at', 'desc')
             ->paginate(12);
