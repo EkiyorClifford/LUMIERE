@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>LUMIÈRE | Fine Jewelry</title>
     <meta name="description" content="Timeless elegance. Handcrafted jewelry for the discerning soul.">
 
@@ -300,15 +301,19 @@
     <!-- ══════════════════════════════════
          NAVIGATION
     ══════════════════════════════════ -->
+    <!-- Fixed navigation with scroll transformation effect -->
+    <!-- Using z-50 to stay above all content, transform for scroll effects -->
     <nav id="main-nav" class="fixed top-0 left-0 w-full z-50 py-5 px-6 md:px-12">
         <div class="flex justify-between items-center max-w-screen-xl mx-auto">
 
-            <!-- Logo -->
+            <!-- Logo - links to home page -->
             <a href="{{ route('home') }}" class="font-playfair text-2xl tracking-widest text-charcoal hover:text-soft-gold transition-colors duration-300">
                 LUMIÈRE
             </a>
 
-            <!-- Desktop Links -->
+            <!-- Desktop navigation links -->
+            <!-- Hidden on mobile, shown on md screens and up -->
+            <!-- Using nav-link class for underline hover effect defined in CSS -->
             <div class="hidden md:flex items-center gap-10">
                 <a href="{{ route('collections') }}" class="nav-link text-xs tracking-[0.18em] text-charcoal/70 hover:text-charcoal transition-colors duration-300 font-jost">COLLECTIONS</a>
                 <a href="{{ route('shop') }}" class="nav-link text-xs tracking-[0.18em] text-charcoal/70 hover:text-charcoal transition-colors duration-300 font-jost">SHOP</a>
@@ -316,22 +321,34 @@
                 <a href="{{ route('journal') }}" class="nav-link text-xs tracking-[0.18em] text-charcoal/70 hover:text-charcoal transition-colors duration-300 font-jost">JOURNAL</a>
             </div>
 
-            <!-- Icons -->
+            <!-- Right side icons: Wishlist, User Profile, Cart, Mobile Menu -->
             <div class="flex items-center gap-5">
-                <button class="wishlist-btn text-charcoal/60 hover:text-soft-gold transition-colors duration-300">
+                <!-- Wishlist button with count badge -->
+                <!-- The count comes from CartController::home() which loads wishlist data -->
+                <!-- Using ?? 0 as fallback to prevent errors if count isn't passed -->
+                <button onclick="toggleWishlist(event)" class="wishlist-btn text-charcoal/60 hover:text-soft-gold transition-colors duration-300 relative">
                     <i class="fa-regular fa-heart text-base"></i>
+                    <span class="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-soft-gold text-white text-[8px] flex items-center justify-center font-jost">{{ $wishlistCount ?? 0 }}</span>
                 </button>
+                <!-- User profile section - conditional based on authentication -->
                 @auth
+                    <!-- Authenticated user: show dropdown with profile options -->
+                    <!-- Using group hover for dropdown visibility -->
                     <div class="relative group">
                         <button class="text-charcoal/60 hover:text-soft-gold transition-colors duration-300 flex items-center gap-2">
                             <i class="fa-solid fa-user text-base"></i>
+                            <!-- Show user name on desktop only -->
                             <span class="text-xs font-jost hidden md:block">{{ auth()->user()->name }}</span>
                         </button>
+                        <!-- Gold circle indicator for premium members -->
                         @if(auth()->user()->is_gold_circle)
                             <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-soft-gold"></span>
                         @endif
+                        <!-- Dropdown menu - appears on hover -->
+                        <!-- Using opacity/visibility for smooth transitions -->
                         <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                            <a href="#" class="block px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">My Profile</a>
+                            <a href="{{ route('profile.show') }}" class="block px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">My Profile</a>
+                            <!-- Logout form - using POST method for security -->
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">Sign Out</button>
@@ -339,14 +356,18 @@
                         </div>
                     </div>
                 @else
+                    <!-- Guest user: simple login link -->
                     <a href="{{ route('login') }}" class="text-charcoal/60 hover:text-soft-gold transition-colors duration-300">
                         <i class="fa-regular fa-user text-base"></i>
                     </a>
                 @endif
+                <!-- Cart button with count badge -->
+                <!-- Count comes from CartController::home() -->
                 <button onclick="toggleCart()" class="text-charcoal/60 hover:text-soft-gold transition-colors duration-300 relative">
                     <i class="fa-solid fa-cart-shopping text-base"></i>
                     <span class="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-soft-gold text-white text-[8px] flex items-center justify-center font-jost">{{ $cartCount ?? 0 }}</span>
                 </button>
+                <!-- Mobile menu toggle - hidden on desktop -->
                 <button id="menu-open" class="md:hidden text-charcoal/70 ml-1">
                     <i class="fa-solid fa-bars text-lg"></i>
                 </button>
@@ -355,22 +376,29 @@
     </nav>
 
     <!-- Mobile Menu Drawer -->
+    <!-- Slide-out menu for mobile devices -->
+    <!-- Using higher z-index than nav but lower than cart drawer -->
     <div id="mobile-menu" class="fixed inset-y-0 right-0 w-72 bg-cream z-[60] shadow-2xl flex flex-col px-10 py-12">
         <button id="menu-close" class="self-end text-charcoal/50 hover:text-charcoal mb-10">
             <i class="fa-solid fa-xmark text-xl"></i>
         </button>
+        <!-- Logo in mobile menu for brand consistency -->
         <a href="{{ route('home') }}" class="font-playfair text-2xl tracking-widest text-charcoal mb-10 block">LUMIÈRE</a>
+        <!-- Navigation links - vertical layout for mobile -->
         <div class="flex flex-col gap-7">
             <a href="{{ route('collections') }}" class="mobile-nav-link text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold transition-colors duration-300 font-jost">COLLECTIONS</a>
             <a href="{{ route('shop') }}" class="mobile-nav-link text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold transition-colors duration-300 font-jost">SHOP</a>
             <a href="{{ route('atelier') }}" class="mobile-nav-link text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold transition-colors duration-300 font-jost">ATELIER</a>
             <a href="{{ route('journal') }}" class="mobile-nav-link text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold transition-colors duration-300 font-jost">JOURNAL</a>
         </div>
+        <!-- Social links at bottom of mobile menu -->
+        <!-- Using mt-auto to push to bottom -->
         <div class="mt-auto flex gap-5 text-charcoal/40">
             <a href="#"><i class="fa-brands fa-instagram text-lg hover:text-soft-gold transition-colors"></i></a>
             <a href="#"><i class="fa-brands fa-pinterest text-lg hover:text-soft-gold transition-colors"></i></a>
         </div>
     </div>
+    <!-- Overlay for mobile menu - darkens background when menu is open -->
     <div id="menu-overlay" class="fixed inset-0 bg-black/30 z-[55] hidden"></div>
 
 
@@ -473,14 +501,14 @@
                 <!-- Card 1 - tall -->
                 <div class="collection-card group cursor-pointer md:row-span-1">
                     <div class="overflow-hidden rounded-sm bg-gray-100 relative">
-                        <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=2187&auto=format&fit=crop"
+                        <img src="{{asset('images/collection_diamond_essence.png')}}"
                              alt="Diamond Collection"
                              class="coll-img w-full h-[480px] object-cover">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
                         <div class="absolute bottom-0 left-0 right-0 p-8 text-white">
                             <h3 class="font-playfair text-2xl font-light mb-1">L'ÉCLAT</h3>
                             <p class="font-jost text-xs text-white/70 mb-2 tracking-wide">Diamond Collection</p>
-                            <p class="coll-label text-soft-gold text-[10px] tracking-[0.15em] font-jost font-light transition-all duration-400">FROM $2,800</p>
+                            <p class="coll-label text-soft-gold text-[10px] tracking-[0.15em] font-jost font-light transition-all duration-400">FROM €2,800</p>
                         </div>
                     </div>
                 </div>
@@ -489,28 +517,28 @@
                 <div class="md:col-span-2 grid grid-rows-2 gap-6">
                     <div class="collection-card group cursor-pointer">
                         <div class="overflow-hidden rounded-sm bg-gray-100 relative">
-                            <img src="https://images.unsplash.com/photo-1602751584552-8ba73aad9250?q=80&w=2187&auto=format&fit=crop"
+                            <img src="{{asset('images/collection_gold_essence.png')}}"
                                  alt="Gold Collection"
                                  class="coll-img w-full h-[228px] object-cover">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
                             <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
                                 <h3 class="font-playfair text-xl font-light mb-1">L'OR</h3>
                                 <p class="font-jost text-xs text-white/70 mb-1 tracking-wide">Gold Collection</p>
-                                <p class="coll-label text-soft-gold text-[10px] tracking-[0.15em] font-jost font-light">FROM $1,200</p>
+                                <p class="coll-label text-soft-gold text-[10px] tracking-[0.15em] font-jost font-light">FROM €1,200</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="collection-card group cursor-pointer">
                         <div class="overflow-hidden rounded-sm bg-gray-100 relative">
-                            <img src="https://images.unsplash.com/photo-1619856699906-09e1f58c98a1?q=80&w=2070&auto=format&fit=crop"
+                            <img src="{{asset('images/collection_pearl_essence.png')}}"
                                  alt="Pearl Collection"
                                  class="coll-img w-full h-[228px] object-cover">
                             <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
                             <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
                                 <h3 class="font-playfair text-xl font-light mb-1">LA PERLE</h3>
                                 <p class="font-jost text-xs text-white/70 mb-1 tracking-wide">Pearl Collection</p>
-                                <p class="coll-label text-soft-gold text-[10px] tracking-[0.15em] font-jost font-light">FROM $900</p>
+                                <p class="coll-label text-soft-gold text-[10px] tracking-[0.15em] font-jost font-light">FROM €900</p>
                             </div>
                         </div>
                     </div>
@@ -543,15 +571,15 @@
                         Only <span class="text-charcoal font-medium">12 pieces</span> remain in this edition.
                     </p>
                     <div class="flex items-baseline gap-4 mb-10">
-                        <span class="font-playfair text-3xl font-light text-charcoal">$4,500</span>
-                        <span class="text-sm text-warm-gray line-through font-jost">$5,800</span>
+                        <span class="font-playfair text-3xl font-light text-charcoal">€4,500</span>
+                        <span class="text-sm text-warm-gray line-through font-jost">€5,800</span>
                         <span class="text-xs text-soft-gold tracking-wide font-jost bg-soft-gold/10 px-2 py-1 rounded-sm">SAVE 22%</span>
                     </div>
                     <div class="flex gap-4 flex-wrap">
                         <button id="inquiry-open" type="button" class="btn-outline-dark inline-block px-8 py-3.5 text-[11px] tracking-[0.22em] font-jost">
                             <span>INQUIRE NOW</span>
                         </button>
-                        <button class="wishlist-btn text-charcoal/50 hover:text-soft-gold transition-colors duration-300 flex items-center gap-2 text-xs tracking-wide font-jost">
+                        <button onclick="toggleWishlist(event)" class="wishlist-btn text-charcoal/50 hover:text-soft-gold transition-colors duration-300 flex items-center gap-2 text-xs tracking-wide font-jost">
                             <i class="fa-regular fa-heart"></i> ADD TO WISHLIST
                         </button>
                     </div>
@@ -675,90 +703,47 @@
             </div>
 
             <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-                <!-- Product 1 -->
-                <div class="product-card group cursor-pointer">
+                @foreach($featuredProducts as $index => $product)
+                <a href="{{ route('product.show', $product) }}" class="product-card group block">
                     <div class="relative overflow-hidden bg-deep-ivory rounded-sm mb-5 aspect-[3/4]">
-                        <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1931&auto=format&fit=crop"
-                             alt="Solitaire Pendant"
+                        <img src="{{ $product->primaryImage?->image_url ?? 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1931&auto=format&fit=crop' }}"
+                             alt="{{ $product->name }}"
                              class="card-img w-full h-full object-cover">
                         <!-- Overlay -->
                         <div class="overlay absolute inset-0 bg-black/20 flex items-end justify-center pb-6">
-                            <button class="bg-white text-charcoal text-[10px] tracking-[0.2em] font-jost px-6 py-2.5 hover:bg-soft-gold hover:text-white transition-colors duration-300">
+                            <button data-product-id="{{ $product->id }}" onclick="addToCart(event, null, 1)" class="bg-white text-charcoal text-[10px] tracking-[0.2em] font-jost px-6 py-2.5 hover:bg-soft-gold hover:text-white transition-colors duration-300">
                                 QUICK ADD
                             </button>
                         </div>
                         <!-- Wishlist -->
-                        <button class="wishlist-btn absolute top-3 right-3 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center text-charcoal/60 hover:text-soft-gold transition-colors duration-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button data-product-id="{{ $product->id }}" onclick="toggleWishlist(event, {{ $product->id }})" class="wishlist-btn absolute top-3 right-3 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center text-charcoal/60 hover:text-soft-gold transition-colors duration-300 opacity-0 group-hover:opacity-100 transition-opacity">
                             <i class="fa-regular fa-heart text-xs"></i>
                         </button>
-                    </div>
-                    <h3 class="font-playfair text-base font-light text-charcoal mb-1">Solitaire Pendant</h3>
-                    <p class="text-warm-gray text-xs font-jost font-light mb-2 tracking-wide">Diamond Necklace</p>
-                    <p class="text-soft-gold text-sm font-jost">$1,250</p>
-                </div>
-
-                <!-- Product 2 -->
-                <div class="product-card group cursor-pointer">
-                    <div class="relative overflow-hidden bg-deep-ivory rounded-sm mb-5 aspect-[3/4]">
-                        <img src="https://images.unsplash.com/photo-1603561591411-07134e719f5d?q=80&w=2070&auto=format&fit=crop"
-                             alt="Lotus Drop Earrings"
-                             class="card-img w-full h-full object-cover">
-                        <div class="overlay absolute inset-0 bg-black/20 flex items-end justify-center pb-6">
-                            <button class="bg-white text-charcoal text-[10px] tracking-[0.2em] font-jost px-6 py-2.5 hover:bg-soft-gold hover:text-white transition-colors duration-300">
-                                QUICK ADD
-                            </button>
-                        </div>
-                        <button class="wishlist-btn absolute top-3 right-3 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center text-charcoal/60 hover:text-soft-gold transition-colors duration-300 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <i class="fa-regular fa-heart text-xs"></i>
-                        </button>
+                        @if($index === 1)
                         <span class="absolute top-3 left-3 bg-soft-gold text-white text-[9px] tracking-[0.15em] font-jost px-2 py-1">NEW</span>
-                    </div>
-                    <h3 class="font-playfair text-base font-light text-charcoal mb-1">Lotus Drop Earrings</h3>
-                    <p class="text-warm-gray text-xs font-jost font-light mb-2 tracking-wide">Gold with Pearl</p>
-                    <p class="text-soft-gold text-sm font-jost">$890</p>
-                </div>
-
-                <!-- Product 3 -->
-                <div class="product-card group cursor-pointer">
-                    <div class="relative overflow-hidden bg-deep-ivory rounded-sm mb-5 aspect-[3/4]">
-                        <img src="https://images.unsplash.com/photo-1589128777073-263566ae5e4d?q=80&w=2070&auto=format&fit=crop"
-                             alt="Infinity Bangle"
-                             class="card-img w-full h-full object-cover">
-                        <div class="overlay absolute inset-0 bg-black/20 flex items-end justify-center pb-6">
-                            <button class="bg-white text-charcoal text-[10px] tracking-[0.2em] font-jost px-6 py-2.5 hover:bg-soft-gold hover:text-white transition-colors duration-300">
-                                QUICK ADD
-                            </button>
-                        </div>
-                        <button class="wishlist-btn absolute top-3 right-3 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center text-charcoal/60 hover:text-soft-gold transition-colors duration-300 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <i class="fa-regular fa-heart text-xs"></i>
-                        </button>
-                    </div>
-                    <h3 class="font-playfair text-base font-light text-charcoal mb-1">Infinity Bangle</h3>
-                    <p class="text-warm-gray text-xs font-jost font-light mb-2 tracking-wide">18k Gold</p>
-                    <p class="text-soft-gold text-sm font-jost">$2,100</p>
-                </div>
-
-                <!-- Product 4 -->
-                <div class="product-card group cursor-pointer">
-                    <div class="relative overflow-hidden bg-deep-ivory rounded-sm mb-5 aspect-[3/4]">
-                        <img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?q=80&w=2188&auto=format&fit=crop"
-                             alt="Celestial Ring"
-                             class="card-img w-full h-full object-cover">
-                        <div class="overlay absolute inset-0 bg-black/20 flex items-end justify-center pb-6">
-                            <button class="bg-white text-charcoal text-[10px] tracking-[0.2em] font-jost px-6 py-2.5 hover:bg-soft-gold hover:text-white transition-colors duration-300">
-                                QUICK ADD
-                            </button>
-                        </div>
-                        <button class="wishlist-btn absolute top-3 right-3 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center text-charcoal/60 hover:text-soft-gold transition-colors duration-300 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <i class="fa-regular fa-heart text-xs"></i>
-                        </button>
+                        @elseif($index === 3)
                         <span class="absolute top-3 left-3 bg-charcoal text-white text-[9px] tracking-[0.15em] font-jost px-2 py-1">LAST FEW</span>
+                        @endif
                     </div>
-                    <h3 class="font-playfair text-base font-light text-charcoal mb-1">Celestial Ring</h3>
-                    <p class="text-warm-gray text-xs font-jost font-light mb-2 tracking-wide">Sapphire & Diamond</p>
-                    <p class="text-soft-gold text-sm font-jost">$3,450</p>
-                </div>
+                    <h3 class="font-playfair text-base font-light text-charcoal mb-1">{{ $product->name }}</h3>
+                    <p class="text-warm-gray text-xs font-jost font-light mb-2 tracking-wide">{{ $product->collection?->name ?? 'LUMIÈRE' }}</p>
+                    <p class="text-soft-gold text-sm font-jost">€{{ number_format($product->price, 2) }}</p>
+                </a>
+                @endforeach
+                @if($featuredProducts->count() < 4)
+                    @for($i = $featuredProducts->count(); $i < 4; $i++)
+                    <div class="product-card group cursor-pointer opacity-50">
+                        <div class="relative overflow-hidden bg-deep-ivory rounded-sm mb-5 aspect-[3/4]">
+                            <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1931&auto=format&fit=crop"
+                                 alt="Coming Soon"
+                                 class="card-img w-full h-full object-cover">
+                        </div>
+                        <h3 class="font-playfair text-base font-light text-charcoal mb-1">More Coming Soon</h3>
+                        <p class="text-warm-gray text-xs font-jost font-light mb-2 tracking-wide">LUMIÈRE</p>
+                        <p class="text-soft-gold text-sm font-jost">--</p>
+                    </div>
+                    @endfor
+                @endif
             </div>
 
             <div class="text-center mt-16">
@@ -830,13 +815,13 @@
                     <p class="text-soft-gold text-[10px] tracking-[0.35em] mb-4 font-jost font-light">FROM OUR JOURNAL</p>
                     <h2 class="font-playfair text-4xl md:text-5xl font-light text-charcoal tracking-wide">Stories &amp; Inspiration</h2>
                 </div>
-                <a href="#" class="text-[10px] tracking-[0.22em] font-jost text-charcoal/50 hover:text-soft-gold transition-colors duration-300 border-b border-charcoal/20 pb-0.5 self-start md:self-auto">VIEW ALL ARTICLES</a>
+                <a href="{{ route('journal') }}" class="text-[10px] tracking-[0.22em] font-jost text-charcoal/50 hover:text-soft-gold transition-colors duration-300 border-b border-charcoal/20 pb-0.5 self-start md:self-auto">VIEW ALL ARTICLES</a>
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
 
                 <!-- Article 1 — large -->
-                <div class="blog-card group cursor-pointer md:col-span-1">
+                <a href="{{ route('post.show', 'ultimate-diamond-buying-guide') }}" class="blog-card group block md:col-span-1">
                     <div class="overflow-hidden rounded-sm bg-gray-100 mb-5">
                         <img src="https://images.unsplash.com/photo-1530968033775-2c92736b131e?q=80&w=2071&auto=format&fit=crop"
                              alt="Diamond Guide"
@@ -848,11 +833,11 @@
                         Everything you need to know before investing in your perfect diamond.
                     </p>
                     <span class="read-more font-jost font-light">READ MORE <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
-                </div>
+                </a>
 
-                <div class="blog-card group cursor-pointer">
+                <a href="{{ route('post.show', 'commitment-sustainability') }}" class="blog-card group block">
                     <div class="overflow-hidden rounded-sm bg-gray-100 mb-5">
-                        <img src="https://images.unsplash.com/photo-1582657050916-f91e9bd60ca1?q=80&w=1974&auto=format&fit=crop"
+                        <img src="{{asset('images/virtues.png')}}"
                              alt="Sustainable Jewelry"
                              class="blog-img w-full h-72 object-cover">
                     </div>
@@ -862,9 +847,9 @@
                         How we're creating beautiful jewelry while protecting our planet.
                     </p>
                     <span class="read-more font-jost font-light">READ MORE <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
-                </div>
+                </a>
 
-                <div class="blog-card group cursor-pointer">
+                <a href="{{ route('post.show', 'jewelry-care-101') }}" class="blog-card group block">
                     <div class="overflow-hidden rounded-sm bg-gray-100 mb-5">
                         <img src="https://images.unsplash.com/photo-1599643477877-530eb83abc8e?q=80&w=2070&auto=format&fit=crop"
                              alt="Care Guide"
@@ -876,7 +861,7 @@
                         Tips to keep your precious pieces shining for generations.
                     </p>
                     <span class="read-more font-jost font-light">READ MORE <i class="fa-solid fa-arrow-right text-[10px]"></i></span>
-                </div>
+                </a>
 
             </div>
         </div>
@@ -898,7 +883,7 @@
                 Be the first to discover new collections, exclusive offers, and jewelry insights.
             </p>
             <!-- Minimal newsletter — no form tag, uses flex row -->
-            <form action="{{ route('newsletter') }}" method="POST" class="mb-6">
+            <form id="newsletter-home-form" action="{{ route('newsletter') }}" method="POST" class="mb-6">
                 @csrf
                 <input type="hidden" name="source" value="newsletter_footer">
             <div class="flex gap-0 max-w-sm mx-auto border-b border-white/20 pb-0 mb-6">
@@ -912,6 +897,7 @@
                 </button>
             </div>
             </form>
+            <p id="newsletter-home-message" class="hidden text-soft-gold text-xs font-jost mb-6"></p>
             <p class="text-white/25 text-[10px] font-jost tracking-wide">By subscribing, you agree to our Privacy Policy.</p>
         </div>
     </section>
@@ -997,9 +983,9 @@
             document.body.style.overflow = '';
         }
 
-        openBtn.addEventListener('click', openMenu);
-        closeBtn.addEventListener('click', closeMenu);
-        overlay.addEventListener('click', closeMenu);
+        if (openBtn) openBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (overlay) overlay.addEventListener('click', closeMenu);
 
         // Close on nav link click (mobile)
         document.querySelectorAll('.mobile-nav-link').forEach(link => {
@@ -1033,18 +1019,20 @@
             inquiryOpen.focus();
         }
 
-        inquiryOpen.addEventListener('click', openInquiryModal);
-        inquiryOverlay.addEventListener('click', closeInquiryModal);
-        inquiryClose.addEventListener('click', closeInquiryModal);
-        inquiryReturn.addEventListener('click', closeInquiryModal);
+        if (inquiryOpen && inquiryModal && inquiryOverlay && inquiryClose && inquiryReturn && inquiryForm && inquirySuccess && inquiryName && successNameDisplay) {
+            inquiryOpen.addEventListener('click', openInquiryModal);
+            inquiryOverlay.addEventListener('click', closeInquiryModal);
+            inquiryClose.addEventListener('click', closeInquiryModal);
+            inquiryReturn.addEventListener('click', closeInquiryModal);
 
-        inquiryForm.addEventListener('submit', event => {
-            event.preventDefault();
-            successNameDisplay.textContent = inquiryName.value.trim() || 'there';
-            inquiryForm.classList.add('hidden');
-            inquirySuccess.classList.remove('hidden');
-            inquiryReturn.focus();
-        });
+            inquiryForm.addEventListener('submit', event => {
+                event.preventDefault();
+                successNameDisplay.textContent = inquiryName.value.trim() || 'there';
+                inquiryForm.classList.add('hidden');
+                inquirySuccess.classList.remove('hidden');
+                inquiryReturn.focus();
+            });
+        }
 
         document.addEventListener('keydown', event => {
             if (event.key === 'Escape' && !inquiryModal.classList.contains('hidden')) {
@@ -1053,60 +1041,146 @@
         });
     </script>
 
-    <!-- CART DRAWER COMPONENT -->
-    <div id="cart-drawer" class="fixed inset-y-0 right-0 w-full md:w-[450px] bg-white z-[100] shadow-2xl translate-x-full transition-transform duration-500 ease-in-out flex flex-col">
-        <!-- Header -->
-        <div class="p-8 border-b border-charcoal/5 flex justify-between items-center">
-            <h2 class="font-playfair text-xl">Your Shopping Bag <span class="text-xs text-warm-gray font-jost ml-2">(2)</span></h2>
-            <button onclick="toggleCart()" class="text-charcoal/40 hover:text-charcoal transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
-        </div>
-
-        <!-- Items -->
-        <div class="flex-1 overflow-y-auto p-8 space-y-8">
-            <!-- Item 1 -->
-            <div class="flex gap-6">
-                <div class="w-24 h-32 bg-deep-ivory overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1635767798638-3e25273a8236?q=80&w=1964&auto=format&fit=crop" class="w-full h-full object-cover">
-                </div>
-                <div class="flex-1 flex flex-col justify-between py-1">
-                    <div>
-                        <h3 class="font-playfair text-sm mb-1">Aurelia Diamond Ring</h3>
-                        <p class="text-[9px] tracking-widest text-warm-gray uppercase">18k Yellow Gold / Size 6</p>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center border border-charcoal/10">
-                            <button class="px-3 py-1 text-xs">-</button>
-                            <span class="px-3 py-1 text-[10px]">1</span>
-                            <button class="px-3 py-1 text-xs">+</button>
-                        </div>
-                        <p class="text-xs">$1,850</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="p-8 bg-cream space-y-6">
-            <div class="flex justify-between items-center">
-                <p class="text-[10px] tracking-[0.2em] uppercase">Subtotal</p>
-                <p class="font-playfair text-lg">$3,200</p>
-            </div>
-            <p class="text-[9px] text-warm-gray leading-relaxed">Complimentary insured shipping applied at checkout.</p>
-            <button class="w-full bg-charcoal text-white py-5 text-[10px] tracking-[0.3em] uppercase hover:bg-soft-gold transition-colors duration-500">
-                Secure Checkout
-            </button>
-        </div>
-    </div>
-    <!-- OVERLAY -->
-    <div id="cart-overlay" class="fixed inset-0 bg-black/20 z-[90] hidden opacity-0 transition-opacity" onclick="toggleCart()"></div>
+    <!-- CART DRAWER COMPONENT (loaded from partial) -->
 
     <script>
-        function toggleCart() {
-            const drawer = document.getElementById('cart-drawer');
-            const overlay = document.getElementById('cart-overlay');
-            drawer.classList.toggle('translate-x-full');
-            overlay.classList.toggle('hidden');
-            setTimeout(() => overlay.classList.toggle('opacity-100'), 10);
+        // Wishlist functionality
+        function toggleWishlist(eventOrProductId = null, productId = null) {
+            let event = null;
+            if (eventOrProductId instanceof Event) {
+                event = eventOrProductId;
+            } else {
+                productId = eventOrProductId;
+            }
+
+            // If no productId provided, redirect to wishlist page
+            if (!productId) {
+                window.location.href = '/wishlist';
+                return;
+            }
+            
+            fetch('/wishlist/add', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    product_id: productId
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`HTTP ${response.status}: ${text}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Update wishlist count
+                    const wishlistCount = document.querySelector('.wishlist-btn .fa-heart').nextElementSibling;
+                    if (wishlistCount) {
+                        wishlistCount.textContent = data.count || 1;
+                    }
+                    // Toggle heart icon
+                    const heartButton = event?.target?.closest('.wishlist-btn');
+                    const heartIcon = heartButton?.querySelector('i');
+                    if (heartIcon) {
+                        heartIcon.classList.toggle('fa-regular');
+                        heartIcon.classList.toggle('fa-solid');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        // ── QUICK ADD AJAX FUNCTION ──────────────────────────────────────
+        // Quick add for product grid - adds item with quantity 1 without page reload
+        // Used on home page and shop page product cards
+        function quickAdd(productId) {
+            // Make AJAX request to cart add API
+            fetch('/api/cart/add', {
+                method: 'POST',
+                headers: {
+                    // Tell server we're sending and expecting JSON
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    // Mark as AJAX request
+                    'X-Requested-With': 'XMLHttpRequest',
+                    // Include CSRF token for security
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                // Send product ID with quantity 1 (default for quick add)
+                body: JSON.stringify({
+                    product_id: productId,
+                    quantity: 1
+                })
+            })
+            .then(response => {
+                // Handle HTTP errors with detailed error message
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`HTTP ${response.status}: ${text}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Update cart count badges if API provides count
+                if (typeof data.cart_count !== 'undefined') {
+                    // Update all cart count badges in navigation
+                    document.querySelectorAll('#cart-count, [data-cart-count], button[onclick*="toggleCart"] span').forEach((badge) => {
+                        badge.textContent = data.cart_count;
+                    });
+                } else {
+                    // Fallback: manually update cart count if API doesn't provide it
+                    updateCartCount();
+                }
+            })
+            .catch(error => {
+                // Log error for debugging (no user-facing error for quick add)
+                console.error('Error:', error);
+            });
+        }
+
+        // ── NEWSLETTER SUBSCRIPTION AJAX ───────────────────────────────────
+        // Handle newsletter form submission without page reload
+        const newsletterHomeForm = document.getElementById('newsletter-home-form');
+        if (newsletterHomeForm) {
+            newsletterHomeForm.addEventListener('submit', async (event) => {
+                // Prevent default form submission
+                event.preventDefault();
+                
+                // Send form data via AJAX
+                const response = await fetch(newsletterHomeForm.action, {
+                    method: 'POST',
+                    headers: {
+                        // Expect JSON response from server
+                        'Accept': 'application/json',
+                        // Include CSRF token
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    // Send form data as FormData (handles file uploads if any)
+                    body: new FormData(newsletterHomeForm),
+                });
+                
+                // Parse JSON response
+                const data = await response.json();
+                
+                // Show success message to user
+                const message = document.getElementById('newsletter-home-message');
+                if (message) {
+                    message.textContent = data.message ?? 'Thank you for subscribing!';
+                    message.classList.remove('hidden');
+                }
+                newsletterHomeForm.classList.add('hidden');
+            });
         }
     </script>
 

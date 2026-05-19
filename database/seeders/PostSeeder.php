@@ -2,22 +2,22 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class PostSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
-    public function run(): void{
+    public function run(): void
+    {
         $categories = DB::table('post_categories')->get()->keyBy('slug');
-        
+
         // Create a default user if none exists
         $user = DB::table('users')->first();
-        if (!$user) {
+        if (! $user) {
             $userId = DB::table('users')->insertGetId([
                 'name' => 'Lumière Team',
                 'email' => 'team@lumiere.com',
@@ -278,6 +278,64 @@ class PostSeeder extends Seeder
             'updated_at' => Carbon::parse('2026-05-01 10:45:00'),
         ];
 
+        // ========== JEWELRY GUIDES ==========
+        // Create a jewelry guides category if it doesn't exist
+        if (! isset($categories['jewelry-guides'])) {
+            $jewelryGuidesId = DB::table('post_categories')->insertGetId([
+                'name' => 'Jewelry Guides',
+                'slug' => 'jewelry-guides',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        } else {
+            $jewelryGuidesId = $categories['jewelry-guides']->id;
+        }
+
+        $posts[] = [
+            'title' => 'The Ultimate Diamond Buying Guide',
+            'slug' => 'ultimate-diamond-buying-guide',
+            'post_category_id' => $jewelryGuidesId,
+            'user_id' => $userId,
+            'volume_label' => 'Vol. 15 — The Diamond Issue',
+            'excerpt' => 'Everything you need to know before investing in your perfect diamond. From the 4 Cs to certification, we cover it all.',
+            'content' => '<p>Buying a diamond is one of the most significant purchases you\'ll ever make. Whether it\'s for an engagement ring, anniversary gift, or personal milestone, understanding what you\'re paying for is essential.</p><h3>The 4 Cs Explained</h3><p><strong>Carat Weight:</strong> This measures the diamond\'s weight, not size. One carat equals 200 milligrams. However, two diamonds of the same carat weight can appear different sizes depending on their cut.</p><p><strong>Clarity:</strong> Diamonds are graded on a scale from Flawless (FL) to Included (I3). Most inclusions are microscopic and don\'t affect beauty, but they do affect value. For most buyers, VS1 or VS2 offers the best balance of clarity and value.</p><p><strong>Color:</strong> Diamonds are graded from D (colorless) to Z (light yellow). The difference between D and H is nearly invisible to the untrained eye, but the price difference is substantial. We recommend G or H for most engagement rings.</p><p><strong>Cut:</strong> This is the most important factor. A well-cut diamond will sparkle brilliantly, while a poorly-cut diamond will appear dull even with excellent clarity and color. Always prioritize cut grade.</p><h3>Certification Matters</h3><p>Never buy a diamond without a certificate from GIA or AGS. These independent laboratories provide unbiased grading. Avoid EGL and other lesser-known certifiers.</p><h3>Our Recommendation</h3><p>For a classic round brilliant engagement ring, we recommend: G color, VS1-VS2 clarity, Excellent cut, and fluorescence None or Faint. This combination offers exceptional beauty at a reasonable price point.</p>',
+            'featured_image' => 'https://images.unsplash.com/photo-1530968033775-2c92736b131e?q=80&w=2071&auto=format&fit=crop',
+            'is_published' => true,
+            'published_at' => Carbon::parse('2026-04-25 09:00:00'),
+            'created_at' => Carbon::parse('2026-04-20 14:00:00'),
+            'updated_at' => Carbon::parse('2026-04-25 09:00:00'),
+        ];
+
+        $posts[] = [
+            'title' => 'Our Commitment to Sustainability',
+            'slug' => 'commitment-sustainability',
+            'post_category_id' => $ethicsId,
+            'user_id' => $userId,
+            'volume_label' => 'Vol. 15 — The Diamond Issue',
+            'excerpt' => 'How we\'re creating beautiful jewelry while protecting our planet. From ethically sourced gemstones to recycled metals, sustainability is at our core.',
+            'content' => '<p>At Lumière, we believe that luxury and responsibility are not mutually exclusive. Every piece of jewelry we create tells a story—not just of love and celebration, but of ethical sourcing and environmental stewardship.</p><h3>Ethically Sourced Gemstones</h3><p>We work directly with mines that adhere to strict labor and environmental standards. Our diamonds come from conflict-free zones, and we can trace every stone back to its origin. We prioritize suppliers who support local communities and provide fair wages.</p><h3>Recycled Precious Metals</h3><p>All our gold and platinum is 100% recycled. By using reclaimed metals, we reduce the demand for newly mined materials, which significantly lowers our environmental impact. Recycled gold has the same purity and beauty as newly mined gold, but without the ecological cost.</p><h3>Responsible Packaging</h3><p>Our packaging is made from FSC-certified paper and biodegradable materials. We minimize plastic use and offset our shipping emissions through carbon-neutral programs.</p><h3>Transparency</h3><p>We publish an annual sustainability report detailing our supply chain, environmental impact, and progress toward our goals. We believe you should know exactly where your jewelry comes from.</p><h3>Looking Forward</h3><p>We\'re committed to continuous improvement. Our goal is to be carbon neutral by 2028 and to achieve 100% traceability across our entire supply chain by 2030.</p>',
+            'featured_image' => 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1931&auto=format&fit=crop',
+            'is_published' => true,
+            'published_at' => Carbon::parse('2026-04-18 10:00:00'),
+            'created_at' => Carbon::parse('2026-04-12 15:00:00'),
+            'updated_at' => Carbon::parse('2026-04-18 10:00:00'),
+        ];
+
+        $posts[] = [
+            'title' => 'Jewelry Care 101',
+            'slug' => 'jewelry-care-101',
+            'post_category_id' => $jewelryGuidesId,
+            'user_id' => $userId,
+            'volume_label' => 'Vol. 15 — The Diamond Issue',
+            'excerpt' => 'Tips to keep your precious pieces shining for generations. Proper care extends the life and beauty of your jewelry.',
+            'content' => '<p>Your jewelry is an investment—both financially and emotionally. With proper care, fine jewelry can last for generations. Here\'s how to keep your pieces looking their best.</p><h3>Daily Care</h3><p><strong>Remove before activities:</strong> Take off jewelry before swimming, exercising, or household chores. Chlorine, salt water, and harsh chemicals can damage metals and gemstones.</p><p><strong>Put on last, take off first:</strong> Apply perfume, lotion, and hairspray before putting on jewelry. These products can leave residue that dulls sparkle over time.</p><h3>Cleaning</h3><p><strong>Gold and Platinum:</strong> Clean with warm water, mild dish soap, and a soft brush. Avoid abrasive cleaners that can scratch metal.</p><p><strong>Diamonds:</strong> Soak in ammonia-based cleaner (1 part ammonia to 6 parts water) for 20 minutes, then gently brush with a soft toothbrush. Rinse thoroughly and dry with a lint-free cloth.</p><p><strong>Pearls:</strong> Wipe with a soft cloth after wearing. Never clean pearls with harsh chemicals or ultrasonic cleaners. Store them separately to prevent scratching.</p><h3>Storage</h3><p>Store each piece separately in soft pouches or compartmentalized jewelry boxes. This prevents pieces from scratching each other. Keep chains fastened to prevent tangling.</p><h3>Professional Maintenance</h3<p>Bring your jewelry to us annually for professional cleaning and inspection. We check for loose stones, worn prongs, and other issues that could lead to loss or damage. This service is complimentary for all Lumière pieces.</p><h3>Insurance</h3><p>We strongly recommend insuring valuable pieces. Keep appraisals and purchase receipts in a safe place, and update your insurance as jewelry values change over time.</p>',
+            'featured_image' => 'https://images.unsplash.com/photo-1599643477877-530eb83abc8e?q=80&w=2070&auto=format&fit=crop',
+            'is_published' => true,
+            'published_at' => Carbon::parse('2026-04-12 08:00:00'),
+            'created_at' => Carbon::parse('2026-04-08 11:00:00'),
+            'updated_at' => Carbon::parse('2026-04-12 08:00:00'),
+        ];
+
         // ========== PEOPLE ==========
         $peopleId = $categories['people']->id;
 
@@ -373,8 +431,10 @@ class PostSeeder extends Seeder
 
         // Insert all posts
         foreach ($posts as $post) {
-            DB::table('posts')->insert($post);
+            DB::table('posts')->updateOrInsert(
+                ['slug' => $post['slug']],
+                $post
+            );
         }
     }
 }
-
