@@ -29,13 +29,13 @@
             <h1 class="font-playfair text-4xl md:text-6xl font-light mb-4">Contact Us</h1>
             <p class="text-black/55 text-sm leading-7 font-light mb-10">Send a note to our atelier team. A real person will reply within 24 hours.</p>
 
-            @if (session('status'))
+            @if (session('status') || session('success'))
                 <div class="bg-[#F2EDE4] border border-[#C9A84C]/20 px-5 py-4 text-sm text-black/65 mb-8">
-                    {{ session('status') }}
+                    {{ session('success') ?? session('status') }}
                 </div>
             @endif
 
-            <form action="{{ route('concierge-requests.store') }}" method="POST" class="space-y-7">
+            <form action="{{ route('concierge.request') }}" method="POST" class="space-y-7">
                 @csrf
                 <input type="hidden" name="source" value="contact_page">
 

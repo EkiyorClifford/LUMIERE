@@ -57,7 +57,10 @@
                 <a href="{{ route('journal') }}" class="nav-link active text-xs tracking-[0.18em] text-charcoal">JOURNAL</a>
             </div>
             <div class="flex items-center gap-5">
-                <button class="text-charcoal/60 hover:text-soft-gold"><i class="fa-regular fa-heart"></i></button>
+                <a href="{{ route('wishlist.index') }}" class="text-charcoal/60 hover:text-soft-gold relative">
+                    <i class="fa-regular fa-heart"></i>
+                    <span id="wishlist-count" class="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-soft-gold text-white text-[8px] flex items-center justify-center">{{ $wishlistCount ?? 0 }}</span>
+                </a>
                 @auth
                     <div class="relative group">
                         <button class="text-charcoal/60 hover:text-soft-gold flex items-center gap-2">
@@ -68,7 +71,7 @@
                             <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-soft-gold"></span>
                         @endif
                         <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                            <a href="#" class="block px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">My Profile</a>
+                            <a href="{{ route('profile.show') }}" class="block px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">My Profile</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">Sign Out</button>
@@ -80,7 +83,7 @@
                         <i class="fa-regular fa-user"></i>
                     </a>
                 @endif
-                <button class="text-charcoal/60 hover:text-soft-gold relative"><i class="fa-solid fa-cart-shopping"></i><span class="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-soft-gold text-white text-[8px] flex items-center justify-center">{{ $cartCount ?? 0 }}</span></button>
+                <button onclick="toggleCart()" class="text-charcoal/60 hover:text-soft-gold relative"><i class="fa-solid fa-cart-shopping"></i><span id="cart-count" class="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-soft-gold text-white text-[8px] flex items-center justify-center">{{ $cartCount ?? 0 }}</span></button>
                 <button id="menu-open" class="md:hidden text-charcoal/70"><i class="fa-solid fa-bars text-lg"></i></button>
             </div>
         </div>
@@ -111,11 +114,11 @@
     <!-- CATEGORY FILTERS -->
     <div class="sticky top-20 z-40 bg-cream/95 backdrop-blur-sm border-y border-charcoal/5 px-6 py-4">
         <div class="max-w-screen-xl mx-auto flex flex-wrap justify-center gap-6 md:gap-10">
-            <button class="category-btn active text-[10px] tracking-[0.2em] font-jost text-charcoal/60 hover:text-charcoal transition-colors pb-2 border-b-2 border-transparent" data-cat="all">ALL STORIES</button>
-            <button class="category-btn text-[10px] tracking-[0.2em] font-jost text-charcoal/60 hover:text-charcoal transition-colors pb-2 border-b-2 border-transparent" data-cat="craft">CRAFTSMANSHIP</button>
-            <button class="category-btn text-[10px] tracking-[0.2em] font-jost text-charcoal/60 hover:text-charcoal transition-colors pb-2 border-b-2 border-transparent" data-cat="ethics">ETHICS & SOURCING</button>
-            <button class="category-btn text-[10px] tracking-[0.2em] font-jost text-charcoal/60 hover:text-charcoal transition-colors pb-2 border-b-2 border-transparent" data-cat="lifestyle">LIFESTYLE</button>
-            <button class="category-btn text-[10px] tracking-[0.2em] font-jost text-charcoal/60 hover:text-charcoal transition-colors pb-2 border-b-2 border-transparent" data-cat="people">PEOPLE</button>
+            <a href="{{ route('journal') }}" class="category-btn {{ !request()->route('post.category') ? 'active' : '' }} text-[10px] tracking-[0.2em] font-jost text-charcoal/60 hover:text-charcoal transition-colors pb-2 border-b-2 border-transparent">ALL STORIES</a>
+            <a href="{{ route('post.category', 'craftsmanship') }}" class="category-btn {{ request()->route('post.category')?->parameter('slug') == 'craftsmanship' ? 'active' : '' }} text-[10px] tracking-[0.2em] font-jost text-charcoal/60 hover:text-charcoal transition-colors pb-2 border-b-2 border-transparent" data-cat="craft">CRAFTSMANSHIP</a>
+            <a href="{{ route('post.category', 'ethics-sourcing') }}" class="category-btn {{ request()->route('post.category')?->parameter('slug') == 'ethics-sourcing' ? 'active' : '' }} text-[10px] tracking-[0.2em] font-jost text-charcoal/60 hover:text-charcoal transition-colors pb-2 border-b-2 border-transparent" data-cat="ethics">ETHICS & SOURCING</a>
+            <a href="{{ route('post.category', 'lifestyle') }}" class="category-btn {{ request()->route('post.category')?->parameter('slug') == 'lifestyle' ? 'active' : '' }} text-[10px] tracking-[0.2em] font-jost text-charcoal/60 hover:text-charcoal transition-colors pb-2 border-b-2 border-transparent" data-cat="lifestyle">LIFESTYLE</a>
+            <a href="{{ route('post.category', 'people') }}" class="category-btn {{ request()->route('post.category')?->parameter('slug') == 'people' ? 'active' : '' }} text-[10px] tracking-[0.2em] font-jost text-charcoal/60 hover:text-charcoal transition-colors pb-2 border-b-2 border-transparent" data-cat="people">PEOPLE</a>
         </div>
     </div>
 
@@ -135,7 +138,7 @@
                         <span><i class="fa-solid fa-clock mr-1"></i> 8 min read</span>
                         <span><i class="fa-solid fa-pen mr-1"></i> Michel Fontaine</span>
                     </div>
-                    <a href="#" class="text-[10px] tracking-[0.2em] border-b border-charcoal/20 pb-1 hover:border-soft-gold transition-colors inline-flex items-center gap-2">READ THE STORY <i class="fa-solid fa-arrow-right text-[9px]"></i></a>
+                    <a href="{{ route('journal') }}" class="text-[10px] tracking-[0.2em] border-b border-charcoal/20 pb-1 hover:border-soft-gold transition-colors inline-flex items-center gap-2">READ THE STORY <i class="fa-solid fa-arrow-right text-[9px]"></i></a>
                 </div>
             </div>
         </div>
@@ -157,7 +160,7 @@
                     <span><i class="fa-solid fa-calendar mr-1"></i> April 8, 2026</span>
                     <span><i class="fa-solid fa-clock mr-1"></i> 5 min read</span>
                 </div>
-                <a href="#" class="text-[9px] tracking-[0.2em] text-charcoal/50 hover:text-soft-gold transition-colors">CONTINUE READING →</a>
+                <a href="{{ route('journal') }}" class="text-[9px] tracking-[0.2em] text-charcoal/50 hover:text-soft-gold transition-colors">CONTINUE READING →</a>
             </div>
 
             <!-- Article 2 -->
@@ -172,7 +175,7 @@
                     <span><i class="fa-solid fa-calendar mr-1"></i> March 28, 2026</span>
                     <span><i class="fa-solid fa-clock mr-1"></i> 4 min read</span>
                 </div>
-                <a href="#" class="text-[9px] tracking-[0.2em] text-charcoal/50 hover:text-soft-gold transition-colors">CONTINUE READING →</a>
+                <a href="{{ route('journal') }}" class="text-[9px] tracking-[0.2em] text-charcoal/50 hover:text-soft-gold transition-colors">CONTINUE READING →</a>
             </div>
 
             <!-- Article 3 -->
@@ -187,7 +190,7 @@
                     <span><i class="fa-solid fa-calendar mr-1"></i> March 15, 2026</span>
                     <span><i class="fa-solid fa-clock mr-1"></i> 7 min read</span>
                 </div>
-                <a href="#" class="text-[9px] tracking-[0.2em] text-charcoal/50 hover:text-soft-gold transition-colors">CONTINUE READING →</a>
+                <a href="{{ route('journal') }}" class="text-[9px] tracking-[0.2em] text-charcoal/50 hover:text-soft-gold transition-colors">CONTINUE READING →</a>
             </div>
 
             <!-- Article 4 -->
@@ -202,7 +205,7 @@
                     <span><i class="fa-solid fa-calendar mr-1"></i> March 5, 2026</span>
                     <span><i class="fa-solid fa-clock mr-1"></i> 6 min read</span>
                 </div>
-                <a href="#" class="text-[9px] tracking-[0.2em] text-charcoal/50 hover:text-soft-gold transition-colors">CONTINUE READING →</a>
+                <a href="{{ route('journal') }}" class="text-[9px] tracking-[0.2em] text-charcoal/50 hover:text-soft-gold transition-colors">CONTINUE READING →</a>
             </div>
 
             <!-- Article 5 -->
@@ -217,7 +220,7 @@
                     <span><i class="fa-solid fa-calendar mr-1"></i> February 18, 2026</span>
                     <span><i class="fa-solid fa-clock mr-1"></i> 5 min read</span>
                 </div>
-                <a href="#" class="text-[9px] tracking-[0.2em] text-charcoal/50 hover:text-soft-gold transition-colors">CONTINUE READING →</a>
+                <a href="{{ route('journal') }}" class="text-[9px] tracking-[0.2em] text-charcoal/50 hover:text-soft-gold transition-colors">CONTINUE READING →</a>
             </div>
 
             <!-- Article 6 -->
@@ -232,7 +235,7 @@
                     <span><i class="fa-solid fa-calendar mr-1"></i> February 3, 2026</span>
                     <span><i class="fa-solid fa-clock mr-1"></i> 6 min read</span>
                 </div>
-                <a href="#" class="text-[9px] tracking-[0.2em] text-charcoal/50 hover:text-soft-gold transition-colors">CONTINUE READING →</a>
+                <a href="{{ route('journal') }}" class="text-[9px] tracking-[0.2em] text-charcoal/50 hover:text-soft-gold transition-colors">CONTINUE READING →</a>
             </div>
 
         </div>
@@ -289,7 +292,9 @@
         const mobileMenu = document.getElementById('mobile-menu'), menuOverlay = document.getElementById('menu-overlay');
         const openMenu = () => { mobileMenu.classList.add('open'); menuOverlay.classList.remove('hidden'); document.body.style.overflow='hidden'; };
         const closeMenu = () => { mobileMenu.classList.remove('open'); menuOverlay.classList.add('hidden'); document.body.style.overflow=''; };
-        openBtn.addEventListener('click', openMenu); closeBtn.addEventListener('click', closeMenu); menuOverlay.addEventListener('click', closeMenu);
+        if (openBtn) openBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
 
         // Category filtering
         const categoryBtns = document.querySelectorAll('.category-btn');
@@ -325,10 +330,38 @@
         reveals.forEach(el => obs.observe(el));
 
         // Load more (demo)
-        let loaded = 6;
-        document.getElementById('load-more').addEventListener('click', () => {
-            alert('In production, this would load the next 6 articles from your CMS.');
-        });
+        const loadMoreButton = document.getElementById('load-more');
+        if (loadMoreButton) {
+            loadMoreButton.addEventListener('click', () => {
+                // Reserved for future pagination behavior.
+            });
+        }
+
+        async function updateHeaderCounts() {
+            try {
+                const [cartResponse, wishlistResponse] = await Promise.all([
+                    fetch('/api/cart/count'),
+                    fetch('/api/wishlist/count'),
+                ]);
+                const cartData = await cartResponse.json();
+                const wishlistData = await wishlistResponse.json();
+
+                const cartCount = document.getElementById('cart-count');
+                const wishlistCount = document.getElementById('wishlist-count');
+                if (cartCount) {
+                    cartCount.textContent = cartData.count ?? 0;
+                }
+                if (wishlistCount) {
+                    wishlistCount.textContent = wishlistData.count ?? 0;
+                }
+            } catch (error) {
+                console.error('Unable to update header counts', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', updateHeaderCounts);
     </script>
+
+    @include('partials.cart-drawer')
 </body>
 </html>

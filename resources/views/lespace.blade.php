@@ -104,11 +104,13 @@
 
             <div class="border-b border-charcoal/10 pb-6">
                 <p class="text-warm-gray text-[9px] tracking-[0.2em] uppercase mb-2">Bienvenue,</p>
-                <h1 class="font-playfair text-3xl">Julianne</h1>
+                <h1 class="font-playfair text-3xl">{{ $user->name }}</h1>
+                @if($user->is_gold_circle ?? false)
                 <div class="mt-3 inline-flex items-center gap-2 bg-soft-gold/10 px-3 py-1.5 rounded-full">
                     <i class="fa-solid fa-crown text-soft-gold text-[10px]"></i>
                     <span class="text-[9px] tracking-[0.15em] font-jost text-charcoal/70">GOLD CIRCLE MEMBER</span>
                 </div>
+                @endif
             </div>
 
             <nav class="side-nav flex flex-col gap-5 text-[10px] tracking-[0.3em] uppercase">
@@ -118,7 +120,10 @@
                 <a href="#commissions" class="text-charcoal/40">Bespoke Commissions</a>
                 <a href="#wishlist" class="text-charcoal/40">Wishlist</a>
                 <a href="#profile" class="text-charcoal/40">Profile</a>
-                <a href="#" class="text-charcoal/40 mt-6">Logout</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="text-charcoal/40 mt-6 text-left">Logout</button>
+                </form>
             </nav>
         </aside>
 
@@ -127,69 +132,107 @@
         <main class="flex-1 space-y-16" id="dashboard">
 
             <!-- ─── CONSULTANT CARD ─── -->
+            @if($upcomingAppointments->isNotEmpty())
             <section class="flex flex-col md:flex-row gap-8 p-6 bg-deep-ivory">
                 <div class="flex-1">
-                    <p class="text-soft-gold text-[9px] tracking-[0.2em] uppercase mb-2">Your Personal Consultant</p>
-                    <h2 class="font-playfair text-xl mb-3">Isabelle Fournier</h2>
+                    <p class="text-soft-gold text-[9px] tracking-[0.2em] uppercase mb-2">Next Appointment</p>
+                    <h2 class="font-playfair text-xl mb-3">{{ $upcomingAppointments->first()->type === 'virtual' ? 'Virtual Consultation' : 'In-Person Meeting' }}</h2>
                     <p class="text-warm-gray text-xs font-light leading-relaxed mb-4">
-                        Available to assist with any question — from sizing to bespoke commissions. Gold Circle members receive priority response within 4 hours during Paris business hours.
+                        @if($upcomingAppointments->first()->consultant)
+                        with {{ $upcomingAppointments->first()->consultant->name }}
+                        @endif
+                        on {{ $upcomingAppointments->first()->scheduled_at->format('F j, Y \a\t g:i A') }}
                     </p>
+                    @if($upcomingAppointments->first()->notes)
+                    <p class="text-[9px] text-charcoal/60 font-light mb-4">{{ $upcomingAppointments->first()->notes }}</p>
+                    @endif
                     <div class="flex flex-wrap gap-4">
-                        <a href="mailto:isabelle.fournier@lumiere.com" class="text-[10px] tracking-[0.15em] text-soft-gold border-b border-soft-gold/30 pb-0.5 hover:border-soft-gold transition-all">EMAIL ISABELLE</a>
-                        <a href="tel:+33140000000" class="text-[10px] tracking-[0.15em] text-soft-gold border-b border-soft-gold/30 pb-0.5 hover:border-soft-gold transition-all">CALL +33 1 40 00 00 00</a>
+                        <button type="button" class="text-[10px] tracking-[0.15em] text-soft-gold border-b border-soft-gold/30 pb-0.5 hover:border-soft-gold transition-all">RESCHEDULE</button>
+                        <button type="button" class="text-[10px] tracking-[0.15em] text-soft-gold border-b border-soft-gold/30 pb-0.5 hover:border-soft-gold transition-all">JOIN MEETING</button>
                     </div>
                 </div>
                 <div class="flex-shrink-0">
                     <div class="consultant-avatar">
+                        @if($upcomingAppointments->first()->consultant)
                         <i class="fa-solid fa-user text-2xl text-charcoal/20"></i>
+                        @else
+                        <i class="fa-solid fa-video text-2xl text-charcoal/20"></i>
+                        @endif
                     </div>
-                    <p class="text-[8px] text-warm-gray/50 font-jost mt-2 text-center">Paris · GMT+2</p>
+                    <p class="text-[8px] text-warm-gray/50 font-jost mt-2 text-center">
+                        {{ $upcomingAppointments->first()->type === 'virtual' ? 'Online' : 'Paris' }}
+                    </p>
                 </div>
             </section>
+            @else
+            <section class="flex flex-col md:flex-row gap-8 p-6 bg-deep-ivory">
+                <div class="flex-1">
+                    <p class="text-soft-gold text-[9px] tracking-[0.2em] uppercase mb-2">Book a Consultation</p>
+                    <h2 class="font-playfair text-xl mb-3">Personal Styling Session</h2>
+                    <p class="text-warm-gray text-xs font-light leading-relaxed mb-4">
+                        Our expert consultants are available to help you find the perfect piece or discuss your bespoke commission ideas.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <button type="button" class="text-[10px] tracking-[0.15em] text-soft-gold border-b border-soft-gold/30 pb-0.5 hover:border-soft-gold transition-all">BOOK VIRTUAL</button>
+                        <button type="button" class="text-[10px] tracking-[0.15em] text-soft-gold border-b border-soft-gold/30 pb-0.5 hover:border-soft-gold transition-all">BOOK IN-PERSON</button>
+                    </div>
+                </div>
+                <div class="flex-shrink-0">
+                    <div class="consultant-avatar">
+                        <i class="fa-solid fa-calendar text-2xl text-charcoal/20"></i>
+                    </div>
+                    <p class="text-[8px] text-warm-gray/50 font-jost mt-2 text-center">Available Daily</p>
+                </div>
+            </section>
+            @endif
 
 
             <!-- ─── THE VAULT ─── -->
             <section id="vault">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="font-playfair text-xl">The Vault</h2>
-                    <a href="#" class="text-[9px] tracking-[0.15em] text-soft-gold hover:underline">VIEW ALL</a>
+                    <a href="{{ route('profile.orders') }}" class="text-[9px] tracking-[0.15em] text-soft-gold hover:underline">VIEW ALL</a>
                 </div>
                 <div class="grid md:grid-cols-2 gap-6">
+                    @forelse($treasures as $treasure)
                     <div class="bg-white p-5 flex gap-5 group vault-card">
                         <div class="w-24 h-24 bg-deep-ivory overflow-hidden flex-shrink-0">
-                            <img src="https://images.unsplash.com/photo-1611652022419-a9419f74343d?q=80&w=400&auto=format&fit=crop" class="vault-img w-full h-full object-cover" alt="Celestial Ring">
+                            @if($treasure->product && $treasure->product->image)
+                            <img src="{{ asset($treasure->product->image) }}" class="vault-img w-full h-full object-cover" alt="{{ $treasure->product->name }}">
+                            @else
+                            <div class="w-full h-full bg-deep-ivory flex items-center justify-center">
+                                <i class="fa-solid fa-gem text-charcoal/20"></i>
+                            </div>
+                            @endif
                         </div>
                         <div class="flex-1">
-                            <h3 class="font-playfair text-base mb-0.5">Celestial Ring</h3>
-                            <p class="text-[9px] text-warm-gray font-jost mb-2">Sapphire & Diamond · 18k White Gold</p>
-                            <p class="text-[8px] font-mono text-charcoal/40 mb-3">SN: LM-CR-8842-01</p>
+                            <h3 class="font-playfair text-base mb-0.5">{{ $treasure->product->name ?? 'Treasure' }}</h3>
+                            <p class="text-[9px] text-warm-gray font-jost mb-2">{{ $treasure->product->description ?? 'Custom Piece' }}</p>
+                            <p class="text-[8px] font-mono text-charcoal/40 mb-3">SN: {{ $treasure->serial_number ?? 'LM-' . $treasure->id }}</p>
                             <div class="flex gap-4">
-                                <a href="#" class="text-[9px] tracking-[0.1em] text-soft-gold hover:underline">VIEW CERTIFICATE →</a>
-                                <a href="#" class="text-[9px] tracking-[0.1em] text-charcoal/40 hover:text-charcoal transition-colors">CARE GUIDE</a>
+                                @if($treasure->certificate_path)
+                                <a href="{{ asset($treasure->certificate_path) }}" class="text-[9px] tracking-[0.1em] text-soft-gold hover:underline">VIEW CERTIFICATE →</a>
+                                @endif
+                                <button type="button" class="text-[9px] tracking-[0.1em] text-charcoal/40 hover:text-charcoal transition-colors">CARE GUIDE</button>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white p-5 flex gap-5 group vault-card">
-                        <div class="w-24 h-24 bg-deep-ivory overflow-hidden flex-shrink-0">
-                            <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=400&auto=format&fit=crop" class="vault-img w-full h-full object-cover" alt="Solitaire Pendant">
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-playfair text-base mb-0.5">Solitaire Pendant</h3>
-                            <p class="text-[9px] text-warm-gray font-jost mb-2">Diamond · 18k Yellow Gold</p>
-                            <p class="text-[8px] font-mono text-charcoal/40 mb-3">SN: LM-SP-7123-02</p>
-                            <div class="flex gap-4">
-                                <a href="#" class="text-[9px] tracking-[0.1em] text-soft-gold hover:underline">VIEW CERTIFICATE →</a>
-                                <a href="#" class="text-[9px] tracking-[0.1em] text-charcoal/40 hover:text-charcoal transition-colors">CARE GUIDE</a>
-                            </div>
-                        </div>
+                    @empty
+                    <div class="bg-white p-5 text-center text-warm-gray text-xs">
+                        <i class="fa-solid fa-gem text-charcoal/20 mb-2"></i>
+                        <p>Your vault is empty. Start your collection with a piece from our shop.</p>
                     </div>
+                    @endforelse
                 </div>
             </section>
 
 
             <!-- ─── ACTIVE ORDERS ─── -->
             <section id="orders">
-                <h2 class="font-playfair text-xl mb-6">Active Orders</h2>
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="font-playfair text-xl">Active Orders</h2>
+                    <a href="{{ route('profile.orders') }}" class="text-[9px] tracking-[0.15em] text-soft-gold hover:underline">VIEW ALL</a>
+                </div>
                 <div class="bg-white border border-charcoal/5 overflow-x-auto">
                     <table class="w-full text-left">
                         <thead class="border-b border-charcoal/5 text-[9px] tracking-widest uppercase text-warm-gray">
@@ -202,20 +245,31 @@
                             </tr>
                         </thead>
                         <tbody class="text-xs font-light">
+                            @forelse($recentOrders as $order)
                             <tr class="border-b border-charcoal/5">
-                                <td class="p-5 font-mono text-[10px]">#LM-88902</td>
-                                <td class="p-5">April 12, 2026</td>
-                                <td class="p-5"><span class="status-badge status-shipped">SHIPPED</span></td>
-                                <td class="p-5">$4,500.00</td>
-                                <td class="p-5"><a href="#" class="text-[9px] text-soft-gold hover:underline">TRACK →</a></td>
+                                <td class="p-5 font-mono text-[10px]">#LM-{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</td>
+                                <td class="p-5">{{ $order->created_at->format('F j, Y') }}</td>
+                                <td class="p-5">
+                                    <span class="status-badge {{ $order->status === 'shipped' ? 'status-shipped' : 'status-processing' }}">
+                                        {{ strtoupper($order->status) }}
+                                    </span>
+                                </td>
+                                <td class="p-5">${{ number_format($order->total, 2) }}</td>
+                                <td class="p-5">
+                                    @if($order->status === 'shipped' && $order->tracking_number)
+                                    <a href="{{ route('profile.orders') }}" class="text-[9px] text-soft-gold hover:underline">TRACK →</a>
+                                    @else
+                                    <span class="text-[9px] text-warm-gray">{{ $order->estimated_delivery ? 'Est. ' . $order->estimated_delivery->format('M j') : 'Processing' }}</span>
+                                    @endif
+                                </td>
                             </tr>
+                            @empty
                             <tr>
-                                <td class="p-5 font-mono text-[10px]">#LM-89123</td>
-                                <td class="p-5">April 5, 2026</td>
-                                <td class="p-5"><span class="status-badge status-processing">IN PRODUCTION</span></td>
-                                <td class="p-5">$2,100.00</td>
-                                <td class="p-5"><span class="text-[9px] text-warm-gray">Est. May 15</span></td>
+                                <td colspan="5" class="p-5 text-center text-warm-gray text-xs">
+                                    No active orders
+                                </td>
                             </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -228,31 +282,52 @@
                     <h2 class="font-playfair text-xl">Bespoke Commission</h2>
                     <a href="{{ route('bespoke') }}" class="text-[9px] tracking-[0.15em] text-soft-gold hover:underline">NEW COMMISSION</a>
                 </div>
+                @forelse($bespokeProjects as $project)
                 <div class="bg-white p-6 gold-circle-border">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
                         <div>
                             <p class="text-[9px] tracking-[0.2em] text-soft-gold uppercase mb-1">ACTIVE COMMISSION</p>
-                            <h3 class="font-playfair text-lg">Custom Engagement Ring</h3>
-                            <p class="text-warm-gray text-xs font-light mt-1">3.2ct Sapphire · 18k Rose Gold · Pavé Diamonds</p>
+                            <h3 class="font-playfair text-lg">{{ $project->project_title }}</h3>
+                            <p class="text-warm-gray text-xs font-light mt-1">
+                                @if($project->consultant)
+                                Consultant: {{ $project->consultant->name }}
+                                @endif
+                            </p>
                         </div>
                         <div class="md:text-right flex-shrink-0">
-                            <p class="text-[10px] font-jost text-charcoal">Expected: <span class="font-medium">June 12, 2026</span></p>
-                            <p class="text-[9px] text-soft-gold mt-1">Stage 2 of 6: Wax Model Approved</p>
+                            <p class="text-[10px] font-jost text-charcoal">Current: <span class="font-medium">{{ ucfirst($project->current_step) }}</span></p>
+                            <p class="text-[9px] text-soft-gold mt-1">Started: {{ $project->created_at->format('F j, Y') }}</p>
                         </div>
                     </div>
                     <!-- Progress bar -->
                     <div class="h-1 bg-charcoal/5 rounded-full overflow-hidden mb-3">
-                        <div class="h-full bg-soft-gold rounded-full transition-all duration-700" style="width: 33%;"></div>
+                        <?php
+                        $steps = ['consultation', 'design', 'casting', 'setting', 'quality_control', 'delivery'];
+                        $currentStep = array_search($project->current_step, $steps);
+                        $progress = ($currentStep + 1) / count($steps) * 100;
+                        ?>
+                        <div class="h-full bg-soft-gold rounded-full transition-all duration-700" style="width: {{ $progress }}%;"></div>
                     </div>
                     <div class="flex justify-between text-[8px] tracking-[0.08em] text-warm-gray">
-                        <span>Consult</span>
-                        <span class="text-soft-gold font-medium">Design <i class="fa-solid fa-check text-[8px]"></i></span>
-                        <span>Casting</span>
-                        <span>Setting</span>
-                        <span>QC</span>
-                        <span>Delivery</span>
+                        @foreach($steps as $index => $step)
+                        <span class="{{ $index <= $currentStep ? 'text-soft-gold font-medium' : '' }}">
+                            {{ ucfirst($step) }}
+                            @if($index < $currentStep)
+                            <i class="fa-solid fa-check text-[8px]"></i>
+                            @endif
+                        </span>
+                        @endforeach
                     </div>
                 </div>
+                @empty
+                <div class="bg-white p-8 text-center text-warm-gray text-xs">
+                    <i class="fa-solid fa-hammer text-charcoal/20 mb-3 text-2xl"></i>
+                    <p class="mb-4">No active bespoke commissions.</p>
+                    <a href="{{ route('bespoke') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-soft-gold text-white text-[9px] tracking-[0.15em] uppercase hover:bg-soft-gold/90 transition-colors">
+                        START A COMMISSION
+                    </a>
+                </div>
+                @endforelse
             </section>
 
 
@@ -268,28 +343,28 @@
                             <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=400&auto=format&fit=crop" class="rec-img w-full h-full object-cover" alt="Signature Diamond Band">
                         </div>
                         <p class="text-[10px] font-playfair mb-0.5">Signature Diamond Band</p>
-                        <p class="text-[9px] text-soft-gold">$4,500</p>
+                        <p class="text-[9px] text-soft-gold">€4,500</p>
                     </div>
                     <div class="rec-card group cursor-pointer">
                         <div class="bg-deep-ivory aspect-square mb-2 overflow-hidden">
                             <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=400&auto=format&fit=crop" class="rec-img w-full h-full object-cover" alt="Knot Signet Ring">
                         </div>
                         <p class="text-[10px] font-playfair mb-0.5">Knot Signet Ring</p>
-                        <p class="text-[9px] text-soft-gold">$1,850</p>
+                        <p class="text-[9px] text-soft-gold">€1,850</p>
                     </div>
                     <div class="rec-card group cursor-pointer">
                         <div class="bg-deep-ivory aspect-square mb-2 overflow-hidden">
                             <img src="https://images.unsplash.com/photo-1602173574767-37ac01994b2a?q=80&w=400&auto=format&fit=crop" class="rec-img w-full h-full object-cover" alt="Diamond Halo Studs">
                         </div>
                         <p class="text-[10px] font-playfair mb-0.5">Diamond Halo Studs</p>
-                        <p class="text-[9px] text-soft-gold">$1,680</p>
+                        <p class="text-[9px] text-soft-gold">€1,680</p>
                     </div>
                     <div class="rec-card group cursor-pointer">
                         <div class="bg-deep-ivory aspect-square mb-2 overflow-hidden">
                             <img src="https://images.unsplash.com/photo-1619856699906-09e1f58c98a1?q=80&w=400&auto=format&fit=crop" class="rec-img w-full h-full object-cover" alt="Akoya Pearl Strand">
                         </div>
                         <p class="text-[10px] font-playfair mb-0.5">Akoya Pearl Strand</p>
-                        <p class="text-[9px] text-soft-gold">$920</p>
+                        <p class="text-[9px] text-soft-gold">€920</p>
                     </div>
                 </div>
             </section>

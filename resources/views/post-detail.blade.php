@@ -45,6 +45,19 @@
     </style>
 </head>
 <body class="bg-cream font-jost text-charcoal overflow-x-hidden">
+    @php
+        $resolveImageUrl = static function (?string $path): ?string {
+            if (! $path) {
+                return null;
+            }
+
+            if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+                return $path;
+            }
+
+            return asset('storage/' . ltrim($path, '/'));
+        };
+    @endphp
 
     <!-- NAV -->
     <nav id="main-nav" class="fixed top-0 left-0 w-full z-50 py-5 px-6 md:px-12 transition-all duration-300">
@@ -97,7 +110,7 @@
             <a href="{{ route('atelier') }}" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold">ATELIER</a>
             <a href="{{ route('journal') }}" class="text-xs tracking-[0.18em] text-soft-gold">JOURNAL</a>
         </div>
-        <div class="mt-auto flex gap-5 text-charcoal/40"><a href="#"><i class="fa-brands fa-instagram text-lg hover:text-soft-gold"></i></a><a href="#"><i class="fa-brands fa-pinterest text-lg hover:text-soft-gold"></i></a></div>
+        <div class="mt-auto flex gap-5 text-charcoal/40"><a href="javascript:void(0)"><i class="fa-brands fa-instagram text-lg hover:text-soft-gold"></i></a><a href="javascript:void(0)"><i class="fa-brands fa-pinterest text-lg hover:text-soft-gold"></i></a></div>
     </div>
     <div id="menu-overlay" class="fixed inset-0 bg-black/30 z-[55] hidden"></div>
 
@@ -120,7 +133,7 @@
                 
                 @if($post->featured_image)
                     <div class="w-full aspect-[16/9] overflow-hidden mb-8">
-                        <img src="{{ $post->featured_image }}" alt="{{ $post->title }}" class="w-full h-full object-cover">
+                        <img src="{{ $resolveImageUrl($post->featured_image) }}" alt="{{ $post->title }}" class="w-full h-full object-cover">
                     </div>
                 @endif
             </header>
@@ -140,10 +153,10 @@
                     <div class="text-center md:text-left">
                         <p class="text-[10px] tracking-[0.3em] text-soft-gold mb-2">SHARE THIS STORY</p>
                         <div class="flex gap-4">
-                            <a href="#" class="text-charcoal/60 hover:text-soft-gold transition-colors"><i class="fa-brands fa-pinterest"></i></a>
-                            <a href="#" class="text-charcoal/60 hover:text-soft-gold transition-colors"><i class="fa-brands fa-facebook"></i></a>
-                            <a href="#" class="text-charcoal/60 hover:text-soft-gold transition-colors"><i class="fa-brands fa-twitter"></i></a>
-                            <a href="#" class="text-charcoal/60 hover:text-soft-gold transition-colors"><i class="fa-solid fa-envelope"></i></a>
+                            <a href="javascript:void(0)" class="text-charcoal/60 hover:text-soft-gold transition-colors"><i class="fa-brands fa-pinterest"></i></a>
+                            <a href="javascript:void(0)" class="text-charcoal/60 hover:text-soft-gold transition-colors"><i class="fa-brands fa-facebook"></i></a>
+                            <a href="javascript:void(0)" class="text-charcoal/60 hover:text-soft-gold transition-colors"><i class="fa-brands fa-twitter"></i></a>
+                            <a href="javascript:void(0)" class="text-charcoal/60 hover:text-soft-gold transition-colors"><i class="fa-solid fa-envelope"></i></a>
                         </div>
                     </div>
                     
@@ -167,11 +180,11 @@
                 
                 <div class="grid md:grid-cols-3 gap-12">
                     @foreach($relatedPosts as $relatedPost)
-                        <div class="group reveal" style="animation-delay: {{ $loop->index * 0.1 }}s;">
+                        <div class="group reveal">
                             <a href="{{ route('post.show', $relatedPost->slug) }}">
                                 @if($relatedPost->featured_image)
                                     <div class="aspect-[4/3] overflow-hidden mb-6">
-                                        <img src="{{ $relatedPost->featured_image }}" alt="{{ $relatedPost->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                        <img src="{{ $resolveImageUrl($relatedPost->featured_image) }}" alt="{{ $relatedPost->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                                     </div>
                                 @endif
                                 <p class="text-[9px] tracking-[0.3em] text-soft-gold mb-3">{{ strtoupper($relatedPost->category->name ?? 'Uncategorized') }}</p>

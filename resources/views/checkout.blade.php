@@ -241,6 +241,7 @@
             font-weight: 300;
             color: var(--charcoal);
             -webkit-appearance: none;
+            appearance: none;
             cursor: pointer;
         }
         .lux-select option { background: var(--cream); }
@@ -799,7 +800,7 @@
 
 <!-- NAV -->
 <nav>
-    <a href="lumiere.html" class="nav-logo">LUMIÈRE</a>
+    <a href="{{ route('home') }}" class="nav-logo">LUMIÈRE</a>
     <div class="nav-secure">
         <i class="fa-solid fa-lock-keyhole"></i>
         SECURE CHECKOUT
@@ -831,8 +832,8 @@
             ORDER REFERENCE &nbsp;·&nbsp; <strong id="order-ref">LM-2026-0847</strong>
         </div>
         <div class="confirm-actions">
-            <a href="lumiere.html" class="btn-outline-dark">RETURN TO LUMIÈRE</a>
-            <a href="#" class="btn-outline-dark" style="background:var(--gold);color:#fff;border-color:var(--gold);">TRACK MY ORDER</a>
+            <a href="{{ route('home') }}" class="btn-outline-dark">RETURN TO LUMIÈRE</a>
+            <a href="{{ route('profile.show') }}" class="btn-outline-dark" style="background:var(--gold);color:#fff;border-color:var(--gold);">TRACK MY ORDER</a>
         </div>
     </div>
 </div>
@@ -854,6 +855,9 @@
             <span class="crumb" id="crumb-3">PAYMENT</span>
         </div>
 
+        <form id="checkout-form" action="{{ route('checkout.store') }}" method="POST">
+            @csrf
+
         <!-- ── STEP 1: CONTACT ── -->
         <div class="acc-section" id="acc-1">
             <div class="acc-header" id="acc-hdr-1">
@@ -872,14 +876,14 @@
                         <div class="field-group">
                             <label class="field-label">FIRST NAME *</label>
                             <div class="field-wrap">
-                                <input type="text" class="lux-input" id="c-fname" placeholder="Isabelle" autocomplete="given-name">
+                                <input type="text" name="shipping_first_name" class="lux-input" id="c-fname" placeholder="Isabelle" value="{{ explode(' ', $user->name)[0] ?? '' }}" autocomplete="given-name" required>
                             </div>
                             <p class="field-error" id="c-fname-err">Required.</p>
                         </div>
                         <div class="field-group">
                             <label class="field-label">LAST NAME *</label>
                             <div class="field-wrap">
-                                <input type="text" class="lux-input" id="c-lname" placeholder="Moreau" autocomplete="family-name">
+                                <input type="text" name="shipping_last_name" class="lux-input" id="c-lname" placeholder="Moreau" value="{{ explode(' ', $user->name)[1] ?? '' }}" autocomplete="family-name" required>
                             </div>
                             <p class="field-error" id="c-lname-err">Required.</p>
                         </div>
@@ -888,7 +892,7 @@
                         <label class="field-label">EMAIL ADDRESS *</label>
                         <div class="field-wrap">
                             <i class="fa-regular fa-envelope"></i>
-                            <input type="email" class="lux-input" id="c-email" placeholder="you@example.com" autocomplete="email">
+                            <input type="email" name="email" class="lux-input" id="c-email" placeholder="you@example.com" value="{{ $user->email }}" autocomplete="email" readonly>
                         </div>
                         <p class="field-error" id="c-email-err">Please enter a valid email.</p>
                     </div>
@@ -941,7 +945,7 @@
                         <label class="field-label">ADDRESS LINE 1 *</label>
                         <div class="field-wrap">
                             <i class="fa-regular fa-location-dot"></i>
-                            <input type="text" class="lux-input" id="s-addr1" placeholder="12 Rue de la Paix" autocomplete="address-line1">
+                            <input type="text" name="shipping_address" class="lux-input" id="s-addr1" placeholder="12 Rue de la Paix" value="{{ $addresses->first()?->address ?? '' }}" autocomplete="address-line1" required>
                         </div>
                         <p class="field-error" id="s-addr1-err">Required.</p>
                     </div>
@@ -949,21 +953,21 @@
                         <label class="field-label">ADDRESS LINE 2</label>
                         <div class="field-wrap">
                             <i class="fa-regular fa-building"></i>
-                            <input type="text" class="lux-input" id="s-addr2" placeholder="Apartment, suite, etc." autocomplete="address-line2">
+                            <input type="text" name="shipping_address_line_2" class="lux-input" id="s-addr2" placeholder="Apartment, suite, etc." value="{{ $addresses->first()?->address_line_2 ?? '' }}" autocomplete="address-line2">
                         </div>
                     </div>
                     <div class="grid-2 field-group">
                         <div>
                             <label class="field-label">CITY *</label>
                             <div class="field-wrap">
-                                <input type="text" class="lux-input" id="s-city" placeholder="Paris" autocomplete="address-level2">
+                                <input type="text" name="shipping_city" class="lux-input" id="s-city" placeholder="Paris" value="{{ $addresses->first()?->city ?? '' }}" autocomplete="address-level2" required>
                             </div>
                             <p class="field-error" id="s-city-err">Required.</p>
                         </div>
                         <div>
                             <label class="field-label">POSTAL CODE *</label>
                             <div class="field-wrap">
-                                <input type="text" class="lux-input" id="s-zip" placeholder="75001" autocomplete="postal-code">
+                                <input type="text" name="shipping_postal_code" class="lux-input" id="s-zip" placeholder="75001" value="{{ $addresses->first()?->postal_code ?? '' }}" autocomplete="postal-code" required>
                             </div>
                             <p class="field-error" id="s-zip-err">Required.</p>
                         </div>
@@ -972,9 +976,9 @@
                         <label class="field-label">COUNTRY *</label>
                         <div class="field-wrap">
                             <i class="fa-regular fa-globe"></i>
-                            <select class="lux-select" id="s-country" autocomplete="country">
+                            <select name="shipping_country" class="lux-select" id="s-country" autocomplete="country" required>
                                 <option value="">Select country…</option>
-                                <option value="FR" selected>France</option>
+                                <option value="FR" {{ ($addresses->first()?->country ?? 'FR') == 'FR' ? 'selected' : '' }}>France</option>
                                 <option value="GB">United Kingdom</option>
                                 <option value="DE">Germany</option>
                                 <option value="IT">Italy</option>
@@ -1161,13 +1165,15 @@
                             <span>PLACE ORDER &nbsp;✦</span>
                         </button>
                         <p style="font-size:0.6rem;color:rgba(28,28,28,0.3);letter-spacing:0.1em;text-align:center;margin-top:12px;line-height:1.7;font-weight:300;">
-                            By placing your order you agree to our <a href="#" style="color:var(--gold);text-decoration:none;">Terms of Service</a> and <a href="#" style="color:var(--gold);text-decoration:none;">Privacy Policy</a>.<br>
-                            Your card will be charged <strong id="charge-amount" style="font-weight:400;color:var(--charcoal);">€4,795.00</strong> upon confirmation.
+                            By placing your order you agree to our <a href="javascript:void(0)" style="color:var(--gold);text-decoration:none;" aria-disabled="true">Terms of Service</a> and <a href="javascript:void(0)" style="color:var(--gold);text-decoration:none;" aria-disabled="true">Privacy Policy</a>.<br>
+                            Your card will be charged <strong id="charge-amount" style="font-weight:400;color:var(--charcoal);">€{{ number_format($total, 2) }}</strong> upon confirmation.
                         </p>
                     </div>
                 </div>
             </div>
         </div>
+
+        </form>
 
     </div><!-- /form-panel -->
 
@@ -1179,28 +1185,25 @@
 
         <!-- Items -->
         <div class="order-items">
+            @foreach($cartItems as $item)
             <div class="order-item">
                 <div class="item-img-wrap">
-                    <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=200&auto=format&fit=crop" class="item-img" alt="Signature Ring">
-                    <span class="item-qty">1</span>
+                    <img src="{{ $item->product->images->first()?->image_path ?? 'https://via.placeholder.com/200' }}" class="item-img" alt="{{ $item->product->name }}">
+                    <span class="item-qty">{{ $item->quantity }}</span>
                 </div>
                 <div style="flex:1;">
-                    <div class="item-name">Lumière Signature Ring</div>
-                    <div class="item-variant">18k Gold · Size 52 · Diamond</div>
+                    <div class="item-name">{{ $item->product->name }}</div>
+                    <div class="item-variant">
+                        @if($item->variant)
+                            {{ $item->variant->material }} · {{ $item->variant->size }} @if($item->variant->gemstone) · {{ $item->variant->gemstone }} @endif
+                        @else
+                            Default variant
+                        @endif
+                    </div>
                 </div>
-                <span class="item-price">€4,500</span>
+                <span class="item-price">€{{ number_format(($item->variant?->price ?? $item->product->price) * $item->quantity, 0) }}</span>
             </div>
-            <div class="order-item">
-                <div class="item-img-wrap">
-                    <img src="https://images.unsplash.com/photo-1603561591411-07134e719f5d?q=80&w=200&auto=format&fit=crop" class="item-img" alt="Lotus Earrings">
-                    <span class="item-qty">1</span>
-                </div>
-                <div style="flex:1;">
-                    <div class="item-name">Lotus Drop Earrings</div>
-                    <div class="item-variant">Gold with Pearl</div>
-                </div>
-                <span class="item-price">€890</span>
-            </div>
+            @endforeach
         </div>
 
         <!-- Promo code -->
@@ -1228,7 +1231,7 @@
         <div class="totals" style="margin-top:24px;">
             <div class="total-row">
                 <span class="total-label">SUBTOTAL</span>
-                <span class="total-value" id="t-subtotal">€5,390</span>
+                <span class="total-value" id="t-subtotal">€{{ number_format($subtotal, 0) }}</span>
             </div>
             <div class="total-row" id="t-discount-row" style="display:none;">
                 <span class="total-label">DISCOUNT (10%)</span>
@@ -1244,11 +1247,11 @@
             </div>
             <div class="total-row" style="padding-top:14px;border-top:1px solid var(--border-md);border-bottom:none;">
                 <span class="total-label">VAT (20%)</span>
-                <span class="total-value" id="t-vat">€898</span>
+                <span class="total-value" id="t-vat">€{{ number_format($tax, 0) }}</span>
             </div>
             <div class="total-row grand" style="padding-top:16px;border-top:1px solid var(--border-md);">
                 <span class="total-label">TOTAL</span>
-                <span class="total-value" id="t-total">€5,390</span>
+                <span class="total-value" id="t-total">€{{ number_format($total, 0) }}</span>
             </div>
         </div>
 

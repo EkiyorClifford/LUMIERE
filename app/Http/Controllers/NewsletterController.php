@@ -26,7 +26,15 @@ class NewsletterController extends Controller
         );
 
         if ($subscriber->wasRecentlyCreated) {
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => 'Thank you for subscribing!']);
+            }
+
             return back()->with('newsletter_status', 'Thank you for subscribing!');
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => 'You are already subscribed.']);
         }
 
         return back()->with('newsletter_status', 'You are already subscribed.');

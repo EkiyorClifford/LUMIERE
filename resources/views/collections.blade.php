@@ -351,7 +351,7 @@
                             <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-soft-gold"></span>
                         @endif
                         <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                            <a href="#" class="block px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">My Profile</a>
+                            <a href="{{ route('profile.show') }}" class="block px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">My Profile</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">Sign Out</button>
@@ -397,7 +397,15 @@
     <!-- ══════════════════════════════════
          PAGE HERO
     ══════════════════════════════════ -->
-    <section class="page-hero pt-36 pb-24 px-6 md:px-12">
+    <section class="page-hero pt-36 pb-24 px-6 md:px-12 relative overflow-hidden">
+        <!-- COLLECTION-HERO image as main background (optimized) -->
+        <div class="absolute inset-0 opacity-25 pointer-events-none">
+            <img src="https://i.ibb.co/Gf91fhsV/COLLECTION-HERO.png" alt="COLLECTION HERO" 
+                 class="w-full h-full object-cover object-center"
+                 loading="lazy"
+                 decoding="async">
+        </div>
+        
         <div class="hero-grid-lines"></div>
         <div class="hero-glow"></div>
         <div class="noise-overlay"></div>
@@ -456,9 +464,11 @@
             <!-- ── L'ÉCLAT — Full width feature ── -->
             <div class="reveal mb-6">
                 <div class="collection-hero-card rounded-sm" style="height: 600px;">
-                    <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=2187&auto=format&fit=crop"
+                    <img src="{{asset('images/diamond_bracelet_paris_night.png')}}"
                          alt="L'Éclat — Diamond Collection"
-                         class="hero-img w-full h-full object-cover absolute inset-0">
+                         class="hero-img w-full h-full object-cover absolute inset-0"
+                         loading="lazy"
+                         decoding="async">
                     <div class="card-overlay absolute inset-0"></div>
 
                     <!-- Number watermark -->
@@ -477,8 +487,8 @@
                             </div>
                             <div class="flex flex-col items-start md:items-end gap-4 shrink-0">
                                 <p class="text-white/40 text-xs font-jost tracking-wide">Starting from</p>
-                                <p class="font-playfair text-3xl text-white font-light">$2,800</p>
-                                <a href="#" class="explore-btn btn-outline-white inline-block px-8 py-3 text-[10px] tracking-[0.25em] font-jost font-light">
+                                <p class="font-playfair text-3xl text-white font-light">€2,800</p>
+                                <a href="{{ route('collections.show', 'leclat') }}" class="explore-btn btn-outline-white inline-block px-8 py-3 text-[10px] tracking-[0.25em] font-jost font-light">
                                     <span>EXPLORE COLLECTION</span>
                                 </a>
                             </div>
@@ -494,9 +504,11 @@
                 <!-- L'OR -->
                 <div class="reveal reveal-delay-1">
                     <div class="split-card rounded-sm" style="height: 480px;">
-                        <img src="https://images.unsplash.com/photo-1602751584552-8ba73aad9250?q=80&w=2187&auto=format&fit=crop"
+                        <img src="{{asset('images/gold_campaign_model_golden_hour.png')}}"
                              alt="L'Or — Gold Collection"
-                             class="split-img w-full h-full object-cover absolute inset-0">
+                             class="split-img w-full h-full object-cover absolute inset-0"
+                             loading="lazy"
+                             decoding="async"> 
                         <div class="split-overlay absolute inset-0"></div>
                         <span style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:300; color:rgba(201,168,76,0.3); font-size:4rem; line-height:1;" class="absolute top-5 right-6 pointer-events-none transition-colors duration-400">02</span>
 
@@ -508,9 +520,9 @@
                                 Pure warmth in every form. Sculpted in 18k and 22k gold by master artisans who have spent lifetimes understanding the metal's temperament.
                             </p>
                             <div class="flex items-center justify-between">
-                                <p class="font-playfair text-2xl text-white font-light">From $1,200</p>
-                                <a href="#" class="explore-btn text-[10px] tracking-[0.2em] font-jost text-soft-gold hover:text-gold-light transition-colors duration-300 flex items-center gap-2">
-                                    EXPLORE <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                <p class="font-playfair text-2xl text-white font-light">From €1,200</p>
+                                <a href="{{ route('collections.show', 'lor') }}" class="explore-btn btn-outline-white inline-block px-6 py-2.5 text-[10px] tracking-[0.22em] font-jost font-light">
+                                    <span>EXPLORE COLLECTION</span>
                                 </a>
                             </div>
                         </div>
@@ -520,9 +532,11 @@
                 <!-- LA PERLE -->
                 <div class="reveal reveal-delay-2">
                     <div class="split-card rounded-sm" style="height: 480px;">
-                        <img src="https://images.unsplash.com/photo-1619856699906-09e1f58c98a1?q=80&w=2070&auto=format&fit=crop"
+                        <img src="{{asset('images/pearl_campaign_model.png')}}"
                              alt="La Perle — Pearl Collection"
-                             class="split-img w-full h-full object-cover absolute inset-0">
+                             class="split-img w-full h-full object-cover absolute inset-0"
+                             loading="lazy"
+                             decoding="async">
                         <div class="split-overlay absolute inset-0"></div>
                         <span style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:300; color:rgba(201,168,76,0.3); font-size:4rem; line-height:1;" class="absolute top-5 right-6 pointer-events-none">03</span>
 
@@ -534,9 +548,9 @@
                                 The ocean's quiet luxury. South Sea and Akoya pearls, sourced from sustainable farms, set in gold to frame their natural luminescence.
                             </p>
                             <div class="flex items-center justify-between">
-                                <p class="font-playfair text-2xl text-white font-light">From $900</p>
-                                <a href="#" class="explore-btn text-[10px] tracking-[0.2em] font-jost text-soft-gold hover:text-gold-light transition-colors duration-300 flex items-center gap-2">
-                                    EXPLORE <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                <p class="font-playfair text-2xl text-white font-light">From €900</p>
+                                <a href="{{ route('collections.show', 'la-perle') }}" class="explore-btn btn-outline-white inline-block px-6 py-2.5 text-[10px] tracking-[0.22em] font-jost font-light">
+                                    <span>EXPLORE COLLECTION</span>
                                 </a>
                             </div>
                         </div>
@@ -547,25 +561,25 @@
 
             <!-- ── LA NUIT — Coming soon ── -->
             <div class="reveal reveal-delay-3">
-                <div class="coming-soon-card rounded-sm" style="height: 240px;">
+                <div class="coming-soon-card rounded-sm min-h-[300px] md:min-h-[240px]">
                     <div class="noise-overlay" style="opacity:0.04;"></div>
-                    <div class="relative z-10 h-full flex flex-col md:flex-row items-center justify-between px-10 md:px-16 py-10 gap-8">
-                        <div>
-                            <span class="coming-soon-badge font-jost mb-5 block w-fit">COMING SOON</span>
-                            <p class="text-white/25 text-[10px] tracking-[0.3em] mb-2 font-jost font-light">DARK STONES COLLECTION</p>
-                            <h2 class="font-playfair text-4xl md:text-5xl font-light text-white/80 tracking-tight">LA NUIT</h2>
+                    <div class="relative z-10 h-full flex flex-col md:flex-row items-center justify-between px-8 md:px-16 py-12 md:py-10 gap-6 md:gap-8">
+                        <div class="text-center md:text-left">
+                            <span class="coming-soon-badge font-jost mb-4 md:mb-5 block w-fit">COMING SOON</span>
+                            <p class="text-white/25 text-[9px] md:text-[10px] tracking-[0.3em] mb-2 font-jost font-light">DARK STONES COLLECTION</p>
+                            <h2 class="font-playfair text-3xl md:text-4xl lg:text-5xl font-light text-white/80 tracking-tight">LA NUIT</h2>
                         </div>
-                        <div class="md:text-right max-w-sm">
-                            <p class="text-white/30 font-jost font-light text-sm leading-relaxed mb-6">
+                        <div class="text-center md:text-right max-w-xs md:max-w-sm">
+                            <p class="text-white/30 font-jost font-light text-[13px] md:text-sm leading-relaxed mb-4 md:mb-6">
                                 Obsidian, black diamond, and midnight sapphire. A collection for those who find beauty in darkness. Arriving 2026.
                             </p>
-                            <button class="text-[10px] tracking-[0.25em] font-jost text-soft-gold/60 hover:text-soft-gold transition-colors duration-300 border-b border-soft-gold/20 hover:border-soft-gold/50 pb-0.5">
+                            <button class="text-[9px] md:text-[10px] tracking-[0.25em] font-jost text-soft-gold/60 hover:text-soft-gold transition-colors duration-300 border-b border-soft-gold/20 hover:border-soft-gold/50 pb-0.5">
                                 NOTIFY ME WHEN AVAILABLE →
                             </button>
                         </div>
                         <!-- Floating ornament -->
-                        <div class="hidden md:block absolute right-10 top-1/2 -translate-y-1/2 animate-float opacity-10">
-                            <span style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:300; color:var(--gold); font-size:9rem; line-height:1;">04</span>
+                        <div class="hidden md:block absolute right-6 md:right-10 top-1/2 -translate-y-1/2 animate-float opacity-10">
+                            <span class="font-cormorant italic font-light text-soft-gold text-[6rem] md:text-[9rem] leading-none">04</span>
                         </div>
                     </div>
                 </div>
@@ -633,7 +647,7 @@
                     <p class="text-warm-gray font-jost font-light text-sm leading-relaxed mb-10">
                         The collections you see here took between eight months and two years to develop. That is not delay — that is the pace of excellence.
                     </p>
-                    <a href="#" class="btn-outline-dark inline-block px-8 py-3.5 text-[11px] tracking-[0.22em] font-jost">
+                    <a href="{{ route('atelier') }}" class="btn-outline-dark inline-block px-8 py-3.5 text-[11px] tracking-[0.22em] font-jost">
                         <span>VISIT THE ATELIER</span>
                     </a>
                 </div>
@@ -657,14 +671,19 @@
             <p class="text-white/40 font-jost font-light text-sm mb-8 leading-relaxed">
                 Join our inner circle and receive early access to new collections, private previews, and bespoke offers.
             </p>
-            <div class="flex gap-0 max-w-sm mx-auto border-b border-white/20 pb-0 mb-5">
-                <input type="email"
-                       placeholder="Your email address"
-                       class="flex-1 py-3 px-1 text-sm font-jost font-light bg-transparent text-white outline-none border-none placeholder-white/25">
-                <button class="text-soft-gold text-[10px] tracking-[0.25em] font-jost font-light hover:text-gold-light transition-colors duration-300 pb-3 pl-4 whitespace-nowrap">
-                    SUBSCRIBE →
-                </button>
-            </div>
+            <form id="newsletter-collections-form" action="{{ route('newsletter') }}" method="POST" class="mb-5">
+                @csrf
+                <input type="hidden" name="source" value="collections">
+                <div class="flex gap-0 max-w-sm mx-auto border-b border-white/20 pb-0">
+                    <input type="email" name="email" required
+                           placeholder="Your email address"
+                           class="flex-1 py-3 px-1 text-sm font-jost font-light bg-transparent text-white outline-none border-none placeholder-white/25">
+                    <button type="submit" class="text-soft-gold text-[10px] tracking-[0.25em] font-jost font-light hover:text-gold-light transition-colors duration-300 pb-3 pl-4 whitespace-nowrap">
+                        SUBSCRIBE →
+                    </button>
+                </div>
+            </form>
+            <p id="newsletter-collections-message" class="hidden text-soft-gold text-xs font-jost mb-4"></p>
             <p class="text-white/20 text-[10px] font-jost tracking-wide">By subscribing, you agree to our Privacy Policy.</p>
         </div>
     </section>
@@ -685,10 +704,10 @@
                 <div>
                     <h4 class="text-white/60 text-[9px] font-jost tracking-[0.3em] mb-5">COLLECTIONS</h4>
                     <ul class="space-y-3">
-                        <li><a href="#" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors duration-300 tracking-wide">L'Éclat — Diamonds</a></li>
-                        <li><a href="#" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors duration-300 tracking-wide">L'Or — Gold</a></li>
-                        <li><a href="#" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors duration-300 tracking-wide">La Perle — Pearls</a></li>
-                        <li><a href="#" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors duration-300 tracking-wide flex items-center gap-2">La Nuit <span class="text-soft-gold/50 text-[9px] tracking-wider">SOON</span></a></li>
+                        <li><a href="{{ route('collections.show', 'leclat') }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors duration-300 tracking-wide">L'Éclat — Diamonds</a></li>
+                        <li><a href="{{ route('collections.show', 'lor') }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors duration-300 tracking-wide">L'Or — Gold</a></li>
+                        <li><a href="{{ route('collections.show', 'la-perle') }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors duration-300 tracking-wide">La Perle — Pearls</a></li>
+                        <li><a href="{{ route('collections') }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors duration-300 tracking-wide flex items-center gap-2">La Nuit <span class="text-soft-gold/50 text-[9px] tracking-wider">SOON</span></a></li>
                     </ul>
                 </div>
                 <div>
@@ -740,9 +759,15 @@
         const overlay = document.getElementById('menu-overlay');
         const openMenu = () => { mobileMenu.classList.add('open'); overlay.classList.remove('hidden'); document.body.style.overflow = 'hidden'; };
         const closeMenu = () => { mobileMenu.classList.remove('open'); overlay.classList.add('hidden'); document.body.style.overflow = ''; };
-        openBtn.addEventListener('click', openMenu);
-        closeBtn.addEventListener('click', closeMenu);
-        overlay.addEventListener('click', closeMenu);
+        if (openBtn) {
+            openBtn.addEventListener('click', openMenu);
+        }
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeMenu);
+        }
+        if (overlay) {
+            overlay.addEventListener('click', closeMenu);
+        }
 
         // Scroll reveal
         const reveals = document.querySelectorAll('.reveal');
@@ -755,19 +780,31 @@
             });
         }, { threshold: 0.12 });
         reveals.forEach(el => observer.observe(el));
+
+        const newsletterCollectionsForm = document.getElementById('newsletter-collections-form');
+        if (newsletterCollectionsForm) {
+            newsletterCollectionsForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const response = await fetch(newsletterCollectionsForm.action, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: new FormData(newsletterCollectionsForm),
+                });
+                const data = await response.json();
+                const message = document.getElementById('newsletter-collections-message');
+                if (message) {
+                    message.textContent = data.message ?? 'Thank you for subscribing!';
+                    message.classList.remove('hidden');
+                }
+                newsletterCollectionsForm.classList.add('hidden');
+            });
+        }
     </script>
 
     @include('partials.cart-drawer')
-
-    <script>
-        function toggleCart() {
-            const drawer = document.getElementById('cart-drawer');
-            const overlay = document.getElementById('cart-overlay');
-            drawer.classList.toggle('translate-x-full');
-            overlay.classList.toggle('hidden');
-            setTimeout(() => overlay.classList.toggle('opacity-100'), 10);
-        }
-    </script>
 
 </body>
 </html>

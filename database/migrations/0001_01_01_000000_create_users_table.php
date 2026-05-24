@@ -36,28 +36,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('collections', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->text('description')->nullable();
-            $table->string('cover_image')->nullable();
-            $table->boolean('is_active')->default(true);
-            $table->integer('sort_order')->default(0);
-            $table->timestamps();
-        });
-
-        Schema::create('categories', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->text('description')->nullable();
-            $table->string('icon')->nullable();
-            $table->boolean('is_active')->default(true);
-            $table->integer('sort_order')->default(0);
-            $table->timestamps();
-        });
-
         Schema::create('post_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -96,51 +74,8 @@ return new class extends Migration
         });
 
         // 4. Products (Depends on Collections)
-        Schema::create('products', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->foreignId('collection_id')->nullable()->constrained()->nullOnDelete();
-            $table->enum('category', ['ring', 'necklace', 'bracelet', 'earrings', 'bangle'])->default('bangle');
-            $table->text('description');
-            $table->decimal('price', 10, 2);
-            $table->boolean('is_active')->default(true);
-            $table->string('slug')->unique();
-            $table->integer('sort_order')->default(0);
-            $table->softDeletes();
-            $table->timestamps();
-        });
 
         // 5. Product Metadata
-        Schema::create('product_variants', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->string('label');
-            $table->enum('type', ['size', 'material', 'color'])->default('size');
-            $table->string('value');
-            $table->decimal('price_modifier', 10, 2)->default(0);
-            $table->integer('stock')->default(0);
-            $table->string('sku')->unique();
-            $table->timestamps();
-        });
-
-        Schema::create('product_images', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->string('image_path');
-            $table->boolean('is_primary')->default(false);
-            $table->integer('sort_order')->default(0);
-            $table->timestamps();
-        });
-
-        Schema::create('product_attributes', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->string('key');
-            $table->string('value');
-            $table->string('unit')->nullable();
-            $table->integer('sort_order')->default(0);
-            $table->timestamps();
-        });
 
         // 6. Orders & Commerce
         Schema::create('orders', function (Blueprint $table) {
@@ -161,7 +96,7 @@ return new class extends Migration
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('product_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('product_id')->nullable();
             $table->integer('quantity');
             $table->string('product_name');
             $table->string('variant_label')->nullable();
@@ -173,7 +108,7 @@ return new class extends Migration
         Schema::create('treasures', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('product_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedBigInteger('product_id')->nullable();
             $table->foreignId('order_item_id')->nullable()->constrained()->nullOnDelete();
             $table->string('serial_number')->unique()->nullable();
             $table->string('certificate_path')->nullable();
@@ -226,16 +161,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('reviews', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('product_id')->nullable()->constrained()->nullOnDelete();
-            $table->integer('rating');
-            $table->text('comment')->nullable();
-            $table->boolean('is_approved')->default(false);
-            $table->timestamps();
-        });
-
         // Standard Laravel Session tables
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
@@ -257,7 +182,6 @@ return new class extends Migration
     {
         Schema::dropIfExists('sessions');
         Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('reviews');
         Schema::dropIfExists('shipments');
         Schema::dropIfExists('payments');
         Schema::dropIfExists('appointments');
@@ -265,11 +189,6 @@ return new class extends Migration
         Schema::dropIfExists('treasures');
         Schema::dropIfExists('order_items');
         Schema::dropIfExists('orders');
-        Schema::dropIfExists('product_attributes');
-        Schema::dropIfExists('product_images');
-        Schema::dropIfExists('product_variants');
-        Schema::dropIfExists('products');
-        Schema::dropIfExists('collections');
         Schema::dropIfExists('addresses');
         Schema::dropIfExists('users');
         Schema::dropIfExists('posts');

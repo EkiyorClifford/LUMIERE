@@ -43,7 +43,7 @@
                             <div class="item-quantity">Quantity: {{ $item->quantity }}</div>
                         </div>
                         <div class="item-price">
-                            ${{ number_format($item->price * $item->quantity, 2) }}
+                            €{{ number_format($item->price * $item->quantity, 2) }}
                         </div>
                     </div>
                 @endforeach
@@ -52,7 +52,7 @@
             <div class="order-totals">
                 <div class="total-row">
                     <span>Subtotal</span>
-                    <span>${{ number_format($order->total / 1.08, 2) }}</span>
+                    <span>€{{ number_format($order->total / 1.08, 2) }}</span>
                 </div>
                 <div class="total-row">
                     <span>Shipping</span>
@@ -60,11 +60,11 @@
                 </div>
                 <div class="total-row">
                     <span>Tax</span>
-                    <span>${{ number_format($order->total - ($order->total / 1.08), 2) }}</span>
+                    <span>€{{ number_format($order->total - ($order->total / 1.08), 2) }}</span>
                 </div>
                 <div class="total-row grand">
                     <span>Total</span>
-                    <span>${{ number_format($order->total, 2) }}</span>
+                    <span>€{{ number_format($order->total, 2) }}</span>
                 </div>
             </div>
 

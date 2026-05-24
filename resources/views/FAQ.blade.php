@@ -175,7 +175,7 @@
                     <i class="fa-solid fa-plus faq-icon text-soft-gold text-sm"></i>
                 </div>
                 <div class="faq-answer pt-3">
-                    <p class="text-warm-gray text-sm leading-relaxed">Gold Circle is our loyalty programme for clients who have spent $15,000+ lifetime or completed a bespoke commission. Benefits include a dedicated Paris-based consultant, priority response within 4 hours, complimentary engraving, and first access to limited collections.</p>
+                    <p class="text-warm-gray text-sm leading-relaxed">Gold Circle is our loyalty programme for clients who have spent €15,000+ lifetime or completed a bespoke commission. Benefits include a dedicated Paris-based consultant, priority response within 4 hours, complimentary engraving, and first access to limited collections.</p>
                 </div>
             </div>
 

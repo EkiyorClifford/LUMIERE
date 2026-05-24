@@ -207,7 +207,7 @@
                             <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-soft-gold"></span>
                         @endif
                         <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                            <a href="#" class="block px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">My Profile</a>
+                            <a href="{{ route('profile.show') }}" class="block px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">My Profile</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">Sign Out</button>
@@ -407,16 +407,16 @@
             <div class="grid md:grid-cols-3 gap-8">
                 <div class="group cursor-pointer reveal">
                     <div class="overflow-hidden rounded-sm mb-5" style="height:360px">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop"
-                             alt="Michel Fontaine" class="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105">
+                        <img src="{{asset('images/elderly-female-artisan.png')}}"
+                             alt="Michelle Fontaine" class="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105">
                     </div>
                     <p class="text-soft-gold text-[10px] tracking-[0.3em] mb-1 font-jost">MASTER GOLDSMITH</p>
-                    <h3 class="font-playfair text-xl font-light text-warm-charcoal mb-2">Michel Fontaine</h3>
+                    <h3 class="font-playfair text-xl font-light text-warm-charcoal mb-2">Michelle Fontaine</h3>
                     <p class="text-warm-gray text-xs font-jost font-light leading-relaxed">34 years · Specialises in granulation and repoussé. Trained under the last generation of Parisian guild goldsmiths.</p>
                 </div>
                 <div class="group cursor-pointer reveal" style="transition-delay:.12s">
                     <div class="overflow-hidden rounded-sm mb-5" style="height:360px">
-                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b1a4?q=80&w=600&auto=format&fit=crop"
+                        <img src="{{ asset('images/young-artisan.png') }}"
                              alt="Isabelle Marchand" class="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105">
                     </div>
                     <p class="text-soft-gold text-[10px] tracking-[0.3em] mb-1 font-jost">STONE SETTER</p>
@@ -436,9 +436,19 @@
         </div>
     </section>
 
-    <!-- OUR VALUES — warm and inviting -->
+    <!-- OUR VALUES — virtues image overlay -->
     <section class="py-28 px-6 md:px-12 bg-warm-charcoal relative overflow-hidden">
         <div class="noise-overlay"></div>
+        
+        <!-- Virtues image overlay (optimized) -->
+        <div class="absolute inset-0 opacity-20 pointer-events-none">
+            <img src="{{ asset('images/virtues.webp') }}" 
+                 alt="LUMIÈRE Virtues" 
+                 class="w-full h-full object-cover"
+                 loading="lazy"
+                 decoding="async">
+        </div>
+        
         <div class="absolute right-0 top-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none select-none text-soft-gold text-[18rem] font-cormorant italic">✦</div>
         <div class="relative z-10 max-w-screen-xl mx-auto">
             <div class="text-center mb-16 reveal">
@@ -468,8 +478,17 @@
     </section>
 
     <!-- CONTACT CTA -->
-    <section id="contact" class="py-24 px-6 md:px-12 bg-rose-warm">
-        <div class="max-w-2xl mx-auto text-center reveal">
+    <section id="contact" class="py-24 px-6 md:px-12 bg-rose-warm relative overflow-hidden">
+        <!-- Contact background image overlay (optimized) -->
+        <div class="absolute inset-0 opacity-15 pointer-events-none">
+            <img src="{{ asset('images/contact-background.webp') }}" 
+                 alt="LUMIÈRE Contact" 
+                 class="w-full h-full object-cover"
+                 loading="lazy"
+                 decoding="async">
+        </div>
+        
+        <div class="relative z-10 max-w-2xl mx-auto text-center reveal">
             <p class="text-soft-gold text-[10px] tracking-[0.35em] mb-5 font-jost font-light">GET IN TOUCH</p>
             <h2 class="font-playfair text-4xl md:text-5xl font-light text-warm-charcoal mb-4">We'd love to <span class="font-cormorant italic font-light">hear from you.</span></h2>
             <span class="block w-10 h-px bg-soft-gold mx-auto my-7"></span>
@@ -643,12 +662,13 @@
             }
         });
 
-        visitBackdrop.addEventListener('click', closeVisitModal);
-        visitClose.addEventListener('click', closeVisitModal);
-        successClose.addEventListener('click', closeVisitModal);
+        if (visitBackdrop) visitBackdrop.addEventListener('click', closeVisitModal);
+        if (visitClose) visitClose.addEventListener('click', closeVisitModal);
+        if (successClose) successClose.addEventListener('click', closeVisitModal);
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeVisitModal(); });
 
         // Submit
+        if (visitSubmit) {
         visitSubmit.addEventListener('click', () => {
             const name    = document.getElementById('visit-name').value.trim();
             const email   = document.getElementById('visit-email').value.trim();
@@ -702,18 +722,10 @@
                 visitError.classList.remove('hidden');
             });
         });
+        }
     </script>
 
     @include('partials.cart-drawer')
 
-    <script>
-        function toggleCart() {
-            const drawer = document.getElementById('cart-drawer');
-            const overlay = document.getElementById('cart-overlay');
-            drawer.classList.toggle('translate-x-full');
-            overlay.classList.toggle('hidden');
-            setTimeout(() => overlay.classList.toggle('opacity-100'), 10);
-        }
-    </script>
 </body>
 </html>

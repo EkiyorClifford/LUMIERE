@@ -43,7 +43,7 @@
                                     <p class="item-quantity">Qty: {{ $item->quantity }}</p>
                                 </div>
                                 <div class="item-price">
-                                    ${{ number_format($item->price * $item->quantity, 2) }}
+                                    €{{ number_format($item->price * $item->quantity, 2) }}
                                 </div>
                             </div>
                         @endforeach
@@ -58,14 +58,14 @@
                     <div class="order-footer">
                         <div class="order-total">
                             <span class="total-label">Total:</span>
-                            <span class="total-amount">${{ number_format($order->total, 2) }}</span>
+                            <span class="total-amount">€{{ number_format($order->total, 2) }}</span>
                         </div>
                         <div class="order-actions">
                             <button class="btn-view-order" onclick="toggleOrderDetails('order-details-{{ $order->id }}')">
                                 View Details
                             </button>
                             @if($order->shipment && $order->shipment->tracking_number)
-                                <a href="#" class="btn-track">Track Order</a>
+                                <button type="button" class="btn-track" onclick="toggleOrderDetails('order-details-{{ $order->id }}')">Track Order</button>
                             @endif
                         </div>
                     </div>
@@ -84,7 +84,7 @@
                                         <p>Quantity: {{ $item->quantity }}</p>
                                     </div>
                                     <div class="detail-item-price">
-                                        ${{ number_format($item->price * $item->quantity, 2) }}
+                                        €{{ number_format($item->price * $item->quantity, 2) }}
                                     </div>
                                 </div>
                             @endforeach

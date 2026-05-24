@@ -45,6 +45,19 @@
     </style>
 </head>
 <body class="bg-cream font-jost text-charcoal overflow-x-hidden">
+    @php
+        $resolveImageUrl = static function (?string $path): ?string {
+            if (! $path) {
+                return null;
+            }
+
+            if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+                return $path;
+            }
+
+            return asset('storage/' . ltrim($path, '/'));
+        };
+    @endphp
 
     <!-- NAV -->
     <nav id="main-nav" class="fixed top-0 left-0 w-full z-50 py-5 px-6 md:px-12 transition-all duration-300">
@@ -57,7 +70,7 @@
                 <a href="{{ route('journal') }}" class="nav-link active text-xs tracking-[0.18em] text-charcoal">JOURNAL</a>
             </div>
             <div class="flex items-center gap-5">
-                <button class="text-charcoal/60 hover:text-soft-gold"><i class="fa-regular fa-heart"></i></button>
+                <a href="{{ route('wishlist.index') }}" class="text-charcoal/60 hover:text-soft-gold"><i class="fa-regular fa-heart"></i></a>
                 @auth
                     <div class="relative group">
                         <button class="text-charcoal/60 hover:text-soft-gold flex items-center gap-2">
@@ -78,7 +91,7 @@
                 @else
                     <a href="{{ route('login') }}" class="text-charcoal/60 hover:text-soft-gold text-xs font-jost">Sign In</a>
                 @endauth
-                <button class="text-charcoal/60 hover:text-soft-gold relative">
+                <button onclick="toggleCart()" class="text-charcoal/60 hover:text-soft-gold relative">
                     <i class="fa-regular fa-bag-shopping"></i>
                     @if(session()->has('cart') && count(session('cart')) > 0)
                         <span class="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-soft-gold text-white text-[8px] flex items-center justify-center">{{ count(session('cart')) }}</span>
@@ -129,7 +142,7 @@
             <div class="group cursor-pointer relative overflow-hidden bg-white shadow-sm">
                 <div class="flex flex-col md:flex-row">
                     <div class="w-full md:w-2/3 overflow-hidden aspect-[16/9]">
-                        <img src="{{ $featured->featured_image ?? 'https://images.unsplash.com/photo-1530968033775-2c92736b131e?q=80&w=2071&auto=format&fit=crop' }}" class="article-img w-full h-full object-cover">
+                        <img src="{{ $resolveImageUrl($featured->featured_image) ?? 'https://images.unsplash.com/photo-1530968033775-2c92736b131e?q=80&w=2071&auto=format&fit=crop' }}" class="article-img w-full h-full object-cover">
                     </div>
                     <div class="w-full md:w-1/3 p-10 md:p-12 flex flex-col justify-center">
                         <p class="text-[9px] tracking-[0.3em] text-soft-gold mb-4 uppercase">{{ $featured->category->name }}</p>
@@ -155,7 +168,7 @@
                     <div class="article-card group cursor-pointer reveal">
                         <a href="{{ route('post.show', $post->slug) }}">
                             <div class="overflow-hidden aspect-[4/3] mb-5 bg-charcoal/5">
-                                <img src="{{ $post->featured_image ?? 'https://images.unsplash.com/photo-1582657050916-f91e9bd60ca1?q=80&w=1974&auto=format&fit=crop' }}" class="article-img w-full h-full object-cover">
+                                <img src="{{ $resolveImageUrl($post->featured_image) ?? 'https://images.unsplash.com/photo-1582657050916-f91e9bd60ca1?q=80&w=1974&auto=format&fit=crop' }}" class="article-img w-full h-full object-cover">
                             </div>
                             <p class="text-[9px] tracking-[0.3em] text-soft-gold mb-3 uppercase">{{ $post->category->name }}</p>
                             <h3 class="font-playfair text-xl mb-2 leading-tight group-hover:text-soft-gold transition-colors">{{ $post->title }}</h3>
@@ -219,7 +232,9 @@
         const mobileMenu = document.getElementById('mobile-menu'), menuOverlay = document.getElementById('menu-overlay');
         const openMenu = () => { mobileMenu.classList.add('open'); menuOverlay.classList.remove('hidden'); document.body.style.overflow='hidden'; };
         const closeMenu = () => { mobileMenu.classList.remove('open'); menuOverlay.classList.add('hidden'); document.body.style.overflow=''; };
-        openBtn.addEventListener('click', openMenu); closeBtn.addEventListener('click', closeMenu); menuOverlay.addEventListener('click', closeMenu);
+        if (openBtn) openBtn.addEventListener('click', openMenu);
+        if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+        if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
 
         // Category filtering
         const categoryBtns = document.querySelectorAll('.category-btn');
@@ -255,10 +270,13 @@
         reveals.forEach(el => obs.observe(el));
 
         // Load more (demo)
-        let loaded = 6;
-        document.getElementById('load-more').addEventListener('click', () => {
-            alert('In production, this would load the next 6 articles from your CMS.');
-        });
+        const loadMoreButton = document.getElementById('load-more');
+        if (loadMoreButton) {
+            loadMoreButton.addEventListener('click', () => {
+                // Reserved for future pagination behavior.
+            });
+        }
     </script>
+    @include('partials.cart-drawer')
 </body>
 </html>

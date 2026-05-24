@@ -208,7 +208,7 @@
                         @endif
                     </div>
                     <div class="item-price">
-                        ${{ number_format(($item->variant?->price ?? $item->product?->price ?? 0) * $item->quantity, 2) }}
+                        €{{ number_format(($item->variant?->price ?? $item->product?->price ?? 0) * $item->quantity, 2) }}
                     </div>
                 </div>
             @endforeach
@@ -223,7 +223,7 @@
         <div class="totals">
             <div class="total-row">
                 <span class="total-label">SUBTOTAL</span>
-                <span class="total-value">${{ number_format($subtotal, 2) }}</span>
+                <span class="total-value">€{{ number_format($subtotal, 2) }}</span>
             </div>
             <div class="total-row">
                 <span class="total-label">SHIPPING</span>
@@ -231,11 +231,11 @@
             </div>
             <div class="total-row">
                 <span class="total-label">TAX</span>
-                <span class="total-value">${{ number_format($tax, 2) }}</span>
+                <span class="total-value">€{{ number_format($tax, 2) }}</span>
             </div>
             <div class="total-row grand">
                 <span class="total-label">TOTAL</span>
-                <span class="total-value">${{ number_format($total, 2) }}</span>
+                <span class="total-value">€{{ number_format($total, 2) }}</span>
             </div>
         </div>
 
@@ -280,7 +280,7 @@
         </div>
         <div class="confirm-actions">
             <a href="{{ route('home') }}" class="btn-outline-dark">RETURN TO LUMIÈRE</a>
-            <a href="#" class="btn-outline-dark" style="background:var(--gold);color:#fff;border-color:var(--gold);">TRACK MY ORDER</a>
+            <a href="{{ route('profile.show') }}" class="btn-outline-dark" style="background:var(--gold);color:#fff;border-color:var(--gold);">TRACK MY ORDER</a>
         </div>
     </div>
 </div>
@@ -435,6 +435,7 @@
     font-weight: 300;
     color: var(--charcoal);
     -webkit-appearance: none;
+    appearance: none;
     cursor: pointer;
 }
 

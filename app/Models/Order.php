@@ -2,12 +2,17 @@
 
 namespace App\Models;
 
+use Database\Factories\OrderFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    //
+    /** @use HasFactory<OrderFactory> */
+    use HasFactory;
+
     protected $fillable = ['user_id',
+        'order_number',
         'total',
         'order_status',
         'shipping_full_name',
@@ -27,9 +32,14 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function address()
+    public function orderItems()
     {
-        return $this->belongsTo(Address::class);
+        return $this->hasMany(OrderItem::class);
+    }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class, 'user_id', 'user_id');
     }
 
     public function payment()

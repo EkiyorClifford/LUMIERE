@@ -14,7 +14,8 @@ class Post extends Model
         'excerpt',
         'content',
         'featured_image',
-        'author',
+        'is_published',
+        'volume_label',
         'published_at',
         'post_category_id',
     ];

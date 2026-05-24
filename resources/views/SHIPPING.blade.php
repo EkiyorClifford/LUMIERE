@@ -85,7 +85,7 @@
                         <div class="flex justify-between items-center pb-3 border-b border-charcoal/5">
                             <div>
                                 <p class="text-sm font-medium">White Glove Service</p>
-                                <p class="text-[11px] text-warm-gray">For purchases over $25,000</p>
+                                <p class="text-[11px] text-warm-gray">For purchases over €25,000</p>
                             </div>
                             <p class="text-sm">In-person delivery</p>
                         </div>

@@ -295,7 +295,7 @@
                             <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-soft-gold"></span>
                         @endif
                         <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                            <a href="#" class="block px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">My Profile</a>
+                            <a href="{{ route('profile.show') }}" class="block px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">My Profile</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">Sign Out</button>
@@ -402,7 +402,7 @@
                             <div class="p-4 flex items-center justify-between">
                                 <div>
                                     <p class="font-playfair text-base font-light text-charcoal">Ring</p>
-                                    <p class="text-warm-gray text-[10px] font-jost font-light tracking-wide mt-0.5">From $1,200</p>
+                                    <p class="text-warm-gray text-[10px] font-jost font-light tracking-wide mt-0.5">From €1,200</p>
                                 </div>
                                 <div class="cat-check w-5 h-5 rounded-full bg-soft-gold flex items-center justify-center">
                                     <i class="fa-solid fa-check text-white text-[9px]"></i>
@@ -419,7 +419,7 @@
                             <div class="p-4 flex items-center justify-between">
                                 <div>
                                     <p class="font-playfair text-base font-light text-charcoal">Necklace</p>
-                                    <p class="text-warm-gray text-[10px] font-jost font-light tracking-wide mt-0.5">From $900</p>
+                                    <p class="text-warm-gray text-[10px] font-jost font-light tracking-wide mt-0.5">From €900</p>
                                 </div>
                                 <div class="cat-check w-5 h-5 rounded-full bg-soft-gold flex items-center justify-center">
                                     <i class="fa-solid fa-check text-white text-[9px]"></i>
@@ -436,7 +436,7 @@
                             <div class="p-4 flex items-center justify-between">
                                 <div>
                                     <p class="font-playfair text-base font-light text-charcoal">Earrings</p>
-                                    <p class="text-warm-gray text-[10px] font-jost font-light tracking-wide mt-0.5">From $750</p>
+                                    <p class="text-warm-gray text-[10px] font-jost font-light tracking-wide mt-0.5">From €750</p>
                                 </div>
                                 <div class="cat-check w-5 h-5 rounded-full bg-soft-gold flex items-center justify-center">
                                     <i class="fa-solid fa-check text-white text-[9px]"></i>
@@ -453,7 +453,7 @@
                             <div class="p-4 flex items-center justify-between">
                                 <div>
                                     <p class="font-playfair text-base font-light text-charcoal">Bracelet</p>
-                                    <p class="text-warm-gray text-[10px] font-jost font-light tracking-wide mt-0.5">From $650</p>
+                                    <p class="text-warm-gray text-[10px] font-jost font-light tracking-wide mt-0.5">From €650</p>
                                 </div>
                                 <div class="cat-check w-5 h-5 rounded-full bg-soft-gold flex items-center justify-center">
                                     <i class="fa-solid fa-check text-white text-[9px]"></i>
@@ -610,12 +610,12 @@
                     <div class="mb-10">
                         <div class="flex justify-between items-center mb-4">
                             <p class="text-[10px] tracking-[0.25em] text-charcoal/50 font-jost">BUDGET</p>
-                            <p class="text-soft-gold font-playfair text-lg font-light" id="budget-display">$3,000</p>
+                            <p class="text-soft-gold font-playfair text-lg font-light" id="budget-display">€3,000</p>
                         </div>
                         <input type="range" id="budget-slider" min="500" max="20000" step="500" value="3000" class="w-full">
                         <div class="flex justify-between mt-2">
-                            <span class="text-charcoal/30 text-[10px] font-jost">$500</span>
-                            <span class="text-charcoal/30 text-[10px] font-jost">$20,000+</span>
+                            <span class="text-charcoal/30 text-[10px] font-jost">€500</span>
+                            <span class="text-charcoal/30 text-[10px] font-jost">€20,000+</span>
                         </div>
                     </div>
 
@@ -914,7 +914,7 @@
         slider.addEventListener('input', () => {
             const v = parseInt(slider.value);
             state.budget = v;
-            budgetDisplay.textContent = v >= 20000 ? '$20,000+' : `$${v.toLocaleString()}`;
+            budgetDisplay.textContent = v >= 20000 ? '€20,000+' : `€${v.toLocaleString()}`;
         });
 
         // ── Engraving counter ──
@@ -966,7 +966,7 @@
                 { label: 'Stone', value: state.stone || 'TBD with artisan' },
                 { label: 'Style', value: state.style.length ? state.style.join(', ') : '—' },
                 { label: 'Occasion', value: state.occasion || '—' },
-                { label: 'Budget', value: state.budget >= 20000 ? '$20,000+' : `$${state.budget.toLocaleString()}` },
+                { label: 'Budget', value: state.budget >= 20000 ? '€20,000+' : `€${state.budget.toLocaleString()}` },
                 { label: 'Timeline', value: state.timeline || 'Flexible' },
             ];
             if (state.engraving) summaryData.push({ label: 'Engraving', value: `"${state.engraving}"` });

@@ -460,7 +460,7 @@
                     <!-- Mobile logo -->
                     <a href="{{ route('home') }}" class="mobile-logo">LUMIÈRE</a>
 
-                    {{ $slot }}
+                    @yield('content')
                 </div>
             </div>
         </div>

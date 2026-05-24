@@ -36,7 +36,7 @@
                         <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#C9A84C]"></span>
                     @endif
                     <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                        <a href="#" class="block px-4 py-3 text-xs text-black/70 hover:text-[#C9A84C] hover:bg-[#F9F6F0] transition-colors">My Profile</a>
+                        <a href="{{ route('profile.show') }}" class="block px-4 py-3 text-xs text-black/70 hover:text-[#C9A84C] hover:bg-[#F9F6F0] transition-colors">My Profile</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="w-full text-left px-4 py-3 text-xs text-black/70 hover:text-[#C9A84C] hover:bg-[#F9F6F0] transition-colors">Sign Out</button>
@@ -90,25 +90,23 @@
                     @foreach($items as $item)
                         <div class="flex items-center justify-between bg-white/50 p-6 border border-black/5">
                             <div class="flex items-center">
-                                <img src="{{ $item->product->primaryImage?->image_path ?? 'https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop' }}" alt="{{ $item->product->name }}" class="w-20 h-20 object-cover mr-6">
+                                <img src="{{ $item->product->primaryImage?->image_url ?? 'https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop' }}" alt="{{ $item->product->name }}" class="w-20 h-20 object-cover mr-6">
                                 <div>
                                     <h2 class="font-playfair text-xl">{{ $item->product->name }}</h2>
                                     <p class="text-sm text-black/50">{{ $item->product->category }}</p>
-                                    <p class="font-playfair text-lg mt-2">${{ number_format((float) $item->product->price) }}</p>
+                                    <p class="font-playfair text-lg mt-2">€{{ number_format((float) $item->product->price) }}</p>
                                 </div>
                             </div>
                             <div class="flex items-center gap-4">
-                                <form method="POST" action="{{ route('api.cart.update') }}" class="flex items-center gap-2">
+                                <form method="POST" action="{{ route('api.cart.quantity', ['item' => $item->id]) }}" class="flex items-center gap-2">
                                     @csrf
-                                    <input type="hidden" name="product_id" value="{{ $item->product_id }}">
-                                    <input type="hidden" name="variant_id" value="{{ $item->variant_id }}">
+                                    @method('PATCH')
                                     <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" class="w-16 text-center border border-black/20 px-2 py-1">
                                     <button type="submit" class="text-[#C9A84C] hover:text-[#B8953A]">Update</button>
                                 </form>
-                                <form method="POST" action="{{ route('api.cart.remove') }}">
+                                <form method="POST" action="{{ route('api.cart.destroy', ['item' => $item->id]) }}">
                                     @csrf
-                                    <input type="hidden" name="product_id" value="{{ $item->product_id }}">
-                                    <input type="hidden" name="variant_id" value="{{ $item->variant_id }}">
+                                    @method('DELETE')
                                     <button type="submit" class="text-red-500 hover:text-red-700">Remove</button>
                                 </form>
                             </div>
@@ -117,8 +115,8 @@
                 </div>
 
                 <div class="mt-12 text-right">
-                    <p class="font-playfair text-2xl">Total: ${{ number_format($items->sum(fn($item) => $item->product->price * $item->quantity)) }}</p>
-                    <a href="#" class="inline-block mt-6 bg-[#C9A84C] text-white px-8 py-3 hover:bg-[#B8953A] transition-colors">PROCEED TO CHECKOUT</a>
+                    <p class="font-playfair text-2xl">Total: €{{ number_format($items->sum(fn($item) => $item->product->price * $item->quantity)) }}</p>
+                    <a href="{{ route('checkout.create') }}" class="inline-block mt-6 bg-[#C9A84C] text-white px-8 py-3 hover:bg-[#B8953A] transition-colors">PROCEED TO CHECKOUT</a>
                 </div>
             @endif
         </div>
@@ -145,13 +143,13 @@
                     itemDiv.className = 'flex items-center justify-between py-4 border-b border-black/10';
                     itemDiv.innerHTML = `
                         <div class="flex items-center">
-                            <img src="${item.product.primaryImage?.image_path || 'https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop'}" alt="${item.product.name}" class="w-16 h-16 object-cover mr-4">
+                            <img src="${item.product.primaryImage?.image_url || 'https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop'}" alt="${item.product.name}" class="w-16 h-16 object-cover mr-4">
                             <div>
                                 <p class="font-playfair text-sm">${item.product.name}</p>
                                 <p class="text-xs text-black/50">Qty: ${item.quantity}</p>
                             </div>
                         </div>
-                        <p class="font-playfair text-sm">$${item.product.price * item.quantity}</p>
+                        <p class="font-playfair text-sm">€${item.product.price * item.quantity}</p>
                     `;
                     cartItems.appendChild(itemDiv);
                 });

@@ -1,6 +1,8 @@
 *.log
 .DS_Store
 .env
+.env.*
+!.env.example
 .env.backup
 .env.production
 .phpactor.json
@@ -19,6 +21,15 @@
 /storage/*.key
 /storage/pail
 /vendor
+/database/*.sqlite
+*.sqlite
+*.sqlite3
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Documentation files (private - except in docs directory)
+*.md
+*.txt
+!docs/*.md
+!docs/*.txt

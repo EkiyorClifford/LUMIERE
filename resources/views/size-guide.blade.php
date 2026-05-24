@@ -129,7 +129,7 @@
                             <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-soft-gold"></span>
                         @endif
                         <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                            <a href="#" class="block px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">My Profile</a>
+                            <a href="{{ route('profile.show') }}" class="block px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">My Profile</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-4 py-3 text-xs text-charcoal/70 hover:text-soft-gold hover:bg-[#F9F6F0] transition-colors font-jost">Sign Out</button>
@@ -158,7 +158,7 @@
             <a href="{{ route('journal') }}" class="text-xs tracking-[0.18em] text-charcoal/70 hover:text-soft-gold">JOURNAL</a>
             <a href="{{ route('size-guide') }}" class="text-xs tracking-[0.18em] text-soft-gold">SIZE GUIDE</a>
         </div>
-        <div class="mt-auto flex gap-5 text-charcoal/40"><a href="#"><i class="fa-brands fa-instagram text-lg hover:text-soft-gold"></i></a><a href="#"><i class="fa-brands fa-pinterest text-lg hover:text-soft-gold"></i></a></div>
+        <div class="mt-auto flex gap-5 text-charcoal/40"><a href="javascript:void(0)"><i class="fa-brands fa-instagram text-lg hover:text-soft-gold"></i></a><a href="javascript:void(0)"><i class="fa-brands fa-pinterest text-lg hover:text-soft-gold"></i></a></div>
     </div>
     <div id="menu-overlay" class="fixed inset-0 bg-black/30 z-[55] hidden"></div>
 
@@ -215,8 +215,8 @@
                     </div>
 
                     <div class="mt-10 flex flex-col sm:flex-row gap-4">
-                        <a href="#" class="btn-outline-dark inline-flex items-center justify-center gap-2 px-6 py-3 text-[10px] tracking-[0.2em]"><span><i class="fa-solid fa-print mr-2"></i> PRINTABLE RING SIZER</span></a>
-                        <a href="#" class="btn-gold inline-flex items-center justify-center gap-2 px-6 py-3 text-[10px] tracking-[0.2em]"><span><i class="fa-solid fa-envelope mr-2"></i> REQUEST FREE SIZER KIT</span></a>
+                        <button type="button" class="btn-outline-dark inline-flex items-center justify-center gap-2 px-6 py-3 text-[10px] tracking-[0.2em]"><span><i class="fa-solid fa-print mr-2"></i> PRINTABLE RING SIZER</span></button>
+                        <button type="button" class="btn-gold inline-flex items-center justify-center gap-2 px-6 py-3 text-[10px] tracking-[0.2em]"><span><i class="fa-solid fa-envelope mr-2"></i> REQUEST FREE SIZER KIT</span></button>
                     </div>
                 </div>
 
@@ -358,6 +358,7 @@
             <p class="text-warm-gray text-sm font-light max-w-md mx-auto mb-10">Not sure about sizing? Our team is here to help before your piece ships. Write to us and we'll respond within 24 hours.</p>
             <div class="flex flex-col sm:flex-row gap-5 justify-center">
                 <button id="open-fitting" class="btn-gold px-10 py-4 text-[10px] tracking-[0.25em]"><span>REQUEST A FITTING CONSULTATION</span></button>
+                <button id="open-sizer-kit" class="btn-outline-dark px-10 py-4 text-[10px] tracking-[0.25em]"><span>REQUEST FREE RING SIZER KIT</span></button>
                 <button id="open-concierge-main" class="btn-outline-dark px-10 py-4 text-[10px] tracking-[0.25em]"><span>WRITE TO OUR CONCIERGE</span></button>
             </div>
         </div>
@@ -368,9 +369,9 @@
         <div class="max-w-screen-xl mx-auto">
             <div class="grid md:grid-cols-4 gap-12 mb-16">
                 <div><h3 class="font-playfair text-2xl font-light text-white mb-4 tracking-widest">LUMIÈRE</h3><p class="text-white/35 text-xs font-jost font-light leading-relaxed max-w-[180px]">Timeless elegance crafted for the discerning soul.</p></div>
-                <div><h4 class="text-white/60 text-[9px] font-jost tracking-[0.3em] mb-5">SHOP</h4><ul class="space-y-3"><li><a href="shop.html" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Necklaces</a></li><li><a href="shop.html" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Rings</a></li><li><a href="shop.html" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Earrings</a></li><li><a href="shop.html" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Bracelets</a></li></ul></div>
+                <div><h4 class="text-white/60 text-[9px] font-jost tracking-[0.3em] mb-5">SHOP</h4><ul class="space-y-3"><li><a href="{{ route('shop', ['category' => 'necklace']) }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Necklaces</a></li><li><a href="{{ route('shop', ['category' => 'ring']) }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Rings</a></li><li><a href="{{ route('shop', ['category' => 'earrings']) }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Earrings</a></li><li><a href="{{ route('shop', ['category' => 'bracelet']) }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Bracelets</a></li></ul></div>
                 <div><h4 class="text-white/60 text-[9px] font-jost tracking-[0.3em] mb-5">SUPPORT</h4><ul class="space-y-3"><li><a href="{{ route('contact') }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Contact Us</a></li><li><a href="{{ route('faq') }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">FAQs</a></li><li><a href="{{ route('shipping') }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Shipping & Returns</a></li><li><a href="{{ route('size-guide') }}" class="text-white/35 hover:text-soft-gold text-xs font-jost font-light transition-colors">Size Guide</a></li></ul></div>
-                <div><h4 class="text-white/60 text-[9px] font-jost tracking-[0.3em] mb-5">FOLLOW</h4><div class="flex gap-5"><a href="#" class="text-white/35 hover:text-soft-gold transition-colors"><i class="fa-brands fa-instagram text-base"></i></a><a href="#" class="text-white/35 hover:text-soft-gold transition-colors"><i class="fa-brands fa-pinterest text-base"></i></a><a href="#" class="text-white/35 hover:text-soft-gold transition-colors"><i class="fa-brands fa-x-twitter text-base"></i></a></div></div>
+                <div><h4 class="text-white/60 text-[9px] font-jost tracking-[0.3em] mb-5">FOLLOW</h4><div class="flex gap-5"><a href="javascript:void(0)" class="text-white/35 hover:text-soft-gold transition-colors"><i class="fa-brands fa-instagram text-base"></i></a><a href="javascript:void(0)" class="text-white/35 hover:text-soft-gold transition-colors"><i class="fa-brands fa-pinterest text-base"></i></a><a href="javascript:void(0)" class="text-white/35 hover:text-soft-gold transition-colors"><i class="fa-brands fa-x-twitter text-base"></i></a></div></div>
             </div>
             <div class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-3">
                 <p class="text-white/20 text-[10px] font-jost font-light tracking-wide">© 2026 Lumière Jewelry. All rights reserved.</p>
@@ -421,6 +422,14 @@
                     <div class="field-wrap">
                         <input type="text" id="fit-measurement" class="field-input" placeholder=" ">
                         <label for="fit-measurement" class="field-label">YOUR MEASUREMENT (optional)</label>
+                    </div>
+                    <div class="field-wrap">
+                        <input type="date" id="fit-date" class="field-input" placeholder=" ">
+                        <label for="fit-date" class="field-label">PREFERRED DATE (optional)</label>
+                    </div>
+                    <div class="field-wrap">
+                        <input type="time" id="fit-time" class="field-input" placeholder=" ">
+                        <label for="fit-time" class="field-label">PREFERRED TIME (optional)</label>
                     </div>
                     <div class="field-wrap">
                         <textarea id="fit-notes" class="field-input" placeholder=" " rows="2"></textarea>
@@ -523,6 +532,26 @@
     </div>
 
 
+    <div id="sizer-kit-modal" class="lumiere-modal fixed inset-0 z-[80] flex items-center justify-center p-6">
+        <div class="absolute inset-0 bg-black/55 backdrop-blur-sm" id="sizer-kit-backdrop"></div>
+        <div class="lumiere-panel relative w-full max-w-lg bg-cream shadow-[0_40px_100px_rgba(0,0,0,0.2)] overflow-hidden">
+            <div class="modal-top-line"></div>
+            <button class="modal-close-btn absolute top-5 right-5 w-8 h-8 flex items-center justify-center text-charcoal/30 hover:text-charcoal transition-colors z-10" data-modal="sizer-kit-modal"><i class="fa-solid fa-xmark text-base"></i></button>
+            <div class="p-10 md:p-12">
+                <p class="text-soft-gold text-[10px] tracking-[0.35em] font-jost font-light mb-5">LUMIERE · RING SIZER KIT</p>
+                <div class="space-y-7">
+                    <div class="field-wrap"><input type="text" id="kit-name" class="field-input" placeholder=" "><label for="kit-name" class="field-label">FULL NAME</label></div>
+                    <div class="field-wrap"><input type="email" id="kit-email" class="field-input" placeholder=" "><label for="kit-email" class="field-label">EMAIL ADDRESS</label></div>
+                    <div class="field-wrap"><input type="text" id="kit-address-1" class="field-input" placeholder=" "><label for="kit-address-1" class="field-label">SHIPPING ADDRESS LINE 1</label></div>
+                    <div class="field-wrap"><input type="text" id="kit-address-2" class="field-input" placeholder=" "><label for="kit-address-2" class="field-label">SHIPPING ADDRESS LINE 2 (optional)</label></div>
+                    <div class="field-wrap"><input type="text" id="kit-address-3" class="field-input" placeholder=" "><label for="kit-address-3" class="field-label">CITY / REGION / POSTCODE</label></div>
+                </div>
+                <p id="kit-error" class="hidden text-[11px] font-jost text-red-400 mt-4"></p>
+                <button id="kit-submit" class="btn-gold w-full mt-8 py-4 text-[11px] tracking-[0.25em] font-jost">SUBMIT REQUEST</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Nav scroll
         const nav = document.getElementById('main-nav');
@@ -566,12 +595,14 @@
         // Backdrop clicks
         document.getElementById('fitting-backdrop').addEventListener('click', () => closeModal('fitting-modal'));
         document.getElementById('concierge-backdrop').addEventListener('click', () => closeModal('concierge-modal'));
+        document.getElementById('sizer-kit-backdrop').addEventListener('click', () => closeModal('sizer-kit-modal'));
 
         // Escape key
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') {
                 closeModal('fitting-modal');
                 closeModal('concierge-modal');
+                closeModal('sizer-kit-modal');
             }
         });
 
@@ -599,6 +630,10 @@
                 openModal('concierge-modal');
             });
         });
+        const openSizerKitButton = document.getElementById('open-sizer-kit');
+        if (openSizerKitButton) {
+            openSizerKitButton.addEventListener('click', () => openModal('sizer-kit-modal'));
+        }
 
         // ── Select label float fix ──
         ['fit-category','con-subject'].forEach(id => {
@@ -637,14 +672,16 @@
                         measurement: document.getElementById('fit-measurement').value.trim(),
                         piece: document.getElementById('fit-notes').value.trim(),
                         message: document.getElementById('fit-notes').value.trim() || 'Fitting consultation requested from the size guide.',
-                        source: 'size_guide_fitting',
+                        preferred_date: document.getElementById('fit-date').value || null,
+                        preferred_time: document.getElementById('fit-time').value || null,
+                        source: 'size-guide',
                     }
                     : {
                         name,
                         email,
-                        subject: document.getElementById('con-subject').value || 'Concierge request',
+                        subject: document.getElementById('con-subject').value || 'Consultation request',
                         message: document.getElementById('con-message').value.trim(),
-                        source: 'contact_page',
+                        source: 'size-guide',
                     };
 
                 if (isFittingRequest && !payload.piece_category) {
@@ -657,7 +694,7 @@
                     return;
                 }
 
-                fetch('{{ route('concierge-requests.store') }}', {
+                fetch("{{ route('concierge.request') }}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -688,6 +725,40 @@
 
         handleSubmit('.fitting-form-wrap', '.fitting-success', '.fitting-success-name', '.fitting-error', '.fitting-submit', 'fit-name', 'fit-email');
         handleSubmit('.concierge-form-wrap', '.concierge-success', '.concierge-success-name', '.concierge-error', '.concierge-submit', 'con-name', 'con-email');
+
+        const kitSubmit = document.getElementById('kit-submit');
+        if (kitSubmit) {
+            kitSubmit.addEventListener('click', async () => {
+                const payload = {
+                    full_name: document.getElementById('kit-name').value.trim(),
+                    email: document.getElementById('kit-email').value.trim(),
+                    shipping_address_line_1: document.getElementById('kit-address-1').value.trim(),
+                    shipping_address_line_2: document.getElementById('kit-address-2').value.trim(),
+                    shipping_address_line_3: document.getElementById('kit-address-3').value.trim(),
+                };
+                const errorEl = document.getElementById('kit-error');
+                if (!payload.full_name || !payload.email || !payload.shipping_address_line_1 || !payload.shipping_address_line_3) {
+                    errorEl.textContent = 'Please complete all required fields.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+                const response = await fetch("{{ route('sizer-kit.request') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify(payload),
+                });
+                if (!response.ok) {
+                    errorEl.textContent = 'Unable to submit request right now.';
+                    errorEl.classList.remove('hidden');
+                    return;
+                }
+                closeModal('sizer-kit-modal');
+            });
+        }
     </script>
 </body>
 </html>

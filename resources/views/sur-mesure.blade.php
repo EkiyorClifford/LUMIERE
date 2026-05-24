@@ -159,12 +159,12 @@
                 <div class="space-y-4 mb-8">
                     <div class="tier-card">
                         <p class="text-[10px] tracking-[0.15em] font-jost font-medium mb-1 text-warm-gray">SILVER TIER</p>
-                        <p class="text-xs font-light text-charcoal">Spend $5,000+ lifetime or purchase any 3 pieces. Complimentary gift wrapping, early sale access, and a welcome gift.</p>
+                        <p class="text-xs font-light text-charcoal">Spend €5,000+ lifetime or purchase any 3 pieces. Complimentary gift wrapping, early sale access, and a welcome gift.</p>
                     </div>
                     <div class="tier-card highlighted">
                         <span class="tier-badge">GOLD CIRCLE</span>
                         <p class="text-[10px] tracking-[0.15em] font-jost font-medium mb-1 text-soft-gold">GOLD CIRCLE</p>
-                        <p class="text-xs font-light text-charcoal mb-3">Spend $15,000+ lifetime or purchase any bespoke commission. Everything in Silver, plus:</p>
+                        <p class="text-xs font-light text-charcoal mb-3">Spend €15,000+ lifetime or purchase any bespoke commission. Everything in Silver, plus:</p>
                         <ul class="space-y-1.5">
                             <li class="flex items-start gap-2 text-xs text-charcoal/70 font-light"><i class="fa-solid fa-check text-soft-gold text-[9px] mt-0.5"></i>Dedicated personal consultant (Paris-based)</li>
                             <li class="flex items-start gap-2 text-xs text-charcoal/70 font-light"><i class="fa-solid fa-check text-soft-gold text-[9px] mt-0.5"></i>Priority bespoke consultations &amp; 3D render included</li>
@@ -187,7 +187,7 @@
                 </div>
 
                 <div class="flex items-center gap-4">
-                    <a href="lespace.html" class="btn-submit inline-block px-7 py-3 text-[10px] tracking-[0.25em] font-jost">
+                    <a href="{{ route('profile.show') }}" class="btn-submit inline-block px-7 py-3 text-[10px] tracking-[0.25em] font-jost">
                         <span>VIEW MY STATUS</span>
                     </a>
                     <button id="gc-modal-close-2" class="text-[10px] tracking-[0.2em] font-jost text-charcoal/40 hover:text-charcoal transition-colors border-b border-charcoal/10 pb-0.5">
@@ -304,10 +304,10 @@
                 </div>
                 <select name="budget" class="w-full py-3 text-[10px] tracking-widest text-warm-gray">
                     <option value="">BUDGET RANGE</option>
-                    <option>$5,000 – $10,000</option>
-                    <option>$10,000 – $25,000</option>
-                    <option>$25,000 – $50,000</option>
-                    <option>$50,000+</option>
+                    <option>€5,000 – €10,000</option>
+                    <option>€10,000 – €25,000</option>
+                    <option>€25,000 – €50,000</option>
+                    <option>€50,000+</option>
                     <option>PREFER NOT TO SAY</option>
                 </select>
 
