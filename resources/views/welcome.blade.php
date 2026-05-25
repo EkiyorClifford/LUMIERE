@@ -297,6 +297,9 @@
     </style>
 </head>
 <body class="bg-cream font-jost text-charcoal overflow-x-hidden">
+@php
+    $currencySymbol = config('lumiere.currency_symbol');
+@endphp
 
     <!-- ══════════════════════════════════
          NAVIGATION
@@ -508,7 +511,7 @@
                         <div class="absolute bottom-0 left-0 right-0 p-8 text-white">
                             <h3 class="font-playfair text-2xl font-light mb-1">L'ÉCLAT</h3>
                             <p class="font-jost text-xs text-white/70 mb-2 tracking-wide">Diamond Collection</p>
-                            <p class="coll-label text-soft-gold text-[10px] tracking-[0.15em] font-jost font-light transition-all duration-400">FROM €2,800</p>
+                            <p class="coll-label text-soft-gold text-[10px] tracking-[0.15em] font-jost font-light transition-all duration-400">FROM {{ $currencySymbol }}2,800</p>
                         </div>
                     </div>
                 </div>
@@ -524,7 +527,7 @@
                             <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
                                 <h3 class="font-playfair text-xl font-light mb-1">L'OR</h3>
                                 <p class="font-jost text-xs text-white/70 mb-1 tracking-wide">Gold Collection</p>
-                                <p class="coll-label text-soft-gold text-[10px] tracking-[0.15em] font-jost font-light">FROM €1,200</p>
+                                <p class="coll-label text-soft-gold text-[10px] tracking-[0.15em] font-jost font-light">FROM {{ $currencySymbol }}1,200</p>
                             </div>
                         </div>
                     </div>
@@ -538,7 +541,7 @@
                             <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
                                 <h3 class="font-playfair text-xl font-light mb-1">LA PERLE</h3>
                                 <p class="font-jost text-xs text-white/70 mb-1 tracking-wide">Pearl Collection</p>
-                                <p class="coll-label text-soft-gold text-[10px] tracking-[0.15em] font-jost font-light">FROM €900</p>
+                                <p class="coll-label text-soft-gold text-[10px] tracking-[0.15em] font-jost font-light">FROM {{ $currencySymbol }}900</p>
                             </div>
                         </div>
                     </div>
@@ -571,8 +574,8 @@
                         Only <span class="text-charcoal font-medium">12 pieces</span> remain in this edition.
                     </p>
                     <div class="flex items-baseline gap-4 mb-10">
-                        <span class="font-playfair text-3xl font-light text-charcoal">€4,500</span>
-                        <span class="text-sm text-warm-gray line-through font-jost">€5,800</span>
+                        <span class="font-playfair text-3xl font-light text-charcoal">{{ $currencySymbol }}4,500</span>
+                        <span class="text-sm text-warm-gray line-through font-jost">{{ $currencySymbol }}5,800</span>
                         <span class="text-xs text-soft-gold tracking-wide font-jost bg-soft-gold/10 px-2 py-1 rounded-sm">SAVE 22%</span>
                     </div>
                     <div class="flex gap-4 flex-wrap">
@@ -727,7 +730,7 @@
                     </div>
                     <h3 class="font-playfair text-base font-light text-charcoal mb-1">{{ $product->name }}</h3>
                     <p class="text-warm-gray text-xs font-jost font-light mb-2 tracking-wide">{{ $product->collection?->name ?? 'LUMIÈRE' }}</p>
-                    <p class="text-soft-gold text-sm font-jost">€{{ number_format($product->price, 2) }}</p>
+                    <p class="text-soft-gold text-sm font-jost">{{ $currencySymbol }}{{ number_format($product->price, 2) }}</p>
                 </a>
                 @endforeach
                 @if($featuredProducts->count() < 4)

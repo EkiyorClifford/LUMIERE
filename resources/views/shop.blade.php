@@ -33,6 +33,9 @@
 </head>
 
 <body class="bg-[#F9F6F0] text-[#1C1C1C]">
+@php
+    $currencySymbol = config('lumiere.currency_symbol');
+@endphp
 
 <nav class="px-6 md:px-12 py-6 flex items-center justify-between">
     <a href="{{ route('home') }}" class="font-playfair text-2xl tracking-[0.25em]">LUMIERE</a>
@@ -200,7 +203,7 @@
 
         <h2 class="font-playfair text-xl font-light">{{ $product->name }}</h2>
         <p class="text-sm text-black/50 mt-1">{{ ucfirst($product->category) }}</p>
-        <p class="font-playfair text-lg mt-3">€{{ number_format((float) $product->price) }}</p>
+        <p class="font-playfair text-lg mt-3">{{ $currencySymbol }}{{ number_format((float) $product->price) }}</p>
     </a>
 
 </div>

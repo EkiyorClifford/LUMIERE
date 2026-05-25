@@ -322,6 +322,9 @@
     </style>
 </head>
 <body class="bg-cream font-jost text-charcoal overflow-x-hidden">
+@php
+    $currencySymbol = config('lumiere.currency_symbol');
+@endphp
 
     <!-- ══════════════════════════════════
          NAVIGATION
@@ -487,7 +490,7 @@
                             </div>
                             <div class="flex flex-col items-start md:items-end gap-4 shrink-0">
                                 <p class="text-white/40 text-xs font-jost tracking-wide">Starting from</p>
-                                <p class="font-playfair text-3xl text-white font-light">€2,800</p>
+                                <p class="font-playfair text-3xl text-white font-light">{{ $currencySymbol }}2,800</p>
                                 <a href="{{ route('collections.show', 'leclat') }}" class="explore-btn btn-outline-white inline-block px-8 py-3 text-[10px] tracking-[0.25em] font-jost font-light">
                                     <span>EXPLORE COLLECTION</span>
                                 </a>
@@ -520,7 +523,7 @@
                                 Pure warmth in every form. Sculpted in 18k and 22k gold by master artisans who have spent lifetimes understanding the metal's temperament.
                             </p>
                             <div class="flex items-center justify-between">
-                                <p class="font-playfair text-2xl text-white font-light">From €1,200</p>
+                                <p class="font-playfair text-2xl text-white font-light">From {{ $currencySymbol }}1,200</p>
                                 <a href="{{ route('collections.show', 'lor') }}" class="explore-btn btn-outline-white inline-block px-6 py-2.5 text-[10px] tracking-[0.22em] font-jost font-light">
                                     <span>EXPLORE COLLECTION</span>
                                 </a>
@@ -548,7 +551,7 @@
                                 The ocean's quiet luxury. South Sea and Akoya pearls, sourced from sustainable farms, set in gold to frame their natural luminescence.
                             </p>
                             <div class="flex items-center justify-between">
-                                <p class="font-playfair text-2xl text-white font-light">From €900</p>
+                                <p class="font-playfair text-2xl text-white font-light">From {{ $currencySymbol }}900</p>
                                 <a href="{{ route('collections.show', 'la-perle') }}" class="explore-btn btn-outline-white inline-block px-6 py-2.5 text-[10px] tracking-[0.22em] font-jost font-light">
                                     <span>EXPLORE COLLECTION</span>
                                 </a>

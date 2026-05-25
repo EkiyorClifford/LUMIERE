@@ -17,13 +17,17 @@ class ProductSeeder extends Seeder
         foreach ($this->products() as $data) {
             $collection = Collection::where('slug', $data['collection'])->firstOrFail();
 
-            $product = Product::updateOrCreate(
+            $product = Product::withTrashed()->updateOrCreate(
                 ['slug' => $data['slug']],
                 Arr::except($data, ['collection', 'images', 'attributes', 'variants']) + [
                     'collection_id' => $collection->id,
                     'is_active' => true,
                 ],
             );
+
+            if ($product->trashed()) {
+                $product->restore();
+            }
 
             $this->syncImages($product, $data['images']);
             $this->syncAttributes($product, $data['attributes']);

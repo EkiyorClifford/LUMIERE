@@ -202,6 +202,7 @@
     </div>
 
     @php
+        $currencySymbol = config('lumiere.currency_symbol');
         $galleryImages  = $product->images->isNotEmpty()
             ? $product->images
             : ($product->primaryImage ? collect([$product->primaryImage]) : collect());
@@ -272,7 +273,7 @@
                     </p>
 
                     <div class="flex items-baseline gap-4 mb-6 animate-fade-up-2">
-                        <span class="font-playfair text-3xl text-charcoal font-light">€{{ number_format($product->price, 2) }}</span>
+                        <span class="font-playfair text-3xl text-charcoal font-light">{{ $currencySymbol }}{{ number_format($product->price, 2) }}</span>
                         @if($showLastFew)
                             <span class="text-xs text-soft-gold tracking-wide font-jost bg-soft-gold/10 px-2 py-1">LAST FEW</span>
                         @endif
@@ -465,7 +466,7 @@
                         </div>
                         <h3 class="font-playfair text-base font-light mb-1">{{ $related->name }}</h3>
                         <p class="text-warm-gray text-xs font-jost font-light mb-1">{{ ucwords(str_replace('-', ' ', $related->category)) }}</p>
-                        <p class="text-soft-gold text-sm font-jost">€{{ number_format($related->price, 2) }}</p>
+                        <p class="text-soft-gold text-sm font-jost">{{ $currencySymbol }}{{ number_format($related->price, 2) }}</p>
                     </div>
                 @endforeach
             </div>
@@ -476,7 +477,7 @@
     <div id="sticky-bar" class="fixed bottom-0 left-0 right-0 bg-cream/97 backdrop-blur-sm border-t border-charcoal/8 z-40 px-6 py-3 flex items-center gap-4">
         <div class="flex-1">
             <p class="font-playfair text-base font-light text-charcoal">{{ $product->name }}</p>
-            <p class="text-soft-gold text-sm font-jost">€{{ number_format($product->price, 2) }}</p>
+            <p class="text-soft-gold text-sm font-jost">{{ $currencySymbol }}{{ number_format($product->price, 2) }}</p>
         </div>
         <button id="sticky-atc-btn" data-product-id="{{ $product->id }}" onclick="handleAddToCart(event)" class="btn-gold px-8 py-3 text-[10px] tracking-[0.22em] font-jost flex-shrink-0">
             <span>ADD TO CART</span>
