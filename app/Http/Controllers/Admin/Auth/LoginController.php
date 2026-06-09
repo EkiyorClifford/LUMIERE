@@ -44,7 +44,7 @@ class LoginController extends Controller
             'last_login_at' => now(),
         ])->save();
 
-        return redirect()->route('admin.dashboard');
+        return redirect()->intended(route('admin.dashboard'));
     }
 
     public function logout(Request $request): RedirectResponse

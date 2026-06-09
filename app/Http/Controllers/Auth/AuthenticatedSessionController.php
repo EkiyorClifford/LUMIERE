@@ -47,13 +47,13 @@ class AuthenticatedSessionController extends Controller
      */
     private function mergeGuestDataIntoAccount(Request $request, array $guestCart, array $guestWishlist): void
     {
-        if (! Auth::check()) {
+        if (! auth('web')->check()) {
             return;
         }
 
         // Merge cart entries (same product+variant => increment quantity).
         if (! empty($guestCart)) {
-            $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+            $cart = Cart::firstOrCreate(['user_id' => auth('web')->id()]);
 
             foreach ($guestCart as $item) {
                 $productId = isset($item['product_id']) ? (int) $item['product_id'] : 0;
@@ -83,7 +83,7 @@ class AuthenticatedSessionController extends Controller
 
         // Merge wishlist entries (avoid duplicates).
         if (! empty($guestWishlist)) {
-            $wishlist = Wishlist::firstOrCreate(['user_id' => Auth::id()]);
+            $wishlist = Wishlist::firstOrCreate(['user_id' => auth('web')->id()]);
 
             foreach ($guestWishlist as $productId) {
                 $productId = (int) $productId;

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Collections | LUMIÈRE Fine Jewelry</title>
     <meta name="description" content="Explore our signature collections — L'Éclat, L'Or, La Perle. Handcrafted fine jewelry from Paris.">
 
@@ -344,13 +345,13 @@
                 <button class="text-charcoal/60 hover:text-soft-gold transition-colors duration-300">
                     <i class="fa-regular fa-heart text-base"></i>
                 </button>
-                @auth
+                @auth('web')
                     <div class="relative group">
                         <button class="text-charcoal/60 hover:text-soft-gold transition-colors duration-300 flex items-center gap-2">
                             <i class="fa-solid fa-user text-base"></i>
-                            <span class="text-xs font-jost hidden md:block">{{ auth()->user()->name }}</span>
+                            <span class="text-xs font-jost hidden md:block">{{ auth('web')->user()?->name }}</span>
                         </button>
-                        @if(auth()->user()->is_gold_circle)
+                        @if(auth('web')->user()?->is_gold_circle)
                             <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-soft-gold"></span>
                         @endif
                         <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
@@ -576,7 +577,7 @@
                             <p class="text-white/30 font-jost font-light text-[13px] md:text-sm leading-relaxed mb-4 md:mb-6">
                                 Obsidian, black diamond, and midnight sapphire. A collection for those who find beauty in darkness. Arriving 2026.
                             </p>
-                            <button class="text-[9px] md:text-[10px] tracking-[0.25em] font-jost text-soft-gold/60 hover:text-soft-gold transition-colors duration-300 border-b border-soft-gold/20 hover:border-soft-gold/50 pb-0.5">
+                            <button id="la-nuit-notify" type="button" class="btn-gold inline-block px-6 py-2.5 text-[9px] md:text-[10px] tracking-[0.25em] font-jost font-light">
                                 NOTIFY ME WHEN AVAILABLE →
                             </button>
                         </div>
@@ -676,9 +677,9 @@
             </p>
             <form id="newsletter-collections-form" action="{{ route('newsletter') }}" method="POST" class="mb-5">
                 @csrf
-                <input type="hidden" name="source" value="collections">
+                <input id="newsletter-collections-source" type="hidden" name="source" value="collections">
                 <div class="flex gap-0 max-w-sm mx-auto border-b border-white/20 pb-0">
-                    <input type="email" name="email" required
+                    <input id="newsletter-collections-email" type="email" name="email" required
                            placeholder="Your email address"
                            class="flex-1 py-3 px-1 text-sm font-jost font-light bg-transparent text-white outline-none border-none placeholder-white/25">
                     <button type="submit" class="text-soft-gold text-[10px] tracking-[0.25em] font-jost font-light hover:text-gold-light transition-colors duration-300 pb-3 pl-4 whitespace-nowrap">
@@ -785,6 +786,19 @@
         reveals.forEach(el => observer.observe(el));
 
         const newsletterCollectionsForm = document.getElementById('newsletter-collections-form');
+        const laNuitNotifyButton = document.getElementById('la-nuit-notify');
+        if (laNuitNotifyButton && newsletterCollectionsForm) {
+            laNuitNotifyButton.addEventListener('click', () => {
+                const sourceInput = document.getElementById('newsletter-collections-source');
+                const emailInput = document.getElementById('newsletter-collections-email');
+                if (sourceInput) {
+                    sourceInput.value = 'la_nuit_notify';
+                }
+                newsletterCollectionsForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                emailInput?.focus({ preventScroll: true });
+            });
+        }
+
         if (newsletterCollectionsForm) {
             newsletterCollectionsForm.addEventListener('submit', async (event) => {
                 event.preventDefault();

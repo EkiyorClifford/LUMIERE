@@ -20,7 +20,7 @@ class CheckoutController extends Controller
 {
     public function create(Request $request)
     {
-        if (! Auth::check()) {
+        if (! auth('web')->check()) {
             return redirect()->route('login')->with('message', 'Please login to proceed with checkout');
         }
 
@@ -30,7 +30,7 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', 'Your cart is empty');
         }
 
-        $user = Auth::user();
+        $user = auth('web')->user();
         $addresses = $user->addresses ?? collect();
 
         $subtotal = $cartItems->sum(function ($item) {
@@ -56,7 +56,7 @@ class CheckoutController extends Controller
 
     public function store(Request $request)
     {
-        if (! Auth::check()) {
+        if (! auth('web')->check()) {
             return response()->json(['error' => 'Authentication required'], 401);
         }
 
@@ -94,7 +94,7 @@ class CheckoutController extends Controller
             $orderReference = 'LM-'.date('Y').'-'.str_pad(Order::count() + 1, 4, '0', STR_PAD_LEFT);
 
             $order = Order::create([
-                'user_id' => Auth::id(),
+                'user_id' => auth('web')->id(),
                 'order_number' => $orderReference,
                 'total' => $total,
                 'order_status' => 'pending',
@@ -164,7 +164,7 @@ class CheckoutController extends Controller
 
     private function getCartItems()
     {
-        $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+        $cart = Cart::firstOrCreate(['user_id' => auth('web')->id()]);
 
         return $cart->items()->with('product', 'variant')->get();
     }
@@ -176,7 +176,7 @@ class CheckoutController extends Controller
 
     private function clearCart()
     {
-        $cart = Cart::where('user_id', Auth::id())->first();
+        $cart = Cart::where('user_id', auth('web')->id())->first();
         if ($cart) {
             $cart->items()->delete();
         }
@@ -227,7 +227,7 @@ class CheckoutController extends Controller
 
     public function success(Order $order)
     {
-        if ($order->user_id !== Auth::id()) {
+        if ($order->user_id !== auth('web')->id()) {
             abort(403);
         }
 

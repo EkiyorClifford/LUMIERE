@@ -28,7 +28,6 @@ class User extends Authenticatable
         'password',
         'membership_tier',
         'consultant_id',
-        'is_admin',
         'is_active',
     ];
 
@@ -52,7 +51,6 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_admin' => 'boolean',
             'is_active' => 'boolean',
         ];
     }
@@ -95,5 +93,15 @@ class User extends Authenticatable
     public function bespokeProjects()
     {
         return $this->hasMany(BespokeProject::class);
+    }
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
+    }
+
+    public function wishlist()
+    {
+        return $this->hasOne(Wishlist::class);
     }
 }

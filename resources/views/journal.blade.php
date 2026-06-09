@@ -61,13 +61,13 @@
                     <i class="fa-regular fa-heart"></i>
                     <span id="wishlist-count" class="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-soft-gold text-white text-[8px] flex items-center justify-center">{{ $wishlistCount ?? 0 }}</span>
                 </a>
-                @auth
+                @auth('web')
                     <div class="relative group">
                         <button class="text-charcoal/60 hover:text-soft-gold flex items-center gap-2">
                             <i class="fa-solid fa-user"></i>
-                            <span class="text-xs font-jost hidden md:block">{{ auth()->user()->name }}</span>
+                            <span class="text-xs font-jost hidden md:block">{{ auth('web')->user()?->name }}</span>
                         </button>
-                        @if(auth()->user()->is_gold_circle)
+                        @if(auth('web')->user()?->is_gold_circle)
                             <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-soft-gold"></span>
                         @endif
                         <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">

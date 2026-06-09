@@ -76,9 +76,13 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index')->with('status', 'Product disabled.');
     }
 
-    public function toggleActive(Product $product): JsonResponse
+    public function toggleActive(Request $request, Product $product): JsonResponse|RedirectResponse
     {
         $product->update(['is_active' => ! $product->is_active]);
+
+        if (! $request->expectsJson()) {
+            return back()->with('status', $product->is_active ? 'Product activated.' : 'Product disabled.');
+        }
 
         return response()->json([
             'ok' => true,

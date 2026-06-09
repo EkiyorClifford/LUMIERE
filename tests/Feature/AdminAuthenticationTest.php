@@ -1,15 +1,10 @@
 <?php
 
-// C:\Users\HP\Desktop\Lumiere\tests\Feature\AdminAuthenticationTest.php
-
 use App\Models\Admin;
 use App\Models\Order;
 use App\Models\Post;
 use App\Models\Product;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-uses(RefreshDatabase::class);
 
 test('admin login screen can be rendered', function () {
     $response = $this->get(route('admin.login'));

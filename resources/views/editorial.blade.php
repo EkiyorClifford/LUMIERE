@@ -71,13 +71,13 @@
             </div>
             <div class="flex items-center gap-5">
                 <a href="{{ route('wishlist.index') }}" class="text-charcoal/60 hover:text-soft-gold"><i class="fa-regular fa-heart"></i></a>
-                @auth
+                @auth('web')
                     <div class="relative group">
                         <button class="text-charcoal/60 hover:text-soft-gold flex items-center gap-2">
                             <i class="fa-solid fa-user"></i>
-                            <span class="text-xs font-jost hidden md:block">{{ auth()->user()->name }}</span>
+                            <span class="text-xs font-jost hidden md:block">{{ auth('web')->user()?->name }}</span>
                         </button>
-                        @if(auth()->user()->is_gold_circle)
+                        @if(auth('web')->user()?->is_gold_circle)
                             <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-soft-gold"></span>
                         @endif
                         <div class="absolute top-full right-0 mt-2 w-48 bg-white shadow-lg rounded-sm py-2 hidden group-hover:block">

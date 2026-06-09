@@ -2,27 +2,27 @@
 
 namespace App\Http\ViewComposers;
 
-use Illuminate\Support\Facades\Auth;
+use App\Services\CartService;
 use Illuminate\View\View;
 
 class CartComposer
 {
+    public function __construct(
+        private CartService $cartService,
+    ) {}
+
     /**
      * Bind cart data to all views.
      */
     public function compose(View $view): void
     {
-        $cartItems = collect();
-        $cartCount = 0;
+        $cartCount = $this->cartService->cartCount();
+        $cartItems = $this->cartService->getCartData();
+
         $cartTotal = 0;
-
-        if (Auth::check()) {
-            $cart = Auth::user()->cart ?? null;
-
-            if ($cart) {
-                $cartItems = $cart->items ?? collect();
-                $cartCount = $cartItems->count();
-                $cartTotal = $cartItems->sum(fn ($item) => $item->price * $item->quantity);
+        foreach ($cartItems as $item) {
+            if ($item->product) {
+                $cartTotal += ($item->product->price ?? 0) * ($item->quantity ?? 1);
             }
         }
 

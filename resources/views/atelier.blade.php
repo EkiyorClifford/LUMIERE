@@ -197,13 +197,13 @@
             </div>
             <div class="flex items-center gap-5">
                 <button class="text-white/50 hover:text-soft-gold transition-colors"><i class="fa-regular fa-heart text-base"></i></button>
-                @auth
+                @auth('web')
                     <div class="relative group">
                         <button class="text-white/50 hover:text-soft-gold transition-colors flex items-center gap-2">
                             <i class="fa-solid fa-user text-base"></i>
-                            <span class="text-xs font-jost hidden md:block">{{ auth()->user()->name }}</span>
+                            <span class="text-xs font-jost hidden md:block">{{ auth('web')->user()?->name }}</span>
                         </button>
-                        @if(auth()->user()->is_gold_circle)
+                        @if(auth('web')->user()?->is_gold_circle)
                             <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-soft-gold"></span>
                         @endif
                         <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-sm opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">

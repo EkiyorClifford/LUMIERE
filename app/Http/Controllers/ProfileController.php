@@ -26,26 +26,26 @@ class ProfileController extends Controller
         $user = $request->user();
 
         // Get recent orders
-        $recentOrders = Order::where('user_id', Auth::id())
+            $recentOrders = Order::where('user_id', auth('web')->id())
             ->with('items.product')
             ->orderBy('created_at', 'desc')
             ->take(3)
             ->get();
 
         // Get bespoke projects
-        $bespokeProjects = BespokeProject::where('user_id', Auth::id())
+            $bespokeProjects = BespokeProject::where('user_id', auth('web')->id())
             ->with('consultant')
             ->orderBy('created_at', 'desc')
             ->get();
 
         // Get treasures
-        $treasures = Treasure::where('user_id', Auth::id())
+            $treasures = Treasure::where('user_id', auth('web')->id())
             ->with('product')
             ->orderBy('purchased_at', 'desc')
             ->get();
 
         // Get upcoming appointments
-        $upcomingAppointments = Appointment::where('user_id', Auth::id())
+            $upcomingAppointments = Appointment::where('user_id', auth('web')->id())
             ->with('consultant')
             ->where('scheduled_at', '>=', now())
             ->where('status', 'confirmed')
@@ -53,7 +53,7 @@ class ProfileController extends Controller
             ->get();
 
         // Get past appointments
-        $pastAppointments = Appointment::where('user_id', Auth::id())
+            $pastAppointments = Appointment::where('user_id', auth('web')->id())
             ->with('consultant')
             ->where('scheduled_at', '<', now())
             ->orderBy('scheduled_at', 'desc')
@@ -116,7 +116,7 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
-        Auth::logout();
+            auth('web')->logout();
 
         $user->delete();
 
@@ -131,8 +131,8 @@ class ProfileController extends Controller
      */
     public function orders(Request $request): View
     {
-        $orders = Order::where('user_id', Auth::id())
-            ->with('items.product')
+        $orders = Order::where('user_id', auth('web')->id())
+                ->with('items.product')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -154,8 +154,8 @@ class ProfileController extends Controller
             'notes' => 'nullable|string|max:500',
         ]);
 
-        Appointment::create([
-            'user_id' => Auth::id(),
+            Appointment::create([
+                'user_id' => auth('web')->id(),
             'consultant_id' => $request->consultant_id,
             'type' => $request->type,
             'scheduled_at' => $request->scheduled_at,
@@ -178,8 +178,8 @@ class ProfileController extends Controller
         ]);
 
         // Create or update bespoke project
-        $project = BespokeProject::create([
-            'user_id' => Auth::id(),
+            $project = BespokeProject::create([
+                'user_id' => auth('web')->id(),
             'consultant_id' => $request->consultant_id,
             'project_title' => $request->project_type,
             'current_step' => 'consultation',

@@ -5,14 +5,19 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class Admin extends Authenticatable
 {
+    use Notifiable;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
+    protected $table = 'admins';
+
     protected $fillable = [
         'name',
         'email',
@@ -38,5 +43,6 @@ class Admin extends Authenticatable
      */
     protected $casts = [
         'password' => 'hashed',
+        'email_verified_at' => 'datetime',
     ];
 }

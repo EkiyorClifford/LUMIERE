@@ -8,6 +8,8 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Collection;
 use App\Models\Product;
+use App\Services\CartService;
+use App\Services\WishlistService;
 // View contract for type hints and Request for handling input
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -16,6 +18,11 @@ use Illuminate\Support\Facades\Schema;
 
 class ProductController extends Controller
 {
+    public function __construct(
+        private CartService $cartService,
+        private WishlistService $wishlistService,
+    ) {}
+
     /**
      * Curated collection page content keyed by collection slug.
      */
@@ -122,8 +129,7 @@ class ProductController extends Controller
             ->get();
 
         // Get cart count for the header badge
-        $cartController = new CartController;
-        $cartCount = $cartController->cartCount();
+        $cartCount = $this->cartService->cartCount();
 
         // Pass all the data to the shop view
         // The view needs: current filters, all categories/collections for navigation, and the filtered products
@@ -179,18 +185,16 @@ class ProductController extends Controller
         // This prevents the count badges from showing 0 on page load
 
         // Get cart data for the cart count badge
-        $cartController = new CartController;
-        $items = $cartController->getCartData();
+        $items = $this->cartService->getCartData();
         $cartCount = count($items);
 
         // Get wishlist data for both count and to check if current product is wishlisted
-        $wishlistController = new WishlistController;
-        $wishlistItems = $wishlistController->getWishlistData();
+        $wishlistItems = $this->wishlistService->getWishlistData();
         $wishlistCount = $wishlistItems->count();
 
         // Check if the current product is in the user's wishlist
         // This lets me show the heart icon as filled or outline on page load
-        $isWishlisted = $wishlistItems->contains('product_id', $product->id);
+        $isWishlisted = $this->wishlistService->isInWishlist($product->id);
 
         // Pass everything to the product detail view
         // The view needs: the product, related products, cart/wishlist counts, and wishlist status
@@ -255,8 +259,7 @@ class ProductController extends Controller
             ->get();
 
         // Get cart count for the header badge
-        $cartController = new CartController;
-        $cartCount = $cartController->cartCount();
+        $cartCount = $this->cartService->cartCount();
 
         $pageContent = self::COLLECTION_PAGE_CONTENT[$collection->slug] ?? [
             'eyebrow' => strtoupper($collection->name).' COLLECTION',

@@ -52,11 +52,11 @@
             <span id="wishlist-count" class="absolute -top-1 -right-1 text-[8px] bg-[#C9A84C] text-white w-4 h-4 flex items-center justify-center rounded-full">{{ $wishlistCount ?? 0 }}</span>
         </a>
 
-        @auth
+        @auth('web')
         <div class="relative group">
             <button class="flex items-center gap-2 text-black/60 hover:text-[#C9A84C]">
                 <i class="fa-solid fa-user"></i>
-                <span class="text-xs hidden md:block">{{ auth()->user()->name }}</span>
+                <span class="text-xs hidden md:block">{{ auth('web')->user()?->name }}</span>
             </button>
 
             <div class="absolute right-0 mt-2 w-48 bg-white shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible">

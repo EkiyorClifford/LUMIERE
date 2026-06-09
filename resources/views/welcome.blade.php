@@ -333,18 +333,18 @@
                     <i class="fa-regular fa-heart text-base"></i>
                     <span class="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-soft-gold text-white text-[8px] flex items-center justify-center font-jost">{{ $wishlistCount ?? 0 }}</span>
                 </button>
-                <!-- User profile section - conditional based on authentication -->
-                @auth
+                <!-- User profile section - conditional based on web guard authentication -->
+                @auth('web')
                     <!-- Authenticated user: show dropdown with profile options -->
                     <!-- Using group hover for dropdown visibility -->
                     <div class="relative group">
                         <button class="text-charcoal/60 hover:text-soft-gold transition-colors duration-300 flex items-center gap-2">
                             <i class="fa-solid fa-user text-base"></i>
                             <!-- Show user name on desktop only -->
-                            <span class="text-xs font-jost hidden md:block">{{ auth()->user()->name }}</span>
+                            <span class="text-xs font-jost hidden md:block">{{ auth('web')->user()?->name }}</span>
                         </button>
                         <!-- Gold circle indicator for premium members -->
-                        @if(auth()->user()->is_gold_circle)
+                        @if(auth('web')->user()?->is_gold_circle)
                             <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-soft-gold"></span>
                         @endif
                         <!-- Dropdown menu - appears on hover -->

@@ -42,7 +42,7 @@
                   <i class="fa-solid fa-eye"></i>
                 </button>
                 <a class="action-btn" href="{{ route('admin.products.edit', $product) }}" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a>
-                <button class="action-btn danger" title="Toggle active" onclick="toggleProductActive({{ $product->id }})"><i class="fa-solid fa-power-off"></i></button>
+                <button class="action-btn danger" title="Toggle active" data-toggle-url="{{ route('admin.products.toggle-active', $product) }}" onclick="toggleProductActive('{{ $product->getRouteKey() }}')"><i class="fa-solid fa-power-off"></i></button>
               </div>
             </td>
           </tr>
@@ -87,13 +87,31 @@ function closeProductQuickView(){
 }
 
 async function toggleProductActive(id){
-  const res = await fetch(`/admin/products/${id}/toggle-active`, {
+  // Generate the correct admin toggle route URL for this product.
+  // Prefer data attribute with the exact route if present (contains slug),
+  // otherwise fall back to the literal URL template.
+  const element = document.querySelector(`[data-toggle-url][onclick*=toggleProductActive(${id})]`) || null;
+  const url = element ? element.getAttribute('data-toggle-url') : '{{ url("/admin/products/:product/toggle-active") }}'.replace(':product', id);
+
+  // Send the PATCH request with CSRF token and same-origin cookies.
+  const res = await fetch(url, {
     method: 'PATCH',
-    headers: {'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json'}
+    credentials: 'same-origin',
+    headers: {
+      'X-CSRF-TOKEN': '{{ csrf_token() }}',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+    body: JSON.stringify({}),
   });
 
-  if (!res.ok) return;
+  if (!res.ok) {
+    console.warn('Product toggle failed:', res.status, await res.text());
+    return;
+  }
 
+  // Update the status badge text + styling without reloading the page.
   const data = await res.json();
   const badge = document.getElementById(`product-status-${id}`);
   if (!badge) return;

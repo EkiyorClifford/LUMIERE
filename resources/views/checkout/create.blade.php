@@ -23,13 +23,13 @@
                             <div class="field-group">
                                 <label class="field-label">FIRST NAME *</label>
                                 <div class="field-wrap">
-                                    <input type="text" name="shipping_full_name" class="lux-input" value="{{ Auth::user()->name ?? '' }}" required>
+                                    <input type="text" name="shipping_full_name" class="lux-input" value="{{ auth('web')->user()?->name ?? '' }}" required>
                                 </div>
                             </div>
                             <div class="field-group">
                                 <label class="field-label">EMAIL *</label>
                                 <div class="field-wrap">
-                                    <input type="email" class="lux-input" value="{{ Auth::user()->email ?? '' }}" readonly>
+                                    <input type="email" class="lux-input" value="{{ auth('web')->user()?->email ?? '' }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -124,7 +124,7 @@
                                         <div class="card-bottom">
                                             <div>
                                                 <div class="card-holder-label">CARD HOLDER</div>
-                                                <div class="card-holder-name" id="holder-display">{{ Auth::user()->name ?? 'YOUR NAME' }}</div>
+                                                <div class="card-holder-name" id="holder-display">{{ auth('web')->user()?->name ?? 'YOUR NAME' }}</div>
                                             </div>
                                             <div class="card-brand-logo">LUMIÈRE</div>
                                         </div>
