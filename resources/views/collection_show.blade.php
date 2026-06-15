@@ -49,6 +49,8 @@
 <body class="bg-[#F9F6F0] text-[#1C1C1C]">
 @php
     $currencySymbol = config('lumiere.currency_symbol');
+    $heroImage = $pageContent['hero_image'] ?? ($collection->cover_image ?? 'images/diamond_bracelet_paris_night.png');
+    $heroImageUrl = str_starts_with($heroImage, 'http') ? $heroImage : asset($heroImage);
 @endphp
 
 <nav id="main-nav" class="fixed top-0 left-0 w-full z-50 py-5 px-6 md:px-12">
@@ -122,7 +124,7 @@
 <div id="menu-overlay" class="fixed inset-0 bg-black/30 z-[55] hidden"></div>
 
 <header class="relative min-h-[70vh] flex items-end">
-    <img src="{{ asset($collection->cover_image ?? 'images/diamond_bracelet_paris_night.png') }}"
+    <img src="{{ $heroImageUrl }}"
          alt="{{ $collection->name }} hero"
          class="absolute inset-0 w-full h-full object-cover">
     <div class="hero-overlay absolute inset-0"></div>

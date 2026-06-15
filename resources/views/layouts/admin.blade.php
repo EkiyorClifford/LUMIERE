@@ -579,6 +579,10 @@ tr:hover td{background:var(--gold-glow);color:var(--text)}
       <i class="fa-solid fa-layer-group"></i>
       <span class="sb-item-label">Collections</span>
     </a>
+    <a class="sb-item {{ request()->routeIs('admin.collection-contents.*') ? 'active' : '' }}" data-label="Collection Pages" href="{{ route('admin.collection-contents.index') }}">
+      <i class="fa-solid fa-file-pen"></i>
+      <span class="sb-item-label">Collection Pages</span>
+    </a>
 
     <div class="sb-section-label">JOURNAL</div>
     <a class="sb-item {{ request()->routeIs('admin.posts.index') || request()->routeIs('admin.posts.edit') ? 'active' : '' }}" data-label="All Stories" href="{{ route('admin.posts.index') }}">

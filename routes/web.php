@@ -6,6 +6,7 @@
 // Grouping them by functionality: Product/Shop, Cart/Checkout, User/Profile, etc.
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\BespokeController as AdminBespokeController;
+use App\Http\Controllers\Admin\CollectionContentController as AdminCollectionContentController;
 use App\Http\Controllers\Admin\CollectionController as AdminCollectionController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
@@ -193,6 +194,8 @@ Route::prefix('admin')->group(function () {
     Route::middleware('auth.admin')->group(function () {
         Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
         Route::get('collections', [AdminCollectionController::class, 'index'])->name('admin.collections.index');
+        Route::resource('collection-contents', AdminCollectionContentController::class)->except(['show'])->names('admin.collection-contents');
+        Route::patch('collection-contents/{collectionContent}/toggle-active', [AdminCollectionContentController::class, 'toggleActive'])->name('admin.collection-contents.toggle-active');
         Route::resource('products', AdminProductController::class)->except(['show'])->names('admin.products');
         Route::patch('products/{product}/toggle-active', [AdminProductController::class, 'toggleActive'])->name('admin.products.toggle-active');
         Route::get('bespoke', [AdminBespokeController::class, 'index'])->name('admin.bespoke.index');

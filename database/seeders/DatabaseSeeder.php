@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
                 CategorySeeder::class,
                 CollectionSeeder::class,
                 ProductSeeder::class,
+                CollectionContentSeeder::class,
             ]);
 
             $consultant = Consultant::updateOrCreate(

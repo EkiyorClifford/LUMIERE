@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Collection;
 use App\Models\Product;
 use App\Services\CartService;
+use App\Services\CollectionContentService;
 use App\Services\WishlistService;
 // View contract for type hints and Request for handling input
 use Illuminate\Contracts\View\View;
@@ -21,40 +22,8 @@ class ProductController extends Controller
     public function __construct(
         private CartService $cartService,
         private WishlistService $wishlistService,
+        private CollectionContentService $contentService,
     ) {}
-
-    /**
-     * Curated collection page content keyed by collection slug.
-     */
-    private const COLLECTION_PAGE_CONTENT = [
-        'leclat' => [
-            'eyebrow' => 'DIAMOND COLLECTION',
-            'tagline' => 'Brilliance captured in motion.',
-            'hero_copy' => 'Flawless diamonds chosen for fire, precision-set in 18k gold.',
-            'story_heading' => 'A study in light',
-            'story_body' => 'L\'Éclat celebrates the architecture of brilliance. Each piece is designed to move with light, balancing clean geometry with quiet opulence for evenings that deserve presence.',
-            'trust_points' => ['Ethically sourced stones', 'Hand-set craftsmanship', 'Lifetime care'],
-            'cta_heading' => 'Need help choosing your diamond silhouette?',
-        ],
-        'lor' => [
-            'eyebrow' => 'GOLD COLLECTION',
-            'tagline' => 'Sculpted warmth, forever wearable.',
-            'hero_copy' => 'Fluid forms in 18k and 22k gold, crafted for everyday luxury.',
-            'story_heading' => 'The language of gold',
-            'story_body' => 'L\'Or is warmth translated into form. From polished cuffs to tactile textures, each creation is built for layering, daily ritual, and timeless confidence.',
-            'trust_points' => ['18k/22k craftsmanship', 'Hand-finished surfaces', 'Paris atelier finishing'],
-            'cta_heading' => 'Build your gold stack with an expert',
-        ],
-        'la-perle' => [
-            'eyebrow' => 'PEARL COLLECTION',
-            'tagline' => 'The ocean\'s quiet luxury.',
-            'hero_copy' => 'South Sea and Akoya pearls selected for luster, tone, and harmony.',
-            'story_heading' => 'Soft light, refined presence',
-            'story_body' => 'La Perle explores subtle radiance through carefully matched pearls and clean gold settings. Modern proportions preserve the softness of classic pearl jewelry.',
-            'trust_points' => ['Responsible farm sourcing', 'Matched by hand', 'Care guide included'],
-            'cta_heading' => 'Unsure which pearl tone suits you?',
-        ],
-    ];
 
     /**
      * Show the main shop page with all products and filters
@@ -261,7 +230,9 @@ class ProductController extends Controller
         // Get cart count for the header badge
         $cartCount = $this->cartService->cartCount();
 
-        $pageContent = self::COLLECTION_PAGE_CONTENT[$collection->slug] ?? [
+        $content = $this->contentService->getBySlug($collection->slug);
+
+        $pageContent = [
             'eyebrow' => strtoupper($collection->name).' COLLECTION',
             'tagline' => 'A curated expression of Lumière craftsmanship.',
             'hero_copy' => $collection->description,
@@ -269,13 +240,32 @@ class ProductController extends Controller
             'story_body' => $collection->description,
             'trust_points' => ['Handcrafted', 'Ethically sourced', 'Lifetime care'],
             'cta_heading' => 'Need a private recommendation?',
+            'hero_image' => $collection->cover_image ?: 'images/diamond_bracelet_paris_night.png',
         ];
+
+        if ($content) {
+            $pageContent = [
+                'eyebrow' => strtoupper($content->title).' COLLECTION',
+                'tagline' => $content->title,
+                'hero_copy' => $content->description,
+                'story_heading' => $content->title,
+                'story_body' => $content->description,
+                'trust_points' => [
+                    'Handcrafted',
+                    'Ethically sourced',
+                    'Lifetime care',
+                ],
+                'cta_heading' => $content->meta_description ?: 'Need a private recommendation?',
+                'hero_image' => $content->image_url ?: ($collection->cover_image ?: 'images/diamond_bracelet_paris_night.png'),
+            ];
+        }
 
         return view('collection_show', [
             'collection' => $collection,
             'products' => $products,
             'cartCount' => $cartCount,
             'pageContent' => $pageContent,
+            'collectionContent' => $content,
         ]);
     }
 }
