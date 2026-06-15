@@ -47,7 +47,11 @@ class CartController extends Controller
         if ($request->ajax() || $request->wantsJson()) {
             $count = $this->cartService->cartCount();
 
-            return response()->json(['success' => true, 'count' => $count]);
+            return response()->json([
+                'success' => true,
+                'count' => $count,
+                'cart_count' => $count,
+            ]);
         }
 
         return redirect()->back()->with('success', 'Product added to cart');
@@ -71,7 +75,11 @@ class CartController extends Controller
         if ($request->ajax() || $request->wantsJson()) {
             $count = $this->cartService->cartCount();
 
-            return response()->json(['success' => true, 'count' => $count]);
+            return response()->json([
+                'success' => true,
+                'count' => $count,
+                'cart_count' => $count,
+            ]);
         }
 
         return redirect()->back()->with('success', 'Product removed from cart');
@@ -97,10 +105,102 @@ class CartController extends Controller
         if ($request->ajax() || $request->wantsJson()) {
             $count = $this->cartService->cartCount();
 
-            return response()->json(['success' => true, 'count' => $count]);
+            return response()->json([
+                'success' => true,
+                'count' => $count,
+                'cart_count' => $count,
+            ]);
         }
 
         return redirect()->back()->with('success', 'Cart updated');
+    }
+
+    /**
+     * Update cart item quantity via route parameter
+     */
+    public function updateQuantity(Request $request, int $item)
+    {
+        $request->validate([
+            'quantity' => 'required|integer|min:0',
+        ]);
+
+        if ($this->isAuthenticated()) {
+            $cart = auth('web')->user()->cart()->first();
+            abort_if(! $cart, 404, 'Cart not found');
+
+            $cartItem = $cart->items()->findOrFail($item);
+            $this->cartService->updateQuantity(
+                $cartItem->product_id,
+                $cartItem->variant_id,
+                (int) $request->quantity
+            );
+        } else {
+            // For guests, extract product_id and variant_id from request
+            $request->validate([
+                'product_id' => 'required|exists:products,id',
+                'variant_id' => 'nullable|integer|exists:product_variants,id',
+            ]);
+
+            $this->cartService->updateQuantity(
+                (int) $request->product_id,
+                $request->variant_id ? (int) $request->variant_id : null,
+                (int) $request->quantity
+            );
+        }
+
+        if ($request->ajax() || $request->wantsJson()) {
+            $count = $this->cartService->cartCount();
+
+            return response()->json([
+                'success' => true,
+                'count' => $count,
+                'cart_count' => $count,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Cart updated');
+    }
+
+    /**
+     * Check if user is authenticated
+     */
+    private function isAuthenticated(): bool
+    {
+        return auth('web')->check();
+    }
+
+    /**
+     * Delete cart item via route parameter
+     */
+    public function destroy(Request $request, int $item)
+    {
+        if ($this->isAuthenticated()) {
+            $cart = auth('web')->user()->cart()->first();
+            abort_if(! $cart, 404, 'Cart not found');
+            $cart->items()->findOrFail($item)->delete();
+        } else {
+            $request->validate([
+                'product_id' => 'required|exists:products,id',
+                'variant_id' => 'nullable|integer|exists:product_variants,id',
+            ]);
+
+            $this->cartService->remove(
+                (int) $request->product_id,
+                $request->variant_id ? (int) $request->variant_id : null
+            );
+        }
+
+        if ($request->ajax() || $request->wantsJson()) {
+            $count = $this->cartService->cartCount();
+
+            return response()->json([
+                'success' => true,
+                'count' => $count,
+                'cart_count' => $count,
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Product removed from cart');
     }
 
     /**
@@ -142,6 +242,19 @@ class CartController extends Controller
     public function cartCount(): int
     {
         return $this->cartService->cartCount();
+    }
+
+    /**
+     * Get cart count via API route
+     */
+    public function getCartCount()
+    {
+        $count = $this->cartService->cartCount();
+
+        return response()->json([
+            'count' => $count,
+            'cart_count' => $count,
+        ]);
     }
 
     /**

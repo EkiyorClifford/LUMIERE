@@ -24,30 +24,25 @@ class CartItems extends Model
     ];
 
     /**
-     * Get the cart this item belongs to
-     * Note: I should probably rename this to 'cart' to follow Laravel conventions
+     * Get the cart this item belongs to.
      */
-    public function Cart()
+    public function cart()
     {
         return $this->belongsTo(Cart::class);
     }
 
     /**
-     * Get the product for this cart item
-     * This gives me access to product name, price, images, etc.
-     * Note: Should probably be 'product' to follow conventions
+     * Get the product for this cart item.
      */
-    public function Product()
+    public function product()
     {
         return $this->belongsTo(Product::class);
     }
 
     /**
-     * Get the variant for this cart item (if any)
-     * Variant could be ring size, metal type, etc.
-     * Note: Should probably be 'variant' to follow conventions
+     * Get the variant for this cart item (if any).
      */
-    public function Variant()
+    public function variant()
     {
         return $this->belongsTo(ProductVariant::class);
     }

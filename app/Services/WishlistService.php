@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Product;
 use App\Models\Wishlist;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 
 class WishlistService
 {

@@ -5,9 +5,7 @@ namespace App\Services;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\ProductVariant;
-use App\Models\User;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 
 class CartService
 {
