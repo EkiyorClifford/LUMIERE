@@ -146,7 +146,7 @@
         <div>
             <p class="text-[#C9A84C] text-[10px] tracking-[0.35em] mb-3">THE STORY</p>
             <h2 class="font-playfair text-4xl md:text-5xl font-light mb-5">{{ $pageContent['story_heading'] }}</h2>
-            <p class="text-black/65 leading-relaxed">{{ $pageContent['story_body'] }}</p>
+        <div class="text-black/65 leading-relaxed space-y-4">{!! $pageContent['story_body'] !!}</div>
         </div>
         <div class="bg-[#F2EDE4] p-8 md:p-10">
             <p class="text-[10px] tracking-[0.3em] text-black/50 mb-4">CRAFT GUARANTEES</p>

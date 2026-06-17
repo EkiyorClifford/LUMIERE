@@ -49,15 +49,24 @@ class CartService
             $cart = [];
         }
 
-        $items = [];
-        foreach ($cart as $key => $item) {
-            $product = Product::with('primaryImage')->find($item['product_id']);
-            $variant = $item['variant_id'] ? ProductVariant::find($item['variant_id']) : null;
+        $cartItems = collect($cart);
+        $products = Product::query()
+            ->with('primaryImage')
+            ->whereIn('id', $cartItems->pluck('product_id')->filter()->unique())
+            ->get()
+            ->keyBy('id');
 
+        $variants = ProductVariant::query()
+            ->whereIn('id', $cartItems->pluck('variant_id')->filter()->unique())
+            ->get()
+            ->keyBy('id');
+
+        $items = [];
+        foreach ($cartItems as $key => $item) {
             $items[] = (object) [
                 'id' => $key,
-                'product' => $product,
-                'variant' => $variant,
+                'product' => $products->get($item['product_id']),
+                'variant' => $item['variant_id'] ? $variants->get($item['variant_id']) : null,
                 'quantity' => $item['quantity'],
                 'product_id' => $item['product_id'],
                 'variant_id' => $item['variant_id'],

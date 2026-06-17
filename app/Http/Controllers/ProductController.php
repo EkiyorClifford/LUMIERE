@@ -16,6 +16,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 // Schema to check if tables exist before querying (prevents errors in fresh installs)
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -247,7 +248,7 @@ class ProductController extends Controller
             $pageContent = [
                 'eyebrow' => strtoupper($content->title).' COLLECTION',
                 'tagline' => $content->title,
-                'hero_copy' => $content->description,
+                'hero_copy' => Str::of($content->description)->stripTags()->toString(),
                 'story_heading' => $content->title,
                 'story_body' => $content->description,
                 'trust_points' => [

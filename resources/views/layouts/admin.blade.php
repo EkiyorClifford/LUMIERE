@@ -551,6 +551,9 @@ tr:hover td{background:var(--gold-glow);color:var(--text)}
 </style>
 </head>
 <body>
+@php
+  $admin = currentAdmin();
+@endphp
 
 <aside class="sidebar" id="sidebar">
   <div class="sb-logo">
@@ -566,51 +569,63 @@ tr:hover td{background:var(--gold-glow);color:var(--text)}
     </a>
 
     <div class="sb-section-label">CATALOGUE</div>
-    <a class="sb-item {{ request()->routeIs('admin.products.index') || request()->routeIs('admin.products.edit') ? 'active' : '' }}" data-label="Products" href="{{ route('admin.products.index') }}">
-      <i class="fa-solid fa-gem"></i>
-      <span class="sb-item-label">Products</span>
-      <span class="sb-badge">{{ $adminProductCount ?? '' }}</span>
-    </a>
-    <a class="sb-item {{ request()->routeIs('admin.products.create') ? 'active' : '' }}" data-label="Add Product" href="{{ route('admin.products.create') }}">
-      <i class="fa-solid fa-circle-plus"></i>
-      <span class="sb-item-label">Add Product</span>
-    </a>
-    <a class="sb-item {{ request()->routeIs('admin.collections.*') ? 'active' : '' }}" data-label="Collections" href="{{ route('admin.collections.index') }}">
-      <i class="fa-solid fa-layer-group"></i>
-      <span class="sb-item-label">Collections</span>
-    </a>
-    <a class="sb-item {{ request()->routeIs('admin.collection-contents.*') ? 'active' : '' }}" data-label="Collection Pages" href="{{ route('admin.collection-contents.index') }}">
-      <i class="fa-solid fa-file-pen"></i>
-      <span class="sb-item-label">Collection Pages</span>
-    </a>
+    @if($admin?->hasPermission('manage-catalog'))
+      <a class="sb-item {{ request()->routeIs('admin.products.index') || request()->routeIs('admin.products.edit') ? 'active' : '' }}" data-label="Products" href="{{ route('admin.products.index') }}">
+        <i class="fa-solid fa-gem"></i>
+        <span class="sb-item-label">Products</span>
+        <span class="sb-badge">{{ $adminProductCount ?? '' }}</span>
+      </a>
+      <a class="sb-item {{ request()->routeIs('admin.products.create') ? 'active' : '' }}" data-label="Add Product" href="{{ route('admin.products.create') }}">
+        <i class="fa-solid fa-circle-plus"></i>
+        <span class="sb-item-label">Add Product</span>
+      </a>
+      <a class="sb-item {{ request()->routeIs('admin.collections.*') ? 'active' : '' }}" data-label="Collections" href="{{ route('admin.collections.index') }}">
+        <i class="fa-solid fa-layer-group"></i>
+        <span class="sb-item-label">Collections</span>
+      </a>
+    @endif
+    @if($admin?->hasPermission('manage-content'))
+      <a class="sb-item {{ request()->routeIs('admin.collection-contents.*') ? 'active' : '' }}" data-label="Collection Pages" href="{{ route('admin.collection-contents.index') }}">
+        <i class="fa-solid fa-file-pen"></i>
+        <span class="sb-item-label">Collection Pages</span>
+      </a>
+    @endif
 
     <div class="sb-section-label">JOURNAL</div>
-    <a class="sb-item {{ request()->routeIs('admin.posts.index') || request()->routeIs('admin.posts.edit') ? 'active' : '' }}" data-label="All Stories" href="{{ route('admin.posts.index') }}">
-      <i class="fa-solid fa-book-open"></i>
-      <span class="sb-item-label">All Stories</span>
-      <span class="sb-badge">{{ $adminPostCount ?? '' }}</span>
-    </a>
-    <a class="sb-item {{ request()->routeIs('admin.posts.create') ? 'active' : '' }}" data-label="New Story" href="{{ route('admin.posts.create') }}">
-      <i class="fa-solid fa-pen-nib"></i>
-      <span class="sb-item-label">New Story</span>
-    </a>
+    @if($admin?->hasPermission('manage-content'))
+      <a class="sb-item {{ request()->routeIs('admin.posts.index') || request()->routeIs('admin.posts.edit') ? 'active' : '' }}" data-label="All Stories" href="{{ route('admin.posts.index') }}">
+        <i class="fa-solid fa-book-open"></i>
+        <span class="sb-item-label">All Stories</span>
+        <span class="sb-badge">{{ $adminPostCount ?? '' }}</span>
+      </a>
+      <a class="sb-item {{ request()->routeIs('admin.posts.create') ? 'active' : '' }}" data-label="New Story" href="{{ route('admin.posts.create') }}">
+        <i class="fa-solid fa-pen-nib"></i>
+        <span class="sb-item-label">New Story</span>
+      </a>
+    @endif
 
     <div class="sb-section-label">COMMERCE</div>
-    <a class="sb-item {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}" data-label="Orders" href="{{ route('admin.orders.index') }}">
-      <i class="fa-solid fa-bag-shopping"></i>
-      <span class="sb-item-label">Orders</span>
-      <span class="sb-badge" style="background:var(--red)">{{ $adminPendingOrderCount ?? '' }}</span>
-    </a>
-    <a class="sb-item {{ request()->routeIs('admin.bespoke.*') ? 'active' : '' }}" data-label="Bespoke" href="{{ route('admin.bespoke.index') }}">
-      <i class="fa-solid fa-wand-magic-sparkles"></i>
-      <span class="sb-item-label">Bespoke</span>
-    </a>
+    @if($admin?->hasPermission('manage-orders'))
+      <a class="sb-item {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}" data-label="Orders" href="{{ route('admin.orders.index') }}">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span class="sb-item-label">Orders</span>
+        <span class="sb-badge" style="background:var(--red)">{{ $adminPendingOrderCount ?? '' }}</span>
+      </a>
+    @endif
+    @if($admin?->hasPermission('manage-bespoke'))
+      <a class="sb-item {{ request()->routeIs('admin.bespoke.*') ? 'active' : '' }}" data-label="Bespoke" href="{{ route('admin.bespoke.index') }}">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <span class="sb-item-label">Bespoke</span>
+      </a>
+    @endif
 
     <div class="sb-section-label">PEOPLE</div>
-    <a class="sb-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" data-label="Customers" href="{{ route('admin.users.index') }}">
-      <i class="fa-solid fa-users"></i>
-      <span class="sb-item-label">Customers</span>
-    </a>
+    @if($admin?->hasPermission('manage-customers'))
+      <a class="sb-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" data-label="Customers" href="{{ route('admin.users.index') }}">
+        <i class="fa-solid fa-users"></i>
+        <span class="sb-item-label">Customers</span>
+      </a>
+    @endif
   </nav>
 
   <div class="sb-toggle" onclick="toggleSidebar()" title="Toggle sidebar">

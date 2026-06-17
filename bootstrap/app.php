@@ -3,6 +3,7 @@
 // C:\Users\HP\Desktop\Lumiere\bootstrap\app.php
 
 use App\Http\Middleware\RedirectIfNotAdmin;
+use App\Http\Middleware\EnsureAdminCan;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -33,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => RedirectIfNotAdmin::class,
             'auth.admin' => RedirectIfNotAdmin::class,
+            'admin.can' => EnsureAdminCan::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

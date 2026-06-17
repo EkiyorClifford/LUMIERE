@@ -192,20 +192,27 @@ Route::prefix('admin')->group(function () {
     });
 
     Route::middleware('auth.admin')->group(function () {
-        Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
-        Route::get('collections', [AdminCollectionController::class, 'index'])->name('admin.collections.index');
-        Route::resource('collection-contents', AdminCollectionContentController::class)->except(['show'])->names('admin.collection-contents');
-        Route::patch('collection-contents/{collectionContent}/toggle-active', [AdminCollectionContentController::class, 'toggleActive'])->name('admin.collection-contents.toggle-active');
-        Route::resource('products', AdminProductController::class)->except(['show'])->names('admin.products');
-        Route::patch('products/{product}/toggle-active', [AdminProductController::class, 'toggleActive'])->name('admin.products.toggle-active');
-        Route::get('bespoke', [AdminBespokeController::class, 'index'])->name('admin.bespoke.index');
-        Route::get('orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
-        Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('admin.orders.show');
-        Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');
-        Route::resource('posts', AdminPostController::class)->except(['show'])->names('admin.posts');
-        Route::get('users', [AdminUsersController::class, 'index'])->name('admin.users.index');
-        Route::get('users/{user}', [AdminUsersController::class, 'show'])->name('admin.users.show');
-        Route::patch('users/{user}/toggle-active', [AdminUsersController::class, 'toggleActive'])->name('admin.users.toggle-active');
+        Route::get('dashboard', [AdminDashboardController::class, 'index'])->middleware('admin.can:view-dashboard')->name('admin.dashboard');
+
+        Route::middleware('admin.can:manage-catalog')->group(function () {
+            Route::get('collections', [AdminCollectionController::class, 'index'])->name('admin.collections.index');
+            Route::resource('products', AdminProductController::class)->except(['show'])->names('admin.products');
+            Route::patch('products/{product}/toggle-active', [AdminProductController::class, 'toggleActive'])->name('admin.products.toggle-active');
+        });
+
+        Route::middleware('admin.can:manage-content')->group(function () {
+            Route::resource('collection-contents', AdminCollectionContentController::class)->except(['show'])->names('admin.collection-contents');
+            Route::patch('collection-contents/{collectionContent}/toggle-active', [AdminCollectionContentController::class, 'toggleActive'])->name('admin.collection-contents.toggle-active');
+            Route::resource('posts', AdminPostController::class)->except(['show'])->names('admin.posts');
+        });
+
+        Route::get('bespoke', [AdminBespokeController::class, 'index'])->middleware('admin.can:manage-bespoke')->name('admin.bespoke.index');
+        Route::get('orders', [AdminOrderController::class, 'index'])->middleware('admin.can:manage-orders')->name('admin.orders.index');
+        Route::get('orders/{order}', [AdminOrderController::class, 'show'])->middleware('admin.can:manage-orders')->name('admin.orders.show');
+        Route::patch('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->middleware('admin.can:manage-orders')->name('admin.orders.updateStatus');
+        Route::get('users', [AdminUsersController::class, 'index'])->middleware('admin.can:manage-customers')->name('admin.users.index');
+        Route::get('users/{user}', [AdminUsersController::class, 'show'])->middleware('admin.can:manage-customers')->name('admin.users.show');
+        Route::patch('users/{user}/toggle-active', [AdminUsersController::class, 'toggleActive'])->middleware('admin.can:manage-customers')->name('admin.users.toggle-active');
         Route::post('/logout', [LoginController::class, 'logout'])->name('admin.logout');
     });
 });

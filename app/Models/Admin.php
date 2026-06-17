@@ -12,6 +12,25 @@ class Admin extends Authenticatable
     use Notifiable;
 
     /**
+     * @var array<string, list<string>>
+     */
+    private const ROLE_PERMISSIONS = [
+        'superadmin' => ['*'],
+        'manager' => [
+            'view-dashboard',
+            'manage-catalog',
+            'manage-content',
+            'manage-orders',
+            'manage-customers',
+            'manage-bespoke',
+        ],
+        'editor' => [
+            'view-dashboard',
+            'manage-content',
+        ],
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -45,4 +64,11 @@ class Admin extends Authenticatable
         'password' => 'hashed',
         'email_verified_at' => 'datetime',
     ];
+
+    public function hasPermission(string $permission): bool
+    {
+        $permissions = self::ROLE_PERMISSIONS[$this->role] ?? [];
+
+        return in_array('*', $permissions, true) || in_array($permission, $permissions, true);
+    }
 }
