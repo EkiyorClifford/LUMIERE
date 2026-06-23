@@ -552,7 +552,7 @@ tr:hover td{background:var(--gold-glow);color:var(--text)}
 </head>
 <body>
 @php
-  $admin = currentAdmin();
+  $admin = auth('admin')->user();
 @endphp
 
 <aside class="sidebar" id="sidebar">

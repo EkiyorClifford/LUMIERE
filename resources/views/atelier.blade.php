@@ -249,7 +249,7 @@
         <div class="hero-vignette"></div>
         <div class="noise-overlay"></div>
         <div class="absolute inset-0 opacity-40">
-            <img src="https://images.unsplash.com/photo-1534008757030-27299c4371b6?q=80&w=2070&auto=format&fit=crop" alt="Warm gold jewelry" class="w-full h-full object-cover animate-slow-zoom">
+            <img src="{{ asset('images/design/lumiere_location_shoot_v2_1.png') }}" alt="Warm gold jewelry" class="w-full h-full object-cover animate-slow-zoom">
         </div>
 
         <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
@@ -309,7 +309,7 @@
             <div class="grid md:grid-cols-2 gap-16 xl:gap-24 items-center">
                 <div class="reveal-left relative corner-tl corner-br">
                     <div class="parallax-wrap rounded-sm overflow-hidden shadow-2xl" style="height:520px">
-                        <img src="https://images.unsplash.com/photo-1589128777073-263566ae5e4d?q=80&w=2070&auto=format&fit=crop" alt="Jeweller at work with warm gold" class="parallax-img w-full h-full object-cover">
+                        <img src="{{asset('images/design/lumiere_architectural_minimalism_1.png')}}" alt="Jeweller at work with warm gold" class="parallax-img w-full h-full object-cover">
                     </div>
                     <div class="absolute -bottom-6 -right-6 bg-warm-charcoal text-white px-6 py-4 shadow-xl">
                         <p class="font-playfair text-2xl font-light">2024</p>
@@ -380,15 +380,17 @@
     <!-- FULL-BLEED ATELIER IMAGE -->
     <section class="relative h-[65vh] overflow-hidden">
         <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2070&auto=format&fit=crop" alt="Paris courtyard atelier" class="w-full h-full object-cover animate-slow-zoom">
-        <div class="absolute inset-0 bg-gradient-to-r from-black/75 via-black/35 to-transparent"></div>
+        <!-- Stronger, more controlled overlay -->
+<div class="absolute inset-0" style="background: linear-gradient(100deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.6) 30%, rgba(0,0,0,0.25) 55%, rgba(0,0,0,0) 75%);"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-black/10"></div>
         <div class="noise-overlay"></div>
         <div class="absolute inset-0 flex items-center px-6 md:px-20">
             <div class="max-w-lg reveal-left">
                 <p class="text-soft-gold text-[9px] tracking-[0.35em] mb-5 font-jost font-light">6TH ARRONDISSEMENT · SAINT-GERMAIN-DES-PRÉS</p>
                 <h2 class="font-playfair text-4xl md:text-5xl font-light text-white mb-5 leading-tight">The Paris <span class="font-cormorant italic font-light">atelier.</span></h2>
                 <span class="block w-10 h-px bg-soft-gold mb-6"></span>
-                <p class="text-white/55 font-jost font-light text-sm leading-relaxed mb-4 max-w-md">Tucked behind a courtyard gate in Saint-Germain-des-Prés, our atelier is where every Lumière piece begins and ends. Seven artisans. One standard. No shortcuts.</p>
-                <p class="text-white/35 font-jost font-light text-sm leading-relaxed mb-8 max-w-md">We don't receive visitors as a rule — but for those who want to see the work up close, we welcome you by appointment. Come and watch a stone being set. Ask questions. Leave knowing exactly what you're wearing.</p>
+                <p class="text-white/75 font-jost font-light text-sm leading-relaxed mb-4 max-w-md">Tucked behind a courtyard gate in Saint-Germain-des-Prés, our atelier is where every Lumière piece begins and ends. Seven artisans. One standard. No shortcuts.</p>
+                <p class="text-white/75 font-jost font-light text-sm leading-relaxed mb-8 max-w-md">We don't receive visitors as a rule — but for those who want to see the work up close, we welcome you by appointment. Come and watch a stone being set. Ask questions. Leave knowing exactly what you're wearing.</p>
                 <a href="#contact" class="btn-outline-white inline-block px-8 py-3 text-[11px] tracking-[0.22em] font-jost"><span>REQUEST A VISIT</span></a>
             </div>
         </div>
@@ -507,7 +509,7 @@
         <div class="max-w-screen-xl mx-auto">
             <div class="grid md:grid-cols-4 gap-12 mb-16">
                 <div><h3 class="font-playfair text-2xl font-light text-white mb-4 tracking-widest">LUMIÈRE</h3><p class="text-white/30 text-xs font-jost font-light">Timeless elegance crafted in Paris.</p></div>
-                <div><h4 class="text-white/50 text-[9px] font-jost tracking-[0.3em] mb-5">SHOP</h4><ul class="space-y-2"><li><a href="#" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">Necklaces</a></li><li><a href="#" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">Rings</a></li><li><a href="#" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">Earrings</a></li></ul></div>
+                <div><h4 class="text-white/50 text-[9px] font-jost tracking-[0.3em] mb-5">SHOP</h4><ul class="space-y-2"><li><a href="{{route('shop', ['category' => 'Necklace'])}}" target="_blank" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">Necklaces</a></li><li><a href="{{route('shop', ['category' => 'Ring'])}}" target="_blank" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">Rings</a></li><li><a href="{{route('shop', ['category' => 'Earring'])}}" target="_blank" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">Earrings</a></li></ul></div>
                 <div><h4 class="text-white/50 text-[9px] font-jost tracking-[0.3em] mb-5">SUPPORT</h4><ul class="space-y-2"><li><a href="{{ route('contact') }}" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">Contact</a></li><li><a href="{{ route('faq') }}" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">FAQs</a></li><li><a href="{{ route('shipping') }}" class="text-white/30 hover:text-soft-gold text-[11px] font-jost font-light">Shipping</a></li></ul></div>
                 <div><h4 class="text-white/50 text-[9px] font-jost tracking-[0.3em] mb-5">FOLLOW</h4><div class="flex gap-4"><a href="#" class="text-white/30 hover:text-soft-gold"><i class="fa-brands fa-instagram"></i></a><a href="#" class="text-white/30 hover:text-soft-gold"><i class="fa-brands fa-pinterest"></i></a></div></div>
             </div>

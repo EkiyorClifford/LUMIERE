@@ -410,7 +410,7 @@
     ══════════════════════════════════ -->
     <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div class="absolute inset-0 z-0">
-            <img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=2070&auto=format&fit=crop"
+            <img src="{{ asset('images/design/lumiere_gold_fw26_hero_dark_realistic_1.png') }}"
                  alt="Elegant jewelry display"
                  class="w-full h-full object-cover animate-slow-zoom">
             <!-- Refined gradient: darkens bottom and left edges, stays light in center -->

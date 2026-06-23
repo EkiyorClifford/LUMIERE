@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\UsersController as AdminUsersController;
 use App\Http\Controllers\AtelierController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\CollectionPageController;
 use App\Http\Controllers\ConciergeController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\PostController;
@@ -34,9 +35,9 @@ Route::get('/', [CartController::class, 'home'])->name('home');
 // Collections listing page - shows all curated collections
 Route::get('/collections', [ProductController::class, 'collections'])->name('collections');
 
-// Individual collection view - reuses shop view but pre-filtered by collection
+// Individual collection view - dedicated editorial page per collection slug
 // Using slug for SEO-friendly URLs
-Route::get('/collections/{slug}', [ProductController::class, 'showCollection'])->name('collections.show');
+Route::get('/collections/{slug}', [CollectionPageController::class, 'show'])->name('collections.show');
 
 // Main shop page with all products and filters
 // Handles category filtering via URL parameter and query string filters

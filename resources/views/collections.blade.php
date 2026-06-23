@@ -404,7 +404,7 @@
     <section class="page-hero pt-36 pb-24 px-6 md:px-12 relative overflow-hidden">
         <!-- COLLECTION-HERO image as main background (optimized) -->
         <div class="absolute inset-0 opacity-25 pointer-events-none">
-            <img src="https://i.ibb.co/Gf91fhsV/COLLECTION-HERO.png" alt="COLLECTION HERO" 
+            <img src="{{ asset('images/design/lumiere_location_shoot_v3_2.png') }}" alt="COLLECTION HERO" 
                  class="w-full h-full object-cover object-center"
                  loading="lazy"
                  decoding="async">
@@ -485,7 +485,7 @@
                                 <p class="text-soft-gold text-[10px] tracking-[0.35em] mb-3 font-jost font-light">DIAMOND COLLECTION</p>
                                 <h2 class="font-playfair text-5xl md:text-6xl font-light text-white mb-2 tracking-tight">L'ÉCLAT</h2>
                                 <div class="card-line mb-4"></div>
-                                <p class="text-white/60 font-jost font-light text-sm max-w-md leading-relaxed">
+                                <p class="text-white/60 font-jost font-medium text-sm max-w-md leading-relaxed">
                                     The brilliance collection. Flawless diamonds set in 18k gold, each stone hand-selected for its fire and clarity. Pieces that catch every light in every room.
                                 </p>
                             </div>
@@ -516,11 +516,13 @@
                         <div class="split-overlay absolute inset-0"></div>
                         <span style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:300; color:rgba(201,168,76,0.3); font-size:4rem; line-height:1;" class="absolute top-5 right-6 pointer-events-none transition-colors duration-400">02</span>
 
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent pointer-events-none"></div>
+
                         <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-10">
                             <p class="text-soft-gold text-[10px] tracking-[0.3em] mb-2 font-jost font-light">GOLD COLLECTION</p>
                             <h2 class="font-playfair text-4xl font-light text-white mb-2 tracking-tight">L'OR</h2>
                             <div class="split-line mb-4"></div>
-                            <p class="text-white/55 font-jost font-light text-xs leading-relaxed mb-5 max-w-xs">
+                            <p class="text-white/95 font-jost font-light text-xs leading-relaxed mb-5 max-w-xs">
                                 Pure warmth in every form. Sculpted in 18k and 22k gold by master artisans who have spent lifetimes understanding the metal's temperament.
                             </p>
                             <div class="flex items-center justify-between">
@@ -544,18 +546,21 @@
                         <div class="split-overlay absolute inset-0"></div>
                         <span style="font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:300; color:rgba(201,168,76,0.3); font-size:4rem; line-height:1;" class="absolute top-5 right-6 pointer-events-none">03</span>
 
-                        <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-10">
-                            <p class="text-soft-gold text-[10px] tracking-[0.3em] mb-2 font-jost font-light">PEARL COLLECTION</p>
-                            <h2 class="font-playfair text-4xl font-light text-white mb-2 tracking-tight">LA PERLE</h2>
-                            <div class="split-line mb-4"></div>
-                            <p class="text-white/55 font-jost font-light text-xs leading-relaxed mb-5 max-w-xs">
-                                The ocean's quiet luxury. South Sea and Akoya pearls, sourced from sustainable farms, set in gold to frame their natural luminescence.
-                            </p>
-                            <div class="flex items-center justify-between">
-                                <p class="font-playfair text-2xl text-white font-light">From {{ $currencySymbol }}900</p>
-                                <a href="{{ route('collections.show', 'la-perle') }}" class="explore-btn btn-outline-white inline-block px-6 py-2.5 text-[10px] tracking-[0.22em] font-jost font-light">
-                                    <span>EXPLORE COLLECTION</span>
-                                </a>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none"></div>
+
+                            <div class="absolute inset-0 flex flex-col justify-end p-8 md:p-10">
+                                <p class="text-soft-gold text-[10px] tracking-[0.3em] mb-2 font-jost font-light">PEARL COLLECTION</p>
+                                <h2 class="font-playfair text-4xl font-light text-white mb-2 tracking-tight">LA PERLE</h2>
+                                <div class="split-line mb-4"></div>
+                                <p class="text-white/90 font-jost font-light text-xs leading-relaxed mb-5 max-w-xs">
+                                    The ocean's quiet luxury. South Sea and Akoya pearls, sourced from sustainable farms, set in gold to frame their natural luminescence.
+                                </p>
+                                <div class="flex items-center justify-between">
+                                    <p class="font-playfair text-2xl text-white font-light">From {{ $currencySymbol }}900</p>
+                                    <a href="{{ route('collections.show', 'la-perle') }}" class="explore-btn btn-outline-white inline-block px-6 py-2.5 text-[10px] tracking-[0.22em] font-jost font-light">
+                                        <span>EXPLORE COLLECTION</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
