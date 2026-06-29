@@ -2,6 +2,7 @@
 
 use App\Models\Collection;
 use App\Models\Product;
+use Spatie\MediaLibrary\HasMedia;
 
 test('collection detail page uses public atelier booking and configured currency', function () {
     config(['lumiere.currency_symbol' => '£']);
@@ -21,6 +22,11 @@ test('collection detail page uses public atelier booking and configured currency
     ]);
 
     $response = $this->get(route('collections.show', $collection->slug));
+
+    $loadedCollection = $collection->fresh(['media']);
+
+    expect($loadedCollection)->toBeInstanceOf(HasMedia::class);
+    expect($loadedCollection->relationLoaded('media'))->toBeTrue();
 
     $response
         ->assertOk()

@@ -21,7 +21,7 @@
       <tbody>
         @forelse($products as $product)
           <tr>
-            <td><img class="prod-thumb" src="{{ $product->primaryImage?->image_url ?? 'https://images.unsplash.com/photo-1611652022419-a9419f74343d?q=80&w=200&auto=format&fit=crop' }}" alt="{{ $product->name }}"></td>
+            <td><img class="prod-thumb" src="{{ $product->productImageUrl('thumb') ?? 'https://images.unsplash.com/photo-1611652022419-a9419f74343d?q=80&w=200&auto=format&fit=crop' }}" alt="{{ $product->name }}"></td>
             <td style="color:var(--text)">{{ $product->name }}</td>
             <td>{{ ucfirst($product->category) }}</td>
             <td>{{ $product->collection?->name ?? '—' }}</td>

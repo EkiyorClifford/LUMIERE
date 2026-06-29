@@ -62,7 +62,7 @@ class ProfileController extends Controller
 
         // Get recommended products for the dashboard
         $recommendedProducts = Product::query()
-            ->with('collection', 'primaryImage')
+            ->with('collection', 'media', 'primaryImage')
             ->where('is_active', true)
             ->inRandomOrder()
             ->limit(4)

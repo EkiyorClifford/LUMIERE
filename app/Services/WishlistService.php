@@ -32,7 +32,7 @@ class WishlistService
         if ($this->isAuthenticated()) {
             $wishlist = $this->getOrCreateAuthWishlist();
 
-            return $wishlist->items()->with('product.collection', 'product.primaryImage', 'product.variants')->get();
+            return $wishlist->items()->with('product.collection', 'product.media', 'product.primaryImage', 'product.variants')->get();
         }
 
         return $this->getSessionWishlistItems();
@@ -47,7 +47,7 @@ class WishlistService
         $items = [];
 
         foreach ($wishlist as $productId) {
-            $product = Product::with('collection', 'primaryImage', 'variants')->find($productId);
+            $product = Product::with('collection', 'media', 'primaryImage', 'variants')->find($productId);
             if ($product) {
                 $items[] = (object) [
                     'product' => $product,

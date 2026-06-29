@@ -35,6 +35,7 @@ Route::get('/', [CartController::class, 'home'])->name('home');
 // Collections listing page - shows all curated collections
 Route::get('/collections', [ProductController::class, 'collections'])->name('collections');
 
+
 // Individual collection view - dedicated editorial page per collection slug
 // Using slug for SEO-friendly URLs
 Route::get('/collections/{slug}', [CollectionPageController::class, 'show'])->name('collections.show');
@@ -199,6 +200,7 @@ Route::prefix('admin')->group(function () {
             Route::get('collections', [AdminCollectionController::class, 'index'])->name('admin.collections.index');
             Route::resource('products', AdminProductController::class)->except(['show'])->names('admin.products');
             Route::patch('products/{product}/toggle-active', [AdminProductController::class, 'toggleActive'])->name('admin.products.toggle-active');
+            Route::post('products/{product}/image', [AdminProductController::class, 'uploadImage'])->name('admin.products.image.upload');
         });
 
         Route::middleware('admin.can:manage-content')->group(function () {

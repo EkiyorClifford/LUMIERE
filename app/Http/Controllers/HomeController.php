@@ -17,7 +17,7 @@ class HomeController extends Controller
         }
 
         $featuredProducts = Product::query()
-            ->with(['collection', 'primaryImage'])
+            ->with(['collection', 'media', 'primaryImage'])
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->limit(4)

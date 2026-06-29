@@ -33,7 +33,7 @@ class CartService
         if ($this->isAuthenticated()) {
             $cart = $this->getOrCreateAuthCart();
 
-            return $cart->items()->with('product.primaryImage', 'variant')->get();
+            return $cart->items()->with('product.media', 'product.primaryImage', 'variant')->get();
         }
 
         return $this->getSessionCartItems();
@@ -51,7 +51,7 @@ class CartService
 
         $cartItems = collect($cart);
         $products = Product::query()
-            ->with('primaryImage')
+            ->with(['media', 'primaryImage'])
             ->whereIn('id', $cartItems->pluck('product_id')->filter()->unique())
             ->get()
             ->keyBy('id');

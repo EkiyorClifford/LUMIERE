@@ -29,7 +29,7 @@ class DashboardController extends Controller
             ->get();
 
         $topProducts = Product::query()
-            ->with(['collection', 'primaryImage'])
+            ->with(['collection', 'media', 'primaryImage'])
             ->withCount('orderItems')
             ->orderByDesc('order_items_count')
             ->limit(5)

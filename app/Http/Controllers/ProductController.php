@@ -50,7 +50,7 @@ class ProductController extends Controller
         $activeCollection = $collections->firstWhere('slug', $filters['collection'] ?? null);
 
         $products = Product::query()
-            ->with(['collection', 'primaryImage', 'images'])
+            ->with(['collection', 'images', 'media', 'primaryImage'])
             ->where('is_active', true)
             ->when($activeCategory, fn ($query) => $query->where('category', $activeCategory))
             ->when($activeCollection, fn ($query) => $query->where('collection_id', $activeCollection->id))
@@ -88,12 +88,14 @@ class ProductController extends Controller
             'attributes',
             'collection',
             'images',
+            'media',
+            'primaryImage',
             'reviews.user',
             'variants',
         ]);
 
         $relatedProducts = Product::query()
-            ->with('primaryImage')
+            ->with(['media', 'primaryImage'])
             ->where('is_active', true)
             ->whereKeyNot($product->id)
             ->where(function ($query) use ($product): void {
@@ -132,7 +134,7 @@ class ProductController extends Controller
         }
 
         $collections = Collection::query()
-            ->with(['products' => fn ($query) => $query->where('is_active', true)->with('primaryImage')])
+            ->with(['products' => fn ($query) => $query->where('is_active', true)->with(['media', 'primaryImage'])])
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->get();

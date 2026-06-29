@@ -227,7 +227,7 @@ class CartController extends Controller
 
         // Get featured products for the bestsellers section
         $featuredProducts = Product::query()
-            ->with('collection', 'primaryImage')
+            ->with('collection', 'media', 'primaryImage')
             ->where('is_active', true)
             ->inRandomOrder()
             ->limit(4)

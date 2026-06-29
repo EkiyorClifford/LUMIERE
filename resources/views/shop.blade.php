@@ -156,8 +156,7 @@
 
 @foreach ($products as $product)
 @php
-    $productImageUrl = $product->primaryImage?->image_url
-        ?? $product->images->first()?->image_url
+    $productImageUrl = $product->productImageUrl('card')
         ?? 'https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop';
 @endphp
 

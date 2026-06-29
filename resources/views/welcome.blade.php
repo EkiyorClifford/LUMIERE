@@ -709,7 +709,7 @@
                 @foreach($featuredProducts as $index => $product)
                 <a href="{{ route('product.show', $product) }}" class="product-card group block">
                     <div class="relative overflow-hidden bg-deep-ivory rounded-sm mb-5 aspect-[3/4]">
-                        <img src="{{ $product->primaryImage?->image_url ?? 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1931&auto=format&fit=crop' }}"
+                        <img src="{{ $product->productImageUrl('card') ?? 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1931&auto=format&fit=crop' }}"
                              alt="{{ $product->name }}"
                              class="card-img w-full h-full object-cover">
                         <!-- Overlay -->

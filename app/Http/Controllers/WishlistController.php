@@ -22,7 +22,7 @@ class WishlistController extends Controller
         // Get recommended products for "You may also love" section
         $wishlistProductIds = $items->pluck('product_id')->toArray();
         $recommendedProducts = Product::query()
-            ->with('collection', 'primaryImage')
+            ->with('collection', 'media', 'primaryImage')
             ->where('is_active', true)
             ->whereNotIn('id', $wishlistProductIds)
             ->inRandomOrder()

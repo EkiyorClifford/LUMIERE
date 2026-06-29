@@ -782,7 +782,7 @@
                 @foreach($recommendedProducts as $product)
                 <div class="rec-card" onclick="window.location.href='{{ route('product.show', $product) }}'">
                     <div class="rec-img-wrap">
-                        <img src="{{ $product->primaryImage?->image_url ?? 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=800&auto=format&fit=crop' }}" class="rec-img" alt="{{ $product->name }}">
+                        <img src="{{ $product->productImageUrl('card') ?? 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=800&auto=format&fit=crop' }}" class="rec-img" alt="{{ $product->name }}">
                     </div>
                     <button class="btn-rec-wish" data-product-id="{{ $product->id }}" onclick="event.stopPropagation();addToCart({{ $product->id }}, null, 1)">
                         <i class="fa-solid fa-bag-shopping"></i>
@@ -834,7 +834,7 @@
                 'desc' => $product->description ?? '',
                 'price' => (float) $product->price,
                 'oldPrice' => null,
-                'img' => $product->primaryImage?->image_url ?? 'https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop',
+                'img' => $product->productImageUrl('card') ?? 'https://images.unsplash.com/photo-1617038220319-276d3cfab638?q=80&w=1200&auto=format&fit=crop',
                 'stock' => $stock <= 0 ? 'out' : ($stock <= 2 ? 'low' : 'in'),
                 'stockLabel' => $stock <= 0 ? 'Out of stock' : ($stock <= 2 ? "Only {$stock} left" : 'In stock'),
                 'dateAdded' => $item->created_at ? 'Added '.$item->created_at->format('M j, Y') : 'Saved',

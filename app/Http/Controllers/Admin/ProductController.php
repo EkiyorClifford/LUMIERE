@@ -12,13 +12,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ProductController extends Controller
 {
     public function index(): View
     {
         $products = Product::query()
-            ->with(['collection', 'primaryImage'])
+            ->with(['collection', 'media', 'primaryImage'])
             ->latest()
             ->paginate(20);
 
@@ -48,7 +49,7 @@ class ProductController extends Controller
 
     public function edit(Product $product): View
     {
-        $product->load(['collection', 'primaryImage']);
+        $product->load(['collection', 'images', 'media', 'primaryImage']);
         $collections = Collection::query()->orderBy('name')->get();
         $categories = Category::query()->orderBy('name')->get();
 
@@ -106,9 +107,9 @@ class ProductController extends Controller
             'description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
             'sort_order' => ['required', 'integer', 'min:0'],
-            'image' => ['nullable', 'image', 'max:4096'],
+            'image' => ['nullable', 'image', 'max:51200'],
             'additional_images' => ['nullable', 'array'],
-            'additional_images.*' => ['image', 'max:4096'],
+            'additional_images.*' => ['image', 'max:51200'],
         ]);
     }
 
@@ -118,14 +119,13 @@ class ProductController extends Controller
             return;
         }
 
-        $path = $request->file('image')->store('products', 'public');
+        $this->clearPrimaryMedia($product);
 
-        $product->images()->update(['is_primary' => false]);
-        $product->images()->create([
-            'image_path' => $path,
-            'is_primary' => true,
-            'sort_order' => 0,
-        ]);
+        $product
+            ->addMedia($request->file('image'))
+            ->withCustomProperties(['primary' => true])
+            ->setOrder($this->nextMediaSortOrder($product))
+            ->toMediaCollection(Product::ProductImagesCollection);
     }
 
     private function storeAdditionalImages(Request $request, Product $product): void
@@ -140,23 +140,60 @@ class ProductController extends Controller
             return;
         }
 
-        $sortOrder = $product->images()->max('sort_order') ?? 0;
+        $sortOrder = $this->nextMediaSortOrder($product) - 1;
 
         foreach ($files as $image) {
-            $path = $image->store('products', 'public');
             $sortOrder++;
 
-            $product->images()->create([
-                'image_path' => $path,
-                'is_primary' => false,
-                'sort_order' => $sortOrder,
-            ]);
+            $product
+                ->addMedia($image)
+                ->withCustomProperties(['primary' => false])
+                ->setOrder($sortOrder)
+                ->toMediaCollection(Product::ProductImagesCollection);
         }
     }
 
     private function processExistingImages(Request $request, Product $product): void
     {
-        // Delete selected images
+        $this->processExistingMedia($request, $product);
+        $this->processExistingLegacyImages($request, $product);
+        $this->ensurePrimaryMedia($product);
+    }
+
+    private function processExistingMedia(Request $request, Product $product): void
+    {
+        foreach ((array) $request->input('delete_media', []) as $mediaId) {
+            $this->findProductMedia($product, (int) $mediaId)?->delete();
+        }
+
+        foreach ((array) $request->file('replace_media', []) as $mediaId => $file) {
+            if (! $file) {
+                continue;
+            }
+
+            $media = $this->findProductMedia($product, (int) $mediaId);
+            if (! $media) {
+                continue;
+            }
+
+            $sortOrder = $media->order_column;
+            $customProperties = $media->custom_properties;
+            $media->delete();
+
+            $product
+                ->addMedia($file)
+                ->withCustomProperties($customProperties)
+                ->setOrder($sortOrder)
+                ->toMediaCollection(Product::ProductImagesCollection);
+        }
+
+        if ($primaryMediaId = $request->integer('primary_media_id')) {
+            $this->markMediaAsPrimary($product, $primaryMediaId);
+        }
+    }
+
+    private function processExistingLegacyImages(Request $request, Product $product): void
+    {
         foreach ((array) $request->input('delete_images', []) as $imageId) {
             $image = $product->images()->whereKey($imageId)->first();
             if (! $image) {
@@ -191,5 +228,45 @@ class ProductController extends Controller
                 $primaryImage->update(['is_primary' => true, 'sort_order' => 0]);
             }
         }
+    }
+
+    private function nextMediaSortOrder(Product $product): int
+    {
+        return ((int) $product->getMedia(Product::ProductImagesCollection)->max('order_column')) + 1;
+    }
+
+    private function clearPrimaryMedia(Product $product): void
+    {
+        $product->getMedia(Product::ProductImagesCollection)->each(function (Media $media): void {
+            $media->setCustomProperty('primary', false)->save();
+        });
+    }
+
+    private function markMediaAsPrimary(Product $product, int $mediaId): void
+    {
+        $media = $this->findProductMedia($product, $mediaId);
+        if (! $media) {
+            return;
+        }
+
+        $this->clearPrimaryMedia($product);
+        $media->setCustomProperty('primary', true)->save();
+    }
+
+    private function ensurePrimaryMedia(Product $product): void
+    {
+        $media = $product->getMedia(Product::ProductImagesCollection);
+        if ($media->isEmpty() || $media->contains(fn (Media $media): bool => (bool) $media->getCustomProperty('primary', false))) {
+            return;
+        }
+
+        $media->first()?->setCustomProperty('primary', true)->save();
+    }
+
+    private function findProductMedia(Product $product, int $mediaId): ?Media
+    {
+        return $product
+            ->getMedia(Product::ProductImagesCollection)
+            ->first(fn (Media $media): bool => $media->id === $mediaId);
     }
 }
